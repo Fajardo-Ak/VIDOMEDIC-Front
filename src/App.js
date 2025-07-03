@@ -1,0 +1,33 @@
+import './App.scss';
+import { BrowserRouter as Router, Route, Routes } from "react-router";
+import Navbar from './Componentes/Navbar';
+import Sidebar from './Componentes/Sidebar';
+import Inicio from './Componentes/Paginas/Inicio';
+import Planes from './Componentes/Paginas/Planes';
+import Ventas from './Componentes/Paginas/Ventas';
+import Usuarios from './Componentes/Paginas/Usuarios';
+import Admin from './Componentes/Paginas/Admin';
+
+function App() {
+  return (
+
+    <Router>
+      <div className="flex">
+        <Sidebar />
+        <div className="content w-100">
+          <Navbar/>
+          <Routes>
+            <Route path="/inicio" element={<Inicio/>}></Route>
+            <Route path="/ventas" element={<Ventas/>}></Route>
+            <Route path="/planes" element={<Planes/>}></Route>
+            <Route path="/usuarios" element={<Usuarios/>}></Route>
+            <Route path="/admin" element={<Admin/>}></Route>
+          </Routes>
+        </div>
+      </div>
+    </Router>
+
+  );
+}
+
+export default App;
