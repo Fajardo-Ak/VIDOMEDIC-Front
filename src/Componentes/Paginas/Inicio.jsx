@@ -48,7 +48,7 @@ const Inicio = () => {
       <div style={styles.columnsContainer}>
         {/* Columna izquierda - Contacto */}
         <div style={styles.column}>
-          <div style={styles.section}>
+          <div style={styles.section}>Contacto
             <div style={styles.contactCard}>
             <div style={styles.contactCard}> Contacto
               <div style={styles.contactName}>Ana Torres</div>
