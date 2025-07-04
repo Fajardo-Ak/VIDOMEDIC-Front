@@ -19,7 +19,7 @@ function App() {
         <div className="content w-100">
           <Navbar/>
           <Routes>
-            <Route path="/inicio" element={<Inicio/>}></Route>
+            <Route path="/Inicio" element={<Inicio/>}></Route>
             <Route path="/ventas" element={<Ventas/>}></Route>
             <Route path="/planes" element={<Planes/>}></Route>
             <Route path="/usuarios" element={<Usuarios/>}></Route>
