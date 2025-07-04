@@ -1,99 +1,96 @@
 // src/components/paginas/Inicio.jsx
 import React from 'react';
+import { FaChevronDown } from 'react-icons/fa';
 
 const Inicio = () => {
   return (
     <div style={styles.container}>
+      {/* Encabezado */}
+      <div style={styles.header}>
+        <h1 style={styles.loginTitle}>Login</h1>
+        <div style={styles.registerLink}>Registrar</div>
+      </div>
+
       {/* Sección Calendario */}
       <div style={styles.section}>
-        <h1 style={styles.title}>CALEINDARIO</h1>
-        <table style={styles.table}>
-          <tbody>
-            <tr>
-              <td style={styles.calendarCell}>La 7</td>
-              <td style={styles.calendarCell}>Ma 8</td>
-              <td style={styles.calendarCell}>Mi 9</td>
-              <td style={styles.calendarCell}>Ju 10</td>
-              <td style={styles.calendarCell}>Vi 11</td>
-              <td style={styles.calendarCell}>Sa 12</td>
-              <td style={styles.calendarCell}>Do 13</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* Sección Medicamentos */}
-      <div style={styles.section}>
-        <h1 style={styles.title}>Modicamentos</h1>
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th style={styles.tableHeader}>Nombre</th>
-              <th style={styles.tableHeader}>Tipo</th>
-              <th style={styles.tableHeader}>Dosis</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style={styles.tableCell}>Telmisartán</td>
-              <td style={styles.tableCell}>Tableta</td>
-              <td style={styles.tableCell}>8ml</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* Sección Características */}
-      <div style={styles.section}>
-        <h1 style={styles.title}>Características</h1>
-        <div style={styles.checkboxContainer}>
-          <div style={styles.checkboxGroup}>
-            <label style={styles.checkbox}>
-              <input type="checkbox" style={styles.checkboxInput} />
-              Paracetamol
-            </label>
-            <label style={styles.checkbox}>
-              <input type="checkbox" style={styles.checkboxInput} />
-              Tableta
-            </label>
-            <label style={styles.checkbox}>
-              <input type="checkbox" style={styles.checkboxInput} />
-              8ml
-            </label>
+        <h1 style={styles.title}>CALENDARIO</h1>
+        <div style={styles.calendarLink}>
+          <FaChevronDown style={styles.arrowIcon} />
+          <span>Contácto</span>
+        </div>
+        
+        <div style={styles.calendarTable}>
+          <div style={styles.calendarRow}>
+            <div style={styles.calendarHeader}>Lu</div>
+            <div style={styles.calendarHeader}>Ma</div>
+            <div style={styles.calendarHeader}>Mi</div>
+            <div style={styles.calendarHeader}>Ju</div>
+            <div style={styles.calendarHeader}>Vi</div>
+            <div style={styles.calendarHeader}>Sa</div>
+            <div style={styles.calendarHeader}>Do</div>
           </div>
-          
-          <div style={styles.checkboxGroup}>
-            <label style={styles.checkbox}>
-              <input type="checkbox" style={styles.checkboxInput} />
-              Insulina
-            </label>
-            <label style={styles.checkbox}>
-              <input type="checkbox" style={styles.checkboxInput} />
-              Inyección
-            </label>
-            <label style={styles.checkbox}>
-              <input type="checkbox" style={styles.checkboxInput} />
-              8ml
-            </label>
-          </div>
-          
-          <div style={styles.buttonGroup}>
-            <button style={styles.button}>Agregar</button>
-            <button style={styles.button}>Login</button>
-            <button style={styles.button}>Registrar</button>
+          <div style={styles.calendarRow}>
+            <div style={styles.calendarDay}>7</div>
+            <div style={styles.calendarDay}>8</div>
+            <div style={styles.calendarDay}>9</div>
+            <div style={styles.calendarDay}>10</div>
+            <div style={styles.calendarDay}>11</div>
+            <div style={styles.calendarDay}>12</div>
+            <div style={styles.calendarDay}>13</div>
           </div>
         </div>
       </div>
 
-      {/* Sección Contacto */}
-      <div style={styles.section}>
-        <h1 style={styles.title}>Contacto</h1>
-        <div style={styles.contactSection}>
-          <h2 style={styles.contactName}>Ana Torres</h2>
-          <p style={styles.note}>
-            Nota: Se le notificará a este contacto en caso de omitir la toma de la dosis.
-          </p>
+      {/* Separador */}
+      <div style={styles.divider} />
+
+      {/* Secciones en columnas */}
+      <div style={styles.columnsContainer}>
+        {/* Columna izquierda - Contacto */}
+        <div style={styles.column}>
+          <div style={styles.section}>
+            <div style={styles.contactCard}>
+              <div style={styles.contactName}>Ana Torres</div>
+              <div style={styles.contactNote}>
+                Nota: Se le notificará a este contacto en caso de omitir la toma de la dosis.
+              </div>
+            </div>
+          </div>
         </div>
+        
+        {/* Columna derecha - Medicamentos */}
+        <div style={styles.column}>
+          <div style={styles.section}>
+            <h1 style={styles.title}>Medicamentos</h1>
+            <div style={styles.medicationsTable}>
+              <div style={styles.tableRow}>
+                <div style={styles.tableHeader}>Nombre</div>
+                <div style={styles.tableHeader}>Tipo</div>
+                <div style={styles.tableHeader}>Dosis</div>
+              </div>
+              <div style={styles.tableRow}>
+                <div style={styles.tableCell}>Telmisartán</div>
+                <div style={styles.tableCell}>Tableta</div>
+                <div style={styles.tableCell}>8ml</div>
+              </div>
+              <div style={styles.tableRow}>
+                <div style={styles.tableCell}>Paracetamol</div>
+                <div style={styles.tableCell}>Tableta</div>
+                <div style={styles.tableCell}>8ml</div>
+              </div>
+              <div style={styles.tableRow}>
+                <div style={styles.tableCell}>Insulina</div>
+                <div style={styles.tableCell}>Inyección</div>
+                <div style={styles.tableCell}>8ml</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Botón Agregar */}
+      <div style={styles.addButtonContainer}>
+        <button style={styles.addButton}>Agregar</button>
       </div>
     </div>
   );
@@ -110,8 +107,27 @@ const styles = {
     borderRadius: '8px',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
   },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+    paddingBottom: '10px',
+    borderBottom: '1px solid #e0e0e0',
+  },
+  loginTitle: {
+    fontSize: '1.8rem',
+    color: '#2c3e50',
+    margin: 0,
+  },
+  registerLink: {
+    fontSize: '1.2rem',
+    color: '#3498db',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+  },
   section: {
-    marginBottom: '30px',
+    marginBottom: '20px',
     padding: '15px',
     backgroundColor: 'white',
     borderRadius: '8px',
@@ -119,88 +135,126 @@ const styles = {
   },
   title: {
     color: '#2c3e50',
-    borderBottom: '2px solid #3498db',
     paddingBottom: '10px',
     marginTop: '0',
-    fontSize: '1.8rem',
+    fontSize: '1.5rem',
+    marginBottom: '15px',
+    borderBottom: '2px solid #3498db',
   },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    marginTop: '10px',
-  },
-  tableHeader: {
-    backgroundColor: '#3498db',
-    color: 'white',
-    padding: '12px',
-    textAlign: 'left',
-    border: '1px solid #2980b9',
-  },
-  tableCell: {
-    padding: '12px',
-    border: '1px solid #ecf0f1',
-  },
-  calendarCell: {
-    padding: '12px',
-    textAlign: 'center',
-    border: '1px solid #ecf0f1',
-    backgroundColor: '#e8f4fc',
-    fontWeight: 'bold',
-  },
-  checkboxContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
-  },
-  checkboxGroup: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '15px',
-    marginBottom: '10px',
-    padding: '10px',
-    backgroundColor: '#f1f8ff',
-    borderRadius: '5px',
-  },
-  checkbox: {
+  calendarLink: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    cursor: 'pointer',
+    marginBottom: '15px',
+    color: '#3498db',
+    fontWeight: 'bold',
   },
-  checkboxInput: {
-    width: '18px',
-    height: '18px',
-    cursor: 'pointer',
+  arrowIcon: {
+    marginRight: '8px',
+    fontSize: '0.9rem',
   },
-  buttonGroup: {
+  calendarTable: {
     display: 'flex',
-    gap: '10px',
-    marginTop: '15px',
+    flexDirection: 'column',
   },
-  button: {
-    padding: '10px 15px',
+  calendarRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '5px',
+  },
+  calendarHeader: {
+    flex: 1,
+    padding: '10px 5px',
+    textAlign: 'center',
+    backgroundColor: '#e8f4fc',
+    borderRadius: '4px',
+    fontWeight: 'bold',
+    border: '1px solid #cde0ee',
+    margin: '0 2px',
+  },
+  calendarDay: {
+    flex: 1,
+    padding: '10px 5px',
+    textAlign: 'center',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '4px',
+    border: '1px solid #e0e0e0',
+    margin: '0 2px',
+  },
+  divider: {
+    height: '2px',
+    backgroundColor: '#3498db',
+    border: 'none',
+    margin: '20px 0',
+  },
+  columnsContainer: {
+    display: 'flex',
+    gap: '20px',
+    marginBottom: '20px',
+  },
+  column: {
+    flex: 1,
+  },
+  contactCard: {
+    backgroundColor: '#e8f4fc',
+    padding: '20px',
+    borderRadius: '6px',
+    borderLeft: '4px solid #3498db',
+  },
+  contactName: {
+    fontWeight: 'bold',
+    fontSize: '1.3rem',
+    marginBottom: '10px',
+    color: '#2c3e50',
+  },
+  contactNote: {
+    color: '#555',
+    fontStyle: 'italic',
+    fontSize: '0.95rem',
+  },
+  medicationsTable: {
+    display: 'flex',
+    flexDirection: 'column',
+    border: '1px solid #e0e0e0',
+    borderRadius: '6px',
+    overflow: 'hidden',
+  },
+  tableRow: {
+    display: 'flex',
+    borderBottom: '1px solid #e0e0e0',
+    '&:last-child': {
+      borderBottom: 'none',
+    },
+  },
+  tableHeader: {
+    flex: 1,
+    padding: '12px',
+    backgroundColor: '#f1f8ff',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  tableCell: {
+    flex: 1,
+    padding: '12px',
+    textAlign: 'center',
+  },
+  addButtonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '10px',
+  },
+  addButton: {
+    padding: '12px 30px',
     backgroundColor: '#3498db',
     color: 'white',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '1rem',
+    fontSize: '1.1rem',
+    fontWeight: 'bold',
     transition: 'background-color 0.3s',
-  },
-  contactSection: {
-    backgroundColor: '#e8f4fc',
-    padding: '15px',
-    borderRadius: '5px',
-    borderLeft: '4px solid #3498db',
-  },
-  contactName: {
-    margin: '0 0 10px 0',
-    color: '#2c3e50',
-  },
-  note: {
-    margin: '0',
-    fontStyle: 'italic',
-    color: '#7f8c8d',
+    '&:hover': {
+      backgroundColor: '#2980b9',
+    },
   },
 };
 
