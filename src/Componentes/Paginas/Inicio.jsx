@@ -1,6 +1,6 @@
 // src/components/paginas/Inicio.jsx
 import React from 'react';
-import { FaChevronDown } from 'react-icons/fa';
+import { FaChevronDown, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 const Inicio = () => {
   return (
@@ -67,36 +67,51 @@ const Inicio = () => {
                 <div style={styles.tableHeader}>Nombre</div>
                 <div style={styles.tableHeader}>Tipo</div>
                 <div style={styles.tableHeader}>Dosis</div>
+                <div style={styles.tableHeader}>Acciones</div>
               </div>
               <div style={styles.tableRow}>
                 <div style={styles.tableCell}>Telmisartán</div>
                 <div style={styles.tableCell}>Tableta</div>
                 <div style={styles.tableCell}>8ml</div>
+                <div style={styles.actionsCell}>
+                  <button style={styles.actionButton}><FaEdit /></button>
+                  <button style={styles.actionButton}><FaTrash /></button>
+                </div>
               </div>
               <div style={styles.tableRow}>
                 <div style={styles.tableCell}>Paracetamol</div>
                 <div style={styles.tableCell}>Tableta</div>
                 <div style={styles.tableCell}>8ml</div>
+                <div style={styles.actionsCell}>
+                  <button style={styles.actionButton}><FaEdit /></button>
+                  <button style={styles.actionButton}><FaTrash /></button>
+                </div>
               </div>
               <div style={styles.tableRow}>
                 <div style={styles.tableCell}>Insulina</div>
                 <div style={styles.tableCell}>Inyección</div>
                 <div style={styles.tableCell}>8ml</div>
+                <div style={styles.actionsCell}>
+                  <button style={styles.actionButton}><FaEdit /></button>
+                  <button style={styles.actionButton}><FaTrash /></button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Botón Agregar */}
-      <div style={styles.addButtonContainer}>
-        <button style={styles.addButton}>Agregar</button>
+      {/* Botón Agregar flotante */}
+      <div style={styles.floatingButtonContainer}>
+        <button style={styles.floatingButton}>
+          <FaPlus style={styles.floatingButtonIcon} />
+        </button>
       </div>
     </div>
   );
 };
 
-// Estilos en el mismo archivo
+// Estilos actualizados
 const styles = {
   container: {
     fontFamily: 'Arial, sans-serif',
@@ -106,6 +121,8 @@ const styles = {
     backgroundColor: '#f8f9fa',
     borderRadius: '8px',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    position: 'relative',
+    minHeight: '100vh',
   },
   header: {
     display: 'flex',
@@ -236,25 +253,51 @@ const styles = {
     flex: 1,
     padding: '12px',
     textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  addButtonContainer: {
+  actionsCell: {
+    flex: 0.5,
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  actionButton: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    color: '#3498db',
+    padding: '5px',
+    '&:hover': {
+      color: '#2980b9',
+    },
+  },
+  floatingButtonContainer: {
+    position: 'fixed',
+    bottom: '30px',
+    right: '30px',
+  },
+  floatingButton: {
+    width: '60px',
+    height: '60px',
+    borderRadius: '50%',
+    backgroundColor: '#3498db',
+    border: 'none',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+    cursor: 'pointer',
     display: 'flex',
     justifyContent: 'center',
-    marginTop: '10px',
-  },
-  addButton: {
-    padding: '12px 30px',
-    backgroundColor: '#3498db',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '1.1rem',
-    fontWeight: 'bold',
+    alignItems: 'center',
     transition: 'background-color 0.3s',
     '&:hover': {
       backgroundColor: '#2980b9',
     },
+  },
+  floatingButtonIcon: {
+    color: 'white',
+    fontSize: '1.5rem',
   },
 };
 
