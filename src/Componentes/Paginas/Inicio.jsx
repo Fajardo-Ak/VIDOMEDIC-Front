@@ -48,9 +48,9 @@ const Inicio = () => {
       <div style={styles.columnsContainer}>
         {/* Columna izquierda - Contacto */}
         <div style={styles.column}>
-          <div style={styles.section}>Contacto
-            <div style={styles.contactCard}>
-            <div style={styles.contactCard}> Contacto
+          <div style={styles.section}>
+            <div style={styles.contactName}>Contacto
+            <div style={styles.contactCard}> 
               <div style={styles.contactName}>Ana Torres</div>
               <div style={styles.contactNote}>
                 Nota: Se le notificará a este contacto en caso de omitir la toma de la dosis.
