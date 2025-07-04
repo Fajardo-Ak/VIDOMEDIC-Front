@@ -50,7 +50,7 @@ const Inicio = () => {
         <div style={styles.column}>
           <div style={styles.section}>
             <div style={styles.contactCard}>
-            <div style={styles.contactCard}> 
+            <div style={styles.contactCard}> Contacto
               <div style={styles.contactName}>Ana Torres</div>
               <div style={styles.contactNote}>
                 Nota: Se le notificará a este contacto en caso de omitir la toma de la dosis.
