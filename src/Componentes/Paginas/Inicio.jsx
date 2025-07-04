@@ -5,4 +5,4 @@ const Inicio = () => {
         </div>
     )
 }
- export default Inicio;
+export default Inicio;
