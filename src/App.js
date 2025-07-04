@@ -8,6 +8,7 @@ import Planes from './Componentes/Paginas/Planes';
 import Ventas from './Componentes/Paginas/Ventas';
 import Usuarios from './Componentes/Paginas/Usuarios';
 import Admin from './Componentes/Paginas/Admin';
+import Inicio from './Componentes/Paginas/Inicio';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         <div className="content w-100">
           <Navbar/>
           <Routes>
-            <Route path="/inicio" element={<Inicio/>}></Route>
+            <Route path="/Inicio" element={<Inicio/>}></Route>
             <Route path="/ventas" element={<Ventas/>}></Route>
             <Route path="/planes" element={<Planes/>}></Route>
             <Route path="/usuarios" element={<Usuarios/>}></Route>
