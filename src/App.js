@@ -12,7 +12,6 @@ import Admin from './Componentes/Paginas/Admin';
 
 function App() {
   return (
-    
     <Router>
       <div className="flex">
         <Sidebar />
@@ -28,7 +27,6 @@ function App() {
         </div>
       </div>
     </Router>
-
   );
 }
 
