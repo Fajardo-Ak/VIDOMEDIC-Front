@@ -15,6 +15,7 @@ function App() {
     
     <Router>
       <div className="flex">
+        
         <Sidebar />
         <div className="content w-100">
           <Navbar/>

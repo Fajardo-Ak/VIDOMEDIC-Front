@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from '../../../api/axios';
 
 const api = axios.create({
   baseURL: "http://localhost:8000/api", // Aquí se conectará al backend Laravel
