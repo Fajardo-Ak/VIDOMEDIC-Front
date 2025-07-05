@@ -3,152 +3,98 @@ import React from "react";
 const Planes = () => {
   const planes = [
     {
-      nombre: "Plan Gratuito",
-      precio: "$0 / mes",
+      nombre: "Básico",
+      precio: "$00",
       caracteristicas: [
-        "Registro y Uso Básico",
-        "Agregar hasta 6 medicamentos",
-        "Notificaciones básicas",
-        "Agregar hasta 1 familiar",
+        "todo lo anterior",
+        "1 cuenta Premium",
+        "Cancela en cualquier momento",
+        "Pago por suscripción o pago único",
       ],
-      destacado: false,
-      colorBorde: "#1e7a8c",
     },
     {
-      nombre: "Plan Premier",
-      precio: "$9.99 / mes",
+      nombre: "Estándar",
+      precio: "$249",
       caracteristicas: [
-        "Número limitado de medicamentos hasta 10",
-        "Notificaciones avanzadas",
-        "Sincronización con la nube",
-        "Registro de 4 familiares",
+        "todo lo anterior",
+        "1 cuenta Premium",
+        "Cancela en cualquier momento",
+        "Pago por suscripción o pago único",
       ],
-      destacado: true,
-      colorBorde: "#72160D",
     },
     {
-      nombre: "Plan Pro",
-      precio: "$19.99 / mes",
+      nombre: "Premium",
+      precio: "$549",
       caracteristicas: [
-        "Medicamentos ilimitados",
-        "Notificaciones premium",
-        "Sincronización avanzada",
-        "Soporte 24/7",
+        "todo lo anterior",
+        "1 cuenta Premium",
+        "Cancela en cualquier momento",
+        "Pago por suscripción o pago único",
       ],
-      destacado: false,
-      colorBorde: "#234567",
     },
   ];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: "30px",
-        padding: "40px 20px",
-        backgroundColor: "#f5f5f5",
-        minHeight: "100vh",
-      }}
-    >
-      {planes.map((plan, index) => (
-        <div
-          key={index}
-          style={{
-            border: `3px solid ${plan.colorBorde}`,
-            borderRadius: "10px",
-            padding: "25px",
-            width: "300px",
-            backgroundColor: "white",
-            position: "relative",
-            boxShadow: plan.destacado ? "0 5px 15px rgba(0,0,0,0.2)" : "none",
-            transform: plan.destacado ? "scale(1.05)" : "none",
-            transition: "transform 0.3s ease",
-            textAlign: "center",
-          }}
-        >
-          {plan.destacado && (
-            <div
+    <div style={{ padding: "40px", backgroundColor: "#fff", minHeight: "100vh" }}>
+      {/* Título y descripción */}
+      <div style={{ textAlign: "center", marginBottom: "40px" }}>
+        <h2 style={{ color: "#23747B", fontSize: "28px", marginBottom: "10px" }}>Planes</h2>
+        <p style={{ fontSize: "16px", color: "#333" }}>
+          Conoce nuestros planes y elige el que se adapte a tus necesidades
+        </p>
+      </div>
+
+      {/* Contenedor de tarjetas */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "30px",
+          flexWrap: "wrap",
+        }}
+      >
+        {planes.map((plan, index) => (
+          <div
+            key={index}
+            style={{
+              backgroundColor: "#23747B",
+              borderRadius: "8px",
+              width: "280px",
+              padding: "30px 20px",
+              color: "#fff",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <h3 style={{ textAlign: "center", fontSize: "22px", marginBottom: "10px" }}>
+              {plan.nombre}
+            </h3>
+            <p style={{ textAlign: "center", fontSize: "20px", marginBottom: "20px" }}>
+              {plan.precio}
+            </p>
+            <hr style={{ borderColor: "#ddd", marginBottom: "20px" }} />
+            <ul style={{ listStyle: "disc", paddingLeft: "20px", marginBottom: "30px" }}>
+              {plan.caracteristicas.map((item, i) => (
+                <li key={i} style={{ marginBottom: "8px" }}>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <button
               style={{
-                position: "absolute",
-                top: "-15px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                backgroundColor: plan.colorBorde,
-                color: "white",
-                padding: "5px 20px",
-                borderRadius: "20px",
+                width: "100%",
+                backgroundColor: "#e0e0e0",
+                border: "none",
+                borderRadius: "5px",
+                padding: "10px",
                 fontWeight: "bold",
-                fontSize: "14px",
+                cursor: "pointer",
               }}
             >
-              RECOMENDADO
-            </div>
-          )}
-          <h2 style={{ color: plan.colorBorde, marginBottom: "15px" }}>
-            {plan.nombre}
-          </h2>
-          <p
-            style={{
-              fontSize: "24px",
-              fontWeight: "bold",
-              color: "#333",
-              marginBottom: "25px",
-            }}
-          >
-            {plan.precio}
-          </p>
-          <ul
-            style={{
-              listStyleType: "none",
-              padding: 0,
-              marginBottom: "30px",
-              textAlign: "left",
-            }}
-          >
-            {plan.caracteristicas.map((carac, i) => (
-              <li
-                key={i}
-                style={{
-                  padding: "10px 0",
-                  borderBottom: "1px solid #eee",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <span
-                  style={{
-                    color: plan.colorBorde,
-                    marginRight: "10px",
-                    fontSize: "18px",
-                  }}
-                >
-                  ✓
-                </span>
-                {carac}
-              </li>
-            ))}
-          </ul>
-          <button
-            style={{
-              width: "100%",
-              padding: "12px",
-              backgroundColor: plan.colorBorde,
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: "16px",
-              transition: "all 0.3s",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.opacity = 0.9)}
-            onMouseOut={(e) => (e.currentTarget.style.opacity = 1)}
-          >
-            {plan.nombre === "Plan Gratuito" ? "Usar Gratis" : "Contratar Ahora"}
-          </button>
-        </div>
-      ))}
+              Obtener plan
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

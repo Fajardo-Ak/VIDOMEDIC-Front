@@ -8,7 +8,7 @@ import Inicio from './Componentes/Paginas/Inicio';
 import Planes from './Componentes/Paginas/Planes';
 import Ventas from './Componentes/Paginas/Ventas';
 import Usuarios from './Componentes/Paginas/Usuarios';
-import Admin from './Componentes/Paginas/Admin';
+import Config from './Componentes/Paginas/Config';
 
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
             <Route path="/Inicio" element={<Inicio/>}></Route>
             <Route path="/ventas" element={<Ventas/>}></Route>
             <Route path="/planes" element={<Planes/>}></Route>
-            <Route path="/usuarios" element={<Usuarios/>}></Route>
-            <Route path="/admin" element={<Admin/>}></Route>
+            <Route path="/Contactos" element={<Usuarios/>}></Route>
+            <Route path="/Config" element={<Config/>}></Route>
           </Routes>
         </div>
       </div>
