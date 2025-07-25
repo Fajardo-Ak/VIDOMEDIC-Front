@@ -22,7 +22,7 @@ function Example(args) {
   return (
     <div>
       <Navbar color="light" light expand="md">
-        <NavbarBrand href="/">Hola</NavbarBrand>
+        <NavbarBrand href="/">hola a todos </NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="ms-auto" navbar>
