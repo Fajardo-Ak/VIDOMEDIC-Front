@@ -1,18 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { FiArrowLeft, FiSun, FiMoon, FiUser, FiType, FiBell, FiLogOut } from 'react-icons/fi';
+import { 
+  FiArrowLeft, FiUser, FiType, FiBell, FiLogOut, FiSun, FiMoon, FiMail 
+} from 'react-icons/fi';
 
 const Configuracion = () => {
-  const [tamanoFuente, setTamanoFuente] = useState(() => parseInt(localStorage.getItem('fontSize')) || 2);
-  const [temaOscuro, setTemaOscuro] = useState(() => localStorage.getItem('darkTheme') === 'true');
+  // Estados para las preferencias de usuario
+  const [tamanoFuente, setTamanoFuente] = useState(() => {
+    const savedSize = localStorage.getItem('fontSize');
+    return savedSize ? parseInt(savedSize) : 2;
+  });
+
+  const [temaOscuro, setTemaOscuro] = useState(() => {
+    const savedTheme = localStorage.getItem('darkTheme');
+    return savedTheme === 'true';
+  });
+
   const [mostrarActualizaciones, setMostrarActualizaciones] = useState(false);
   const [sesionCerrada, setSesionCerrada] = useState(false);
+  const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem('userName') || '');
+  const [emailUsuario, setEmailUsuario] = useState(localStorage.getItem('userEmail') || '');
 
+  // Nuevos estados para abrir modales
+  const [modalCuenta, setModalCuenta] = useState(false);
+  const [modalFuente, setModalFuente] = useState(false);
+  const [modalTema, setModalTema] = useState(false);
+
+  // Aplicar preferencias al cargar el componente
   useEffect(() => {
+    // Aplicar tamaño de fuente
     const sizes = ['text-base', 'text-lg', 'text-xl'];
-    document.documentElement.classList.remove(...sizes);
+    document.documentElement.classList.remove('text-base', 'text-lg', 'text-xl');
     document.documentElement.classList.add(sizes[tamanoFuente - 1]);
-    localStorage.setItem('fontSize', tamanoFuente);
 
+    // Aplicar tema
     if (temaOscuro) {
       document.documentElement.classList.add('dark');
       document.documentElement.style.setProperty('color-scheme', 'dark');
@@ -20,205 +40,444 @@ const Configuracion = () => {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.setProperty('color-scheme', 'light');
     }
-    localStorage.setItem('darkTheme', temaOscuro);
+
+    // Guardar preferencias
+    localStorage.setItem('fontSize', tamanoFuente.toString());
+    localStorage.setItem('darkTheme', temaOscuro.toString());
   }, [tamanoFuente, temaOscuro]);
 
+  // Manejar cierre de sesión
   const handleCerrarSesion = () => {
     setSesionCerrada(true);
     setTimeout(() => {
       setSesionCerrada(false);
       alert('Sesión cerrada exitosamente');
-    }, 3000);
+    }, 2000);
   };
 
-  const getSizeLabel = () => ['Normal', 'Grande', 'Extra Grande'][tamanoFuente - 1];
+  // Guardar información de cuenta
+  const handleGuardarCuenta = () => {
+    localStorage.setItem('userName', nombreUsuario);
+    localStorage.setItem('userEmail', emailUsuario);
+  };
+
+  // Obtener etiqueta para tamaño de fuente
+  const getSizeLabel = () => {
+    switch(tamanoFuente) {
+      case 1: return 'Normal';
+      case 2: return 'Grande';
+      case 3: return 'Extra Grande';
+      default: return 'Grande';
+    }
+  };
+
+  // Estilos para modales y secciones
+  const styles = {
+    modalOverlay: {
+      position: 'fixed',
+      top: 0, left: 0,
+      width: '100vw', height: '100vh',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backdropFilter: 'blur(3px)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    },
+    modal: {
+      backgroundColor: temaOscuro ? '#1e293b' : '#fff',
+      color: temaOscuro ? '#e2e8f0' : '#1e293b',
+      borderRadius: '1rem',
+      width: '100%',
+      maxWidth: '500px',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+      padding: '2rem',
+      position: 'relative'
+    },
+    modalHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      background: 'linear-gradient(to right, #1F7A8C, #25a18e)',
+      color: '#fff',
+      padding: '1rem',
+      borderRadius: '0.75rem 0.75rem 0 0'
+    },
+    modalActions: {
+      marginTop: '2rem',
+      display: 'flex',
+      justifyContent: 'flex-end',
+      gap: '1rem'
+    },
+    closeButton: {
+      background: 'none',
+      border: 'none',
+      fontSize: '1.5rem',
+      color: '#fff',
+      cursor: 'pointer',
+      transition: 'transform 0.2s ease'
+    },
+    sectionCard: {
+      cursor: 'pointer',
+      background: '#1F7A8C',
+      borderRadius: '1rem',
+      padding: '1.5rem',
+      boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
+      border: '2px solid #145e6a',
+      color: '#f0f9ff',
+      transition: 'background-color 0.3s ease',
+      userSelect: 'none'
+    },
+    sectionCardHover: {
+      background: '#176474',
+      borderColor: '#0f454f',
+    },
+    sectionTitle: {
+      fontWeight: '700',
+      fontSize: '1.25rem',
+      marginBottom: '0.75rem',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem'
+    },
+    sectionContent: {
+      marginLeft: '2.5rem',
+      fontSize: '1rem'
+    }
+  };
+
+  // Función para combinar estilos (para hover simple con inline)
+  const combineStyles = (base, extra) => ({ ...base, ...extra });
+
+  // Control de hover para tarjetas (opcional, aquí con hooks simples)
+  const [hoverCuenta, setHoverCuenta] = useState(false);
+  const [hoverFuente, setHoverFuente] = useState(false);
+  const [hoverTema, setHoverTema] = useState(false);
+  const [hoverActualizaciones, setHoverActualizaciones] = useState(false);
 
   return (
-    <main
-      role="main"
-      className={`min-h-screen flex flex-col items-center py-8 px-4 transition-colors duration-500 ${
-        temaOscuro ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'
-      }`}
-      aria-label="Configuración de usuario"
-    >
-      {/* Encabezado */}
-      <header className="w-full max-w-2xl mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <button
-            aria-label="Regresar"
-            className={`flex items-center py-2 px-4 rounded-lg transition-colors ${
-              temaOscuro ? 'bg-gray-800 text-blue-400 hover:bg-gray-700' : 'bg-gray-100 text-blue-600 hover:bg-gray-200'
-            }`}
-            onClick={() => window.history.back()}
-          >
-            <FiArrowLeft className="mr-2" />
-            Regresar
-          </button>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center">
-            <FiSun className="mr-2" />
-            Configuración
-          </h1>
-        </div>
-
-        {sesionCerrada && (
-          <div
-            role="status"
-            aria-live="assertive"
-            className={`mb-6 p-4 rounded-lg flex items-center ${
-              temaOscuro ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
-            }`}
-          >
-            <div className="animate-pulse mr-3">🔒</div>
-            <span className="font-medium">Cerrando sesión...</span>
-          </div>
-        )}
-      </header>
-
-      {/* CUERPO DE CONFIGURACIÓN */}
-      <section className="w-full max-w-2xl space-y-6">
-
-        {/* Cuenta */}
-        <article className={`rounded-xl p-5 shadow-lg cursor-default ${
-          temaOscuro ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'
-        }`}>
-          <div className="flex items-center mb-3">
-            <FiUser className="mr-3 text-xl" />
-            <h2 className="text-xl font-semibold">Cuenta</h2>
-          </div>
-          <p className={`${temaOscuro ? 'text-gray-300' : 'text-gray-600'}`}>
-            Administra tu información personal y preferencias de cuenta.
-          </p>
-        </article>
-
-        {/* Tamaño de fuente */}
-        <article className={`rounded-xl p-5 shadow-lg ${temaOscuro ? 'bg-gray-800' : 'bg-gray-50'}`}>
-          <div className="flex items-center mb-4">
-            <FiType className="mr-3 text-xl" />
-            <h2 className="text-xl font-semibold">Tamaño de fuente</h2>
-          </div>
-
-          <label className="block mb-2 text-sm" htmlFor="sliderFuente">
-            Tamaño actual: <strong>{getSizeLabel()}</strong>
-          </label>
-
-          <input
-            id="sliderFuente"
-            type="range"
-            min={1}
-            max={3}
-            value={tamanoFuente}
-            onChange={(e) => setTamanoFuente(parseInt(e.target.value))}
-            className={`w-full h-3 rounded-lg appearance-none cursor-pointer ${
-              temaOscuro ? 'accent-blue-400 bg-gray-700' : 'accent-blue-600 bg-gray-200'
-            }`}
-            aria-valuetext={getSizeLabel()}
-            aria-label="Tamaño de fuente"
-          />
-
-          <div className="flex justify-between mt-2 text-sm">
-            <span style={{ fontSize: '12px' }}>A</span>
-            <span style={{ fontSize: '16px' }}>Aa</span>
-            <span style={{ fontSize: '20px' }}>Aa</span>
-          </div>
-
-          <div className="mt-4 p-3 rounded-lg bg-opacity-20" style={{
-            backgroundColor: temaOscuro ? '#4B5563' : '#E5E7EB',
-          }}>
-            <p className="text-center">
-              <span className="text-lg">Vista previa: </span>
-              Este es un texto con el tamaño de fuente seleccionado.
-            </p>
-          </div>
-        </article>
-
-        {/* Tema */}
-        <article className={`rounded-xl p-5 shadow-lg ${temaOscuro ? 'bg-gray-800' : 'bg-gray-50'}`}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              {temaOscuro ? <FiMoon className="mr-3 text-xl" /> : <FiSun className="mr-3 text-xl" />}
-              <h2 className="text-xl font-semibold">Tema</h2>
-            </div>
+    <div className="container-fluid py-4 px-2 px-md-4 min-h-screen" style={{ backgroundColor: temaOscuro ? '#0f172a' : '#ffffff' }}>
+      <div className="card shadow-lg p-3 p-md-4" style={{ borderColor: "#1e7a8c" }}>
+        {/* Encabezado */}
+        <div className="mb-6">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-6">
             <button
-              onClick={() => setTemaOscuro(!temaOscuro)}
-              aria-label="Cambiar tema"
-              className={`flex items-center px-4 py-2 rounded-full transition-colors ${
-                temaOscuro ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 hover:bg-gray-400'
+              className={`flex items-center py-3 px-5 rounded-xl transition-all text-lg font-medium shadow-md mb-4 md:mb-0 ${
+                temaOscuro 
+                  ? 'bg-gray-800 text-blue-400 hover:bg-gray-700' 
+                  : 'bg-white text-blue-600 hover:bg-blue-100'
               }`}
+              onClick={() => window.history.back()}
             >
-              <span className="mr-2">{temaOscuro ? 'Oscuro' : 'Claro'}</span>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                temaOscuro ? 'bg-gray-800' : 'bg-yellow-300'
-              }`}>
-                {temaOscuro ? <FiMoon size={14} /> : <FiSun size={14} />}
-              </div>
+              <FiArrowLeft className="mr-2 text-xl" />
+              Regresar
             </button>
-          </div>
-          <p className={`${temaOscuro ? 'text-gray-300' : 'text-gray-600'}`}>
-            El tema {temaOscuro ? 'oscuro es ideal para entornos con poca luz' : 'claro es más visible con luz ambiental'}.
-          </p>
-        </article>
 
-        {/* Actualizaciones */}
-        <article
-          className={`rounded-xl p-5 shadow-lg cursor-pointer transition-colors ${
-            temaOscuro ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'
-          }`}
-          onClick={() => setMostrarActualizaciones(!mostrarActualizaciones)}
-          role="button"
-          tabIndex={0}
-          aria-expanded={mostrarActualizaciones}
-        >
-          <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <FiBell className="mr-3 text-xl" />
-              <h2 className="text-xl font-semibold">Actualizaciones</h2>
+              <div className={`p-3 rounded-xl mr-3 ${temaOscuro ? 'bg-blue-900' : 'bg-blue-700'}`}>
+                <FiSun className={`text-xl ${temaOscuro ? 'text-blue-300' : 'text-white'}`} />
+              </div>
+              <h1 className={`text-2xl md:text-3xl font-bold ${temaOscuro ? 'text-gray-100' : 'text-gray-900'}`}>
+                Configuración
+              </h1>
             </div>
-            <span className="text-2xl">{mostrarActualizaciones ? '▲' : '▼'}</span>
           </div>
 
-          {mostrarActualizaciones && (
-            <div className={`mt-4 pt-4 border-t ${temaOscuro ? 'border-gray-700' : 'border-gray-200'}`}>
-              <h3 className="font-semibold mb-2">Última versión</h3>
-              <div className={`p-3 rounded-lg font-mono ${temaOscuro ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                v1.23.2 — Estable
-              </div>
-
-              <ul className={`mt-4 space-y-2 ${temaOscuro ? 'text-gray-300' : 'text-gray-600'}`}>
-                <li>✔ Mejoras en accesibilidad</li>
-                <li>✔ Recordatorios de medicamentos actualizados</li>
-                <li>✔ Corrección de errores en el calendario</li>
-              </ul>
-
-              <button className={`mt-4 w-full py-2 rounded-lg font-medium ${
-                temaOscuro ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
-              }`}>
-                Buscar actualizaciones
-              </button>
+          {/* Feedback de sesión cerrada */}
+          {sesionCerrada && (
+            <div className={`mb-6 p-4 rounded-xl flex items-center shadow-md ${
+              temaOscuro 
+                ? 'bg-green-900 text-green-200' 
+                : 'bg-green-100 text-green-800'
+            }`}>
+              <div className="animate-pulse mr-3 text-xl">🔒</div>
+              <span className="font-medium text-lg">Cerrando sesión...</span>
             </div>
           )}
-        </article>
+        </div>
 
-        {/* Cerrar sesión */}
-        <button
-          onClick={handleCerrarSesion}
-          className={`w-full flex items-center justify-center py-4 rounded-xl font-semibold text-lg shadow-lg transition-transform hover:scale-[1.02] ${
-            temaOscuro ? 'bg-red-800 hover:bg-red-700 text-red-100' : 'bg-red-600 hover:bg-red-500 text-white'
-          }`}
-          aria-label="Cerrar sesión"
-        >
-          <FiLogOut className="mr-3" />
-          Cerrar sesión
-        </button>
-      </section>
+        {/* Contenedor principal en cuadrícula */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Tarjeta de Cuenta */}
+          <div
+            style={hoverCuenta ? combineStyles(styles.sectionCard, styles.sectionCardHover) : styles.sectionCard}
+            onClick={() => setModalCuenta(true)}
+            onMouseEnter={() => setHoverCuenta(true)}
+            onMouseLeave={() => setHoverCuenta(false)}
+          >
+            <div style={styles.sectionTitle}>
+              <FiUser size={24} />
+              Cuenta
+            </div>
 
-      {/* Footer */}
-      <footer className={`mt-10 pt-6 text-center max-w-2xl w-full border-t ${
-        temaOscuro ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-500'
-      }`}>
-        <p className="mb-2">Configuración adaptada para adultos mayores o personas con baja visión.</p>
-        <p>Tus preferencias se guardan automáticamente en este dispositivo.</p>
-      </footer>
-    </main>
+            <div style={styles.sectionContent}>
+              <p>Nombre: <strong>{nombreUsuario || '—'}</strong></p>
+              <p>Email: <strong>{emailUsuario || '—'}</strong></p>
+            </div>
+          </div>
+
+          {/* Tarjeta Tamaño de fuente */}
+          <div
+            style={hoverFuente ? combineStyles(styles.sectionCard, styles.sectionCardHover) : styles.sectionCard}
+            onClick={() => setModalFuente(true)}
+            onMouseEnter={() => setHoverFuente(true)}
+            onMouseLeave={() => setHoverFuente(false)}
+          >
+            <div style={styles.sectionTitle}>
+              <FiType size={24} />
+              Tamaño de fuente
+            </div>
+
+            <div style={styles.sectionContent}>
+              <p>
+                Tamaño actual: <strong>{getSizeLabel()}</strong> ({tamanoFuente}/3)
+              </p>
+            </div>
+          </div>
+
+          {/* Tarjeta Tema */}
+          <div
+            style={hoverTema ? combineStyles(styles.sectionCard, styles.sectionCardHover) : styles.sectionCard}
+            onClick={() => setModalTema(true)}
+            onMouseEnter={() => setHoverTema(true)}
+            onMouseLeave={() => setHoverTema(false)}
+          >
+            <div style={styles.sectionTitle}>
+              {temaOscuro ? <FiMoon size={24} /> : <FiSun size={24} />}
+              Tema
+            </div>
+
+            <div style={styles.sectionContent}>
+              <p>
+                {temaOscuro
+                  ? 'Modo oscuro activado, ideal para ambientes con poca luz.'
+                  : 'Modo claro activado, ideal para ambientes bien iluminados.'}
+              </p>
+            </div>
+          </div>
+
+          {/* Actualizaciones */}
+          <div
+            style={hoverActualizaciones ? combineStyles(styles.sectionCard, styles.sectionCardHover) : styles.sectionCard}
+            onClick={() => setMostrarActualizaciones(!mostrarActualizaciones)}
+            onMouseEnter={() => setHoverActualizaciones(true)}
+            onMouseLeave={() => setHoverActualizaciones(false)}
+          >
+            <div style={{...styles.sectionTitle, justifyContent: 'space-between', cursor: 'pointer'}}>
+              <span style={{display:'flex', alignItems:'center', gap:'0.75rem'}}>
+                <FiBell size={24} />
+                Actualizaciones
+              </span>
+              <span style={{
+                transform: mostrarActualizaciones ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s ease',
+                userSelect: 'none'
+              }}>
+                ▼
+              </span>
+            </div>
+
+            {mostrarActualizaciones && (
+              <div style={{marginLeft: '2.5rem', marginTop: '1rem', fontSize: '1rem'}}>
+                <h3 style={{fontWeight: '700', marginBottom: '0.75rem'}}>Versión actual</h3>
+                <div style={{backgroundColor: temaOscuro ? '#145e6a' : '#b7def0', padding: '1rem', borderRadius: '0.75rem', marginBottom: '1rem', color: temaOscuro ? '#c7f0f7' : '#0f496a' }}>
+                  <strong>v1.23.2</strong> - Estable
+                </div>
+
+                <h3 style={{fontWeight: '700', marginBottom: '0.75rem'}}>Últimas actualizaciones</h3>
+                <ul style={{listStyleType: 'disc', paddingLeft: '1.5rem', color: temaOscuro ? '#d0f1ff' : '#345a75'}}>
+                  <li>Mejorada la accesibilidad para personas con visión reducida</li>
+                  <li>Nuevo sistema de recordatorios de medicamentos</li>
+                  <li>Corrección de errores menores en el calendario</li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Botón de cerrar sesión */}
+        <div className="mt-8">
+          <button
+            onClick={handleCerrarSesion}
+            className={`w-full flex items-center justify-center py-5 rounded-xl font-semibold text-xl shadow-lg transition-all hover:scale-[1.02] ${
+              temaOscuro
+                ? 'bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-red-100'
+                : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white'
+            }`}
+          >
+            <FiLogOut className="mr-3 text-xl" />
+            Cerrar sesión
+          </button>
+        </div>
+
+        {/* Footer descriptivo */}
+        <footer className={`mt-10 pt-6 text-center w-full border-t text-lg ${
+          temaOscuro ? 'border-gray-800 text-gray-400' : 'border-gray-300 text-gray-600'
+        }`}>
+          <p className="mb-2">
+            Configuración diseñada para adultos mayores y personas con visión reducida
+          </p>
+          <p>
+            Tus preferencias se guardan automáticamente en este dispositivo
+          </p>
+        </footer>
+      </div>
+
+      {/* --- MODAL CUENTA --- */}
+      {modalCuenta && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalHeader}>
+              <h2>Editar Cuenta</h2>
+              <button 
+                style={styles.closeButton}
+                onClick={() => setModalCuenta(false)}
+                title="Cerrar"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-6">
+              <label className="block mb-2 font-medium">Name :</label>
+              <input
+                type="text"
+                value={nombreUsuario}
+                onChange={e => setNombreUsuario(e.target.value)}
+                className={`w-full p-3 rounded-lg mb-4 ${
+                  temaOscuro ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800'
+                }`}
+                placeholder="Ingresa tu nombre"
+              />
+              <br />   
+
+              <label className="block mb-2 font-medium">Email      :</label>
+              <input
+                type="email"
+                value={emailUsuario}
+                onChange={e => setEmailUsuario(e.target.value)}
+                className={`w-full p-3 rounded-lg ${
+                  temaOscuro ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800'
+                }`}
+                placeholder="Ingresa tu email"
+              />
+
+              <div style={styles.modalActions}>
+                <button 
+                  onClick={() => setModalCuenta(false)}
+                  className={`px-5 py-2 rounded-lg font-medium ${
+                    temaOscuro ? 'bg-gray-600 text-gray-200' : 'bg-gray-300 text-gray-800'
+                  }`}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={() => {
+                    handleGuardarCuenta();
+                    setModalCuenta(false);
+                  }}
+                  className="bg-[#1F7A8C] text-white px-5 py-2 rounded-lg font-medium"
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL TAMAÑO DE FUENTE --- */}
+      {modalFuente && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalHeader}>
+              <h2>Tamaño de Fuente</h2>
+              <button 
+                style={styles.closeButton}
+                onClick={() => setModalFuente(false)}
+                title="Cerrar"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <p className={`text-lg ${temaOscuro ? 'text-gray-300' : 'text-gray-700'}`}>
+                Ajusta el tamaño de fuente para facilitar la lectura:
+              </p>
+
+              {[1,2,3].map(size => (
+                <button
+                  key={size}
+                  onClick={() => setTamanoFuente(size)}
+                  className={`w-full py-3 rounded-lg text-center font-semibold transition-colors ${
+                    tamanoFuente === size 
+                      ? 'bg-[#1F7A8C] text-white' 
+                      : temaOscuro
+                        ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {size === 1 ? 'Normal' : size === 2 ? 'Grande' : 'Extra Grande'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL TEMA --- */}
+      {modalTema && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalHeader}>
+              <h2>Configuración de Tema</h2>
+              <button 
+                style={styles.closeButton}
+                onClick={() => setModalTema(false)}
+                title="Cerrar"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <center><p className={`text-lg ${temaOscuro ? 'text-gray-300' : 'text-gray-700'}`}>
+                Selecciona el modo visual que prefieras:
+              </p>
+              </center>
+<center>
+              <button
+                onClick={() => setTemaOscuro(false)}
+                className={`w-full py-3 rounded-lg text-center font-semibold transition-colors ${
+                  !temaOscuro
+                    ? 'bg-[#1F7A8C] text-white' 
+                    : temaOscuro
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Modo Claro <FiSun className="inline ml-2" />
+              </button>
+
+              <button
+                onClick={() => setTemaOscuro(true)}
+                className={`w-full py-3 rounded-lg text-center font-semibold transition-colors ${
+                  temaOscuro
+                    ? 'bg-[#1F7A8C] text-white' 
+                    : temaOscuro
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Modo Oscuro <FiMoon className="inline ml-2" />
+              </button>
+              </center>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

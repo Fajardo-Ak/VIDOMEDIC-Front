@@ -1,0 +1,29 @@
+/* src/Componentes/Paginas/NotFound.css */
+.notfound-container {
+  height: 100vh;
+  background-color: #1F7A8C;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+}
+
+.notfound-container h1 {
+  font-size: 8rem;
+  margin: 0;
+}
+
+.notfound-container p {
+  font-size: 1.5rem;
+  margin: 0.5rem 0;
+}
+.notfound-gif {
+  width: 300px;
+  max-width: 90%;
+  margin: 1.5rem 0;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}

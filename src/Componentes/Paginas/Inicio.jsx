@@ -1,5 +1,5 @@
 // src/components/paginas/Inicio.jsx
-import { FaChevronDown, FaEdit, FaTrash, FaPlus, FaTimes, FaBell } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaTimes, FaBell } from 'react-icons/fa';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect, useRef } from 'react';
@@ -11,6 +11,7 @@ import getDay from 'date-fns/getDay';
 import esES from 'date-fns/locale/es';
 import addHours from 'date-fns/addHours';
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
+
 
 const Inicio = () => {
   // Estado para controlar la visibilidad del modal
@@ -305,38 +306,43 @@ const Inicio = () => {
     <div style={styles.container}>
       {/* Encabezado */}
       <div style={styles.header}>
-        <div style={styles.registerLink} onClick={() => setModalAbierto(true)}>Registrar Medicamento</div>
+        <div style={styles.registerLink} onClick={() => setModalAbierto(true)}>
+          <FaPlus style={styles.addIcon} />
+          <span>Registrar Medicamento</span>
+        </div>
       </div>
 
       {/* Sección Calendario */}
-      <div style={{ height: 500, marginTop: '30px', backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-        <h2 style={{ color: '#2c3e50', marginTop: 0, marginBottom: '20px', paddingBottom: '10px', borderBottom: '2px solid #3498db' }}>
+      <div style={styles.calendarContainer}>
+        <h2 style={styles.sectionTitle}>
           Calendario de Medicamentos
         </h2>
-        <Calendar
-          localizer={localizer}
-          events={eventos}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 400 }}
-          view={view}
-          date={date}
-          onView={view => setView(view)}
-          onNavigate={date => setDate(date)}
-          messages={{
-            next: "Siguiente",
-            previous: "Anterior",
-            today: "Hoy",
-            month: "Mes",
-            week: "Semana",
-            day: "Día",
-            agenda: "Agenda"
-          }}
-          eventPropGetter={(event) => {
-            const backgroundColor = event.tipo === 'medicamento' ? '#3498db' : '#2ecc71';
-            return { style: { backgroundColor } };
-          }}
-        />
+        <div style={styles.calendarWrapper}>
+          <Calendar
+            localizer={localizer}
+            events={eventos}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: '100%' }}
+            view={view}
+            date={date}
+            onView={view => setView(view)}
+            onNavigate={date => setDate(date)}
+            messages={{
+              next: "Sig",
+              previous: "Ant",
+              today: "Hoy",
+              month: "Mes",
+              week: "Sem",
+              day: "Día",
+              agenda: "Agenda"
+            }}
+            eventPropGetter={(event) => {
+              const backgroundColor = event.tipo === 'medicamento' ? '#3498db' : '#2ecc71';
+              return { style: { backgroundColor } };
+            }}
+          />
+        </div>
       </div>
 
       {/* Separador */}
@@ -345,32 +351,37 @@ const Inicio = () => {
       {/* Secciones en columnas */}
       <div style={styles.columnsContainer}>
         {/* Columna izquierda - Contacto y Alarmas */}
-        <div style={styles.column}>
+        <div style={styles.leftColumn}>
           <div style={styles.section}>
-            <div style={styles.contactName}>Contacto</div>
             <div style={styles.contactCard}> 
-              <div style={styles.contactName}>Ana Torres</div>
+              <div style={styles.contactName}>Contacto de Emergencia</div>
+              <div style={styles.contactInfo}>
+                <div style={styles.contactName}>Ana Torres</div>
+                <div style={styles.contactPhone}>Tel: +34 612 345 678</div>
+              </div>
               <div style={styles.contactNote}>
-                Nota: Se le notificará a este contacto en caso de omitir la toma de la dosis.
+                Se le notificará a este contacto en caso de omitir la toma de medicamentos.
               </div>
             </div>
           </div>
           
-          <div style={{ ...styles.section, marginTop: '20px' }}>
-            <h2 style={styles.title}>Próximas Alarmas</h2>
+          <div style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <FaBell style={styles.sectionIcon} />
+              <h2 style={styles.sectionTitle}>Próximas Alarmas</h2>
+            </div>
             <div style={styles.alarmsList}>
               {alarmasActivas.map((alarma, index) => (
                 <div key={index} style={styles.alarmItem}>
-                  <FaBell style={{ color: '#e74c3c', fontSize: '1.5rem', marginRight: '15px' }} />
-                  <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
-                      {alarma.medicamento.nombre} ({alarma.medicamento.dosis})
+                  <div style={styles.alarmTime}>
+                    {format(alarma.proximaAlarma, "HH:mm")}
+                  </div>
+                  <div style={styles.alarmContent}>
+                    <div style={styles.alarmMedName}>
+                      {alarma.medicamento.nombre}
                     </div>
-                    <div>
-                      {format(alarma.proximaAlarma, "dd/MM/yyyy 'a las' HH:mm")}
-                    </div>
-                    <div style={{ color: '#7f8c8d', fontSize: '0.9rem' }}>
-                      {alarma.medicamento.frecuencia}
+                    <div style={styles.alarmDetails}>
+                      {alarma.medicamento.dosis} • {alarma.medicamento.frecuencia}
                     </div>
                   </div>
                 </div>
@@ -378,7 +389,7 @@ const Inicio = () => {
               
               {alarmasActivas.length === 0 && (
                 <div style={styles.noAlarms}>
-                  No hay alarmas programadas actualmente
+                  No hay alarmas programadas
                 </div>
               )}
             </div>
@@ -386,48 +397,87 @@ const Inicio = () => {
         </div>
         
         {/* Columna derecha - Medicamentos */}
-        <div style={styles.column}>
+        <div style={styles.rightColumn}>
           <div style={styles.section}>
-            <h1 style={styles.title}>Medicamentos Registrados</h1>
-            <div style={styles.medicationsTable}>
-              <div style={styles.tableRow}>
-                <div style={styles.tableHeader}>Nombre</div>
-                <div style={styles.tableHeader}>Tipo</div>
-                <div style={styles.tableHeader}>Dosis</div>
-                <div style={styles.tableHeader}>Frecuencia</div>
-                <div style={styles.tableHeader}>Duración</div>
-                <div style={styles.tableHeader}>Acciones</div>
-              </div>
-              
+            <div style={styles.sectionHeader}>
+              <h1 style={styles.sectionTitle}>Medicamentos</h1>
+            </div>
+            
+            {/* Vista de tarjetas para móviles */}
+            <div style={styles.medicationsCards}>
               {medicamentos.map((med, index) => (
-                <div key={med.id} style={styles.tableRow}>
-                  <div style={styles.tableCell}>{med.nombre}</div>
-                  <div style={styles.tableCell}>{med.tipo}</div>
-                  <div style={styles.tableCell}>{med.dosis}</div>
-                  <div style={styles.tableCell}>{med.frecuencia}</div>
-                  <div style={styles.tableCell}>{med.duracion}</div>
-                  <div style={styles.actionsCell}>
-                    <button 
-                      style={styles.actionButton} 
-                      onClick={() => editarMedicamento(index)}
-                    >
-                      <FaEdit />
-                    </button>
-                    <button 
-                      style={styles.actionButton} 
-                      onClick={() => eliminarMedicamento(index)}
-                    >
-                      <FaTrash />
-                    </button>
+                <div key={med.id} style={styles.medCard}>
+                  <div style={styles.medCardHeader}>
+                    <div style={styles.medCardName}>{med.nombre}</div>
+                    <div style={styles.medCardActions}>
+                      <button 
+                        style={styles.actionButton} 
+                        onClick={() => editarMedicamento(index)}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button 
+                        style={styles.actionButton} 
+                        onClick={() => eliminarMedicamento(index)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                  <div style={styles.medCardDetails}>
+                    <div><strong>Tipo:</strong> {med.tipo}</div>
+                    <div><strong>Dosis:</strong> {med.dosis}</div>
+                    <div><strong>Frecuencia:</strong> {med.frecuencia}</div>
+                    <div><strong>Duración:</strong> {med.duracion}</div>
+                    <div><strong>Próxima dosis:</strong> {format(med.horaInicio, "dd/MM HH:mm")}</div>
                   </div>
                 </div>
               ))}
+            </div>
+            
+            {/* Vista de tabla para escritorio */}
+            <div style={styles.tableContainer}>
+              <div style={styles.medicationsTable}>
+                <div style={styles.tableRow}>
+                  <div style={styles.tableHeader}>Medicamento</div>
+                  <div style={styles.tableHeader}>Dosis</div>
+                  <div style={styles.tableHeader}>Frecuencia</div>
+                  <div style={styles.tableHeader}>Próxima</div>
+                  <div style={styles.tableHeader}>Acciones</div>
+                </div>
+                
+                {medicamentos.map((med, index) => (
+                  <div key={med.id} style={styles.tableRow}>
+                    <div style={styles.tableCell}>
+                      <div style={styles.medName}>{med.nombre}</div>
+                      <div style={styles.medType}>{med.tipo}</div>
+                    </div>
+                    <div style={styles.tableCell}>{med.dosis}</div>
+                    <div style={styles.tableCell}>{med.frecuencia}</div>
+                    <div style={styles.tableCell}>{format(med.horaInicio, "dd/MM HH:mm")}</div>
+                    <div style={styles.actionsCell}>
+                      <button 
+                        style={styles.actionButton} 
+                        onClick={() => editarMedicamento(index)}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button 
+                        style={styles.actionButton} 
+                        onClick={() => eliminarMedicamento(index)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Botón Agregar flotante */}
+      {/* Botón Agregar flotante solo para móviles */}
       <div style={styles.floatingButtonContainer}>
         <button 
           style={styles.floatingButton}
@@ -443,7 +493,7 @@ const Inicio = () => {
           <div style={styles.modal}>
             <div style={styles.modalHeader}>
               <h2 style={styles.modalTitle}>
-                {editando !== null ? 'Editar Medicamento' : 'Registrar Nuevo Medicamento'}
+                {editando !== null ? 'Editar Medicamento' : 'Nuevo Medicamento'}
               </h2>
               <button 
                 style={styles.closeButton}
@@ -666,35 +716,37 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// Estilos actualizados
+// Estilos completamente responsivos
 const styles = {
   container: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     maxWidth: '1200px',
     margin: '0 auto',
-    padding: '20px',
+    padding: '15px',
     backgroundColor: '#f8f9fa',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
     position: 'relative',
     minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
   },
   header: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginBottom: '20px',
+    marginBottom: '15px',
     paddingBottom: '10px',
-    borderBottom: '1px solid #e0e0e0',
   },
   registerLink: {
-    fontSize: '1.2rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '1rem',
     color: '#3498db',
     fontWeight: 'bold',
     cursor: 'pointer',
-    padding: '10px 20px',
+    padding: '10px 15px',
     backgroundColor: '#e8f4fc',
-    borderRadius: '6px',
+    borderRadius: '30px',
     transition: 'all 0.3s',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     '&:hover': {
@@ -702,61 +754,177 @@ const styles = {
       transform: 'translateY(-2px)',
     },
   },
-  section: {
-    marginBottom: '20px',
-    padding: '20px',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 1px 5px rgba(0,0,0,0.08)',
+  addIcon: {
+    fontSize: '1rem',
   },
-  title: {
-    color: '#2c3e50',
-    paddingBottom: '10px',
-    marginTop: '0',
+  section: {
+    marginBottom: '15px',
+    padding: '15px',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+  },
+  sectionHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '15px',
+  },
+  sectionIcon: {
+    color: '#3498db',
     fontSize: '1.5rem',
-    marginBottom: '20px',
-    borderBottom: '2px solid #3498db',
+    marginRight: '10px',
+  },
+  sectionTitle: {
+    color: '#2c3e50',
+    marginTop: '0',
+    fontSize: '1.3rem',
+    marginBottom: '0',
   },
   divider: {
-    height: '2px',
-    background: 'linear-gradient(to right, #3498db, #2ecc71)',
+    height: '1px',
+    background: '#e0e0e0',
     border: 'none',
-    margin: '30px 0',
+    margin: '20px 0',
   },
   columnsContainer: {
     display: 'flex',
-    gap: '30px',
-    marginBottom: '30px',
+    flexDirection: 'column',
+    gap: '20px',
+    marginBottom: '20px',
   },
-  column: {
+  leftColumn: {
     flex: 1,
+    minWidth: 0,
+  },
+  rightColumn: {
+    flex: 1,
+    minWidth: 0,
   },
   contactCard: {
     backgroundColor: '#e8f4fc',
-    padding: '25px',
-    borderRadius: '8px',
-    borderLeft: '5px solid #3498db',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+    padding: '20px',
+    borderRadius: '12px',
+    borderLeft: '4px solid #3498db',
   },
   contactName: {
     fontWeight: 'bold',
-    fontSize: '1.4rem',
-    marginBottom: '15px',
+    fontSize: '1.2rem',
+    marginBottom: '10px',
     color: '#2c3e50',
+  },
+  contactInfo: {
+    marginBottom: '15px',
+  },
+  contactPhone: {
+    color: '#3498db',
+    fontWeight: '500',
   },
   contactNote: {
     color: '#555',
+    fontSize: '0.9rem',
+    lineHeight: '1.4',
+  },
+  addButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
+    padding: '8px 15px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '20px',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
+    fontWeight: 'bold',
+    transition: 'all 0.3s',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    '&:hover': {
+      backgroundColor: '#2980b9',
+    },
+  },
+  // Estilos para alarmas
+  alarmsList: {
+    marginTop: '10px',
+  },
+  alarmItem: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '15px',
+    backgroundColor: '#fff8e1',
+    borderRadius: '10px',
+    marginBottom: '10px',
+    borderLeft: '4px solid #ffc107',
+  },
+  alarmTime: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#e74c3c',
+    minWidth: '60px',
+    textAlign: 'center',
+  },
+  alarmContent: {
+    flex: 1,
+  },
+  alarmMedName: {
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+    marginBottom: '5px',
+  },
+  alarmDetails: {
+    color: '#555',
+    fontSize: '0.9rem',
+  },
+  noAlarms: {
+    textAlign: 'center',
+    padding: '15px',
+    color: '#7f8c8d',
     fontStyle: 'italic',
-    fontSize: '1rem',
-    lineHeight: '1.5',
+  },
+  // Vista de tarjetas para móviles
+  medicationsCards: {
+    display: 'block',
+  },
+  medCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: '12px',
+    padding: '15px',
+    marginBottom: '15px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+  },
+  medCardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '10px',
+  },
+  medCardName: {
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+    color: '#2c3e50',
+  },
+  medCardActions: {
+    display: 'flex',
+    gap: '5px',
+  },
+  medCardDetails: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+    gap: '8px',
+    fontSize: '0.9rem',
+  },
+  // Vista de tabla para escritorio
+  tableContainer: {
+    display: 'none',
+    overflowX: 'auto',
+    WebkitOverflowScrolling: 'touch',
+    borderRadius: '10px',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
   },
   medicationsTable: {
     display: 'flex',
     flexDirection: 'column',
-    border: '1px solid #e0e0e0',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+    minWidth: '600px',
   },
   tableRow: {
     display: 'flex',
@@ -773,45 +941,51 @@ const styles = {
   },
   tableHeader: {
     flex: 1,
-    padding: '15px',
+    padding: '12px 15px',
     backgroundColor: '#2c3e50',
     color: 'white',
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     minWidth: '0',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    fontSize: '0.9rem',
   },
   tableCell: {
     flex: 1,
-    padding: '15px',
-    textAlign: 'center',
+    padding: '12px 15px',
+    textAlign: 'left',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
     minWidth: '0',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    fontSize: '1rem',
+    fontSize: '0.9rem',
+  },
+  medName: {
+    fontWeight: 'bold',
+  },
+  medType: {
+    fontSize: '0.8rem',
+    color: '#7f8c8d',
   },
   actionsCell: {
-    flex: 1,
+    flex: '0 0 100px',
     display: 'flex',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    minWidth: '100px',
   },
   actionButton: {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    fontSize: '1.2rem',
+    fontSize: '1.1rem',
     color: '#3498db',
-    padding: '8px',
+    padding: '6px',
     transition: 'all 0.2s',
     borderRadius: '50%',
-    width: '36px',
-    height: '36px',
+    width: '32px',
+    height: '32px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -820,19 +994,21 @@ const styles = {
       backgroundColor: '#f0f8ff',
     },
   },
+  // Botón flotante solo para móviles
   floatingButtonContainer: {
     position: 'fixed',
-    bottom: '40px',
-    right: '40px',
+    bottom: '20px',
+    right: '20px',
     zIndex: 10,
+    display: 'block',
   },
   floatingButton: {
-    width: '70px',
-    height: '70px',
+    width: '60px',
+    height: '60px',
     borderRadius: '50%',
     backgroundColor: '#3498db',
     border: 'none',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
     cursor: 'pointer',
     display: 'flex',
     justifyContent: 'center',
@@ -845,33 +1021,21 @@ const styles = {
   },
   floatingButtonIcon: {
     color: 'white',
-    fontSize: '2rem',
+    fontSize: '1.5rem',
   },
-  // Estilos para alarmas
-  alarmsList: {
-    marginTop: '15px',
-  },
-  alarmItem: {
-    display: 'flex',
-    alignItems: 'center',
+  calendarContainer: {
+    marginTop: '20px',
+    backgroundColor: 'white',
     padding: '15px',
-    backgroundColor: '#fff8e1',
-    borderRadius: '8px',
-    marginBottom: '10px',
-    borderLeft: '4px solid #ffc107',
-    transition: 'all 0.3s',
-    '&:hover': {
-      backgroundColor: '#ffecb3',
-      transform: 'translateX(5px)',
-    },
+    borderRadius: '12px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+    display: 'flex',
+    flexDirection: 'column',
   },
-  noAlarms: {
-    textAlign: 'center',
-    padding: '20px',
-    color: '#7f8c8d',
-    fontStyle: 'italic',
+  calendarWrapper: {
+    height: '350px',
   },
-  // Estilos para el modal de medicamentos
+  // Estilos para modales
   modalOverlay: {
     position: 'fixed',
     top: 0,
@@ -884,13 +1048,14 @@ const styles = {
     alignItems: 'center',
     zIndex: 2000,
     backdropFilter: 'blur(3px)',
+    padding: '15px',
   },
   modal: {
     backgroundColor: 'white',
     borderRadius: '12px',
     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-    width: '500px',
-    maxWidth: '90%',
+    width: '100%',
+    maxWidth: '500px',
     maxHeight: '90vh',
     overflowY: 'auto',
   },
@@ -898,20 +1063,23 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '25px',
+    padding: '20px',
     background: 'linear-gradient(to right, #3498db, #2ecc71)',
     color: 'white',
+    position: 'sticky',
+    top: 0,
+    zIndex: 10,
   },
   modalTitle: {
     margin: 0,
-    fontSize: '1.8rem',
+    fontSize: '1.5rem',
     fontWeight: '600',
   },
   closeButton: {
     background: 'none',
     border: 'none',
     color: 'white',
-    fontSize: '1.8rem',
+    fontSize: '1.5rem',
     cursor: 'pointer',
     padding: '5px',
     transition: 'transform 0.2s',
@@ -920,21 +1088,21 @@ const styles = {
     },
   },
   formGroup: {
-    padding: '20px 25px',
+    padding: '15px 20px',
   },
   label: {
     display: 'block',
-    marginBottom: '10px',
+    marginBottom: '8px',
     fontWeight: '600',
     color: '#2c3e50',
-    fontSize: '1.1rem',
+    fontSize: '1rem',
   },
   input: {
     width: '100%',
-    padding: '14px',
+    padding: '12px',
     border: '1px solid #ddd',
-    borderRadius: '6px',
-    fontSize: '1.1rem',
+    borderRadius: '8px',
+    fontSize: '1rem',
     boxSizing: 'border-box',
     transition: 'all 0.3s',
     '&:focus': {
@@ -946,41 +1114,39 @@ const styles = {
   modalActions: {
     display: 'flex',
     justifyContent: 'flex-end',
-    padding: '20px 25px',
+    padding: '15px 20px',
     backgroundColor: '#f8f9fa',
     borderTop: '1px solid #eee',
-    gap: '15px',
+    gap: '10px',
   },
   cancelButton: {
-    padding: '12px 25px',
+    padding: '10px 20px',
     backgroundColor: '#e74c3c',
     color: 'white',
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '1.1rem',
+    fontSize: '1rem',
     fontWeight: 'bold',
     transition: 'all 0.3s',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     '&:hover': {
       backgroundColor: '#c0392b',
-      transform: 'translateY(-2px)',
     },
   },
   saveButton: {
-    padding: '12px 25px',
+    padding: '10px 20px',
     backgroundColor: '#2ecc71',
     color: 'white',
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '1.1rem',
+    fontSize: '1rem',
     fontWeight: 'bold',
     transition: 'all 0.3s',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     '&:hover': {
       backgroundColor: '#27ae60',
-      transform: 'translateY(-2px)',
     },
   },
   // Estilos para el modal de alarma
@@ -996,68 +1162,73 @@ const styles = {
     alignItems: 'center',
     zIndex: 3000,
     backdropFilter: 'blur(5px)',
+    padding: '15px',
   },
   alarmModal: {
     backgroundColor: 'white',
     borderRadius: '15px',
     boxShadow: '0 0 0 10px rgba(231, 76, 60, 0.5)',
-    width: '450px',
-    maxWidth: '90%',
+    width: '100%',
+    maxWidth: '400px',
     textAlign: 'center',
-    padding: '30px',
+    padding: '25px',
     animation: 'pulse 1.5s infinite',
   },
   alarmModalHeader: {
-    marginBottom: '25px',
+    marginBottom: '20px',
   },
   alarmModalTitle: {
     margin: 0,
-    fontSize: '2rem',
+    fontSize: '1.5rem',
     fontWeight: 'bold',
     color: '#e74c3c',
   },
+  alarmModalContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+  },
   alarmMedInfo: {
     backgroundColor: '#f9f9f9',
-    padding: '20px',
+    padding: '15px',
     borderRadius: '10px',
-    marginBottom: '25px',
+    marginBottom: '15px',
     border: '2px solid #ffeb3b',
   },
   alarmActions: {
     display: 'flex',
     justifyContent: 'center',
-    gap: '15px',
+    gap: '10px',
+    flexWrap: 'wrap',
   },
   snoozeButton: {
-    padding: '12px 25px',
+    padding: '10px 20px',
     backgroundColor: '#ff9800',
     color: 'white',
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '1.1rem',
+    fontSize: '1rem',
     fontWeight: 'bold',
     transition: 'all 0.3s',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     '&:hover': {
       backgroundColor: '#f57c00',
-      transform: 'translateY(-2px)',
     },
   },
   dismissButton: {
-    padding: '12px 25px',
+    padding: '10px 20px',
     backgroundColor: '#4caf50',
     color: 'white',
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '1.1rem',
+    fontSize: '1rem',
     fontWeight: 'bold',
     transition: 'all 0.3s',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     '&:hover': {
       backgroundColor: '#388e3c',
-      transform: 'translateY(-2px)',
     },
   },
   // Animación para el modal de alarma
@@ -1066,12 +1237,108 @@ const styles = {
       boxShadow: '0 0 0 0 rgba(231, 76, 60, 0.7)',
     },
     '70%': {
-      boxShadow: '0 0 0 20px rgba(231, 76, 60, 0)',
+      boxShadow: '0 0 0 15px rgba(231, 76, 60, 0)',
     },
     '100%': {
       boxShadow: '0 0 0 0 rgba(231, 76, 60, 0)',
     },
   },
+  
+  // Media Queries para diferentes tamaños de pantalla
+  '@media (min-width: 576px)': {
+    container: {
+      padding: '20px',
+    },
+    section: {
+      padding: '20px',
+    },
+    calendarContainer: {
+      padding: '20px',
+    },
+    contactCard: {
+      padding: '25px',
+    },
+    modal: {
+      width: '500px',
+    },
+  },
+  
+  '@media (min-width: 768px)': {
+    columnsContainer: {
+      flexDirection: 'row',
+    },
+    leftColumn: {
+      flex: '0 0 35%',
+      maxWidth: '35%',
+    },
+    medicationsCards: {
+      display: 'none',
+    },
+    tableContainer: {
+      display: 'block',
+    },
+    floatingButtonContainer: {
+      display: 'none',
+    },
+    calendarWrapper: {
+      height: '400px',
+    },
+  },
+  
+  '@media (min-width: 992px)': {
+    container: {
+      padding: '25px',
+    },
+    calendarWrapper: {
+      height: '450px',
+    },
+  },
+  
+  '@media (max-width: 576px)': {
+    sectionTitle: {
+      fontSize: '1.2rem',
+    },
+    contactName: {
+      fontSize: '1.1rem',
+    },
+    alarmTime: {
+      fontSize: '1.3rem',
+    },
+    alarmMedName: {
+      fontSize: '1rem',
+    },
+    modalTitle: {
+      fontSize: '1.3rem',
+    },
+    modalHeader: {
+      padding: '15px',
+    },
+  },
+};
+
+// Función para aplicar media queries
+const applyMediaQueries = (styles) => {
+  const finalStyles = { ...styles };
+  
+  Object.keys(styles).forEach(key => {
+    if (typeof styles[key] === 'object' && styles[key]['@media']) {
+      const mediaStyles = styles[key]['@media'];
+      delete finalStyles[key]['@media'];
+      
+      Object.keys(mediaStyles).forEach(mediaQuery => {
+        const mediaStyle = mediaStyles[mediaQuery];
+        if (!finalStyles[`@media ${mediaQuery}`]) {
+          finalStyles[`@media ${mediaQuery}`] = {};
+        }
+        finalStyles[`@media ${mediaQuery}`][key] = {
+          ...(finalStyles[`@media ${mediaQuery}`][key] || {}),
+          ...mediaStyle
+        };
+      });
+    }
+  });
+  
+  return finalStyles;
 };
 
 export default Inicio;
