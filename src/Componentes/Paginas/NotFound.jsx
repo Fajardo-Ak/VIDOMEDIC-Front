@@ -8,8 +8,8 @@ const NotFound = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate('/login');
-    }, 5000); // redirige después de 5 segundos
+      navigate('/Home');
+    }, 3000); // redirige después de 5 segundos
 
     return () => clearTimeout(timer);
   }, [navigate]);

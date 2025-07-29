@@ -16,7 +16,8 @@ import Config from './Componentes/Paginas/Config';
 import Login from './Componentes/Paginas/m.jsx'; // <<<< AÑADE LA EXTENSIÓN
 import Registro from './Componentes/Paginas/j.jsx'; // <<<< AÑADE LA EXTENSIÓN
 import NotFound from './Componentes/Paginas/NotFound'; // 👈 Importa el 404
-import { ThemeProvider } from './Context/ThemeContext';
+
+import Home from './Componentes/Paginas/Home.jsx'; // <<<< AÑADE LA EXTENSIÓN
 
 // Layout para rutas autenticadas (con navbar y sidebar)
 const AuthenticatedLayout = () => {
@@ -33,12 +34,13 @@ const AuthenticatedLayout = () => {
 
 function App() {
   return (
-    <ThemeProvider>
       <Router>
         <Routes>
           {/* Ruta pública sin layout */}
            <Route path="/registro" element={<Registro />} />
+           
           <Route path="/login" element={<Login />} />
+          <Route path="/Home" element={<Home />} />
           {/* Rutas autenticadas con layout */}
           <Route element={<AuthenticatedLayout />}>
             <Route path="/inicio" element={<Inicio />} />
@@ -49,13 +51,13 @@ function App() {
           </Route>
           
           {/* Redirección desde raíz */}
-          <Route path="/" element={<Navigate to="/inicio" replace />} />
+          <Route path="/" element={<NotFound />} />
+
           
           {/* Redirección para rutas no encontradas */}
             <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-    </ThemeProvider>
   );
 }
 
