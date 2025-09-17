@@ -13,7 +13,7 @@ import Planes from './Componentes/Paginas/Planes';
 import Ventas from './Componentes/Paginas/Ventas';
 import Usuarios from './Componentes/Paginas/Usuarios';
 import Config from './Componentes/Paginas/Config';
-import Login from './Componentes/Paginas/m.jsx'; // <<<< AÑADE LA EXTENSIÓN
+import Login from './Componentes/Paginas/Login.jsx'; // <<<< AÑADE LA EXTENSIÓN
 import Registro from './Componentes/Paginas/j.jsx'; // <<<< AÑADE LA EXTENSIÓN
 import NotFound from './Componentes/Paginas/NotFound'; // 👈 Importa el 404
 
