@@ -4,51 +4,13 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect, useRef } from 'react';
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
-import startOfWeek from 'date-fns/startOfWeek';
-import getDay from 'date-fns/getDay';
-import esES from 'date-fns/locale/es';
-import addHours from 'date-fns/addHours';
-import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
+import { format, parse, startOfWeek, getDay, addHours, differenceInMilliseconds } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 
 const Inicio = () => {
-  // Estado para controlar la visibilidad del modal
   const [modalAbierto, setModalAbierto] = useState(false);
-  
-  // Estado para almacenar medicamentos
-  const [medicamentos, setMedicamentos] = useState([
-    { 
-      id: 1, 
-      nombre: 'Telmisartán', 
-      tipo: 'Tableta', 
-      dosis: '40 mg', 
-      frecuencia: 'cada 24 horas', 
-      duracion: '7 días',
-      horaInicio: new Date(2025, 6, 25, 8, 0) // Fecha de inicio
-    },
-    { 
-      id: 2, 
-      nombre: 'Paracetamol', 
-      tipo: 'Tableta', 
-      dosis: '500 mg', 
-      frecuencia: 'cada 8 horas', 
-      duracion: '5 días',
-      horaInicio: new Date(2025, 6, 25, 9, 0)
-    },
-    { 
-      id: 3, 
-      nombre: 'Insulina', 
-      tipo: 'Inyección', 
-      dosis: '10 UI', 
-      frecuencia: '2 veces al día', 
-      duracion: 'Indefinido',
-      horaInicio: new Date(2025, 6, 25, 12, 0)
-    },
-  ]);
-  
-  // Estado para el formulario de medicamentos
+  const [medicamentos, setMedicamentos] = useState([]);
   const [formulario, setFormulario] = useState({
     nombre: '',
     tipo: '',
@@ -57,49 +19,51 @@ const Inicio = () => {
     duracion: '',
     horaInicio: new Date()
   });
-  
-  // Estado para identificar si estamos editando un medicamento
   const [editando, setEditando] = useState(null);
-  
-  // Estado para eventos del calendario
   const [eventos, setEventos] = useState([]);
-  
-  // Estado para alarmas activas
   const [alarmasActivas, setAlarmasActivas] = useState([]);
-  
-  // Referencia para los timeouts de alarmas
-  const alarmTimeouts = useRef({});
-  
-  // Referencia para el audio de alarma
-  const audioRef = useRef(null);
-  
-  // Estado para mostrar modal de alarma
-  const [alarmaModal, setAlarmaModal] = useState({
-    visible: false,
-    medicamento: null,
-    hora: null
-  });
-  
-  // Estado para el formato de vista del calendario
+  const [alarmaModal, setAlarmaModal] = useState({ visible: false, medicamento: null, hora: null });
   const [view, setView] = useState('month');
   const [date, setDate] = useState(new Date());
-  
-  // Solicitar permiso para notificaciones al cargar el componente
+  const alarmTimeouts = useRef({});
+  const audioRef = useRef(null);
+
+  // --- Cargar medicamentos desde API ---
   useEffect(() => {
+    const cargarMedicamentos = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/medicamentos', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (!res.ok) throw new Error('Error al cargar medicamentos');
+        const data = await res.json();
+        // Convertir fechas de string a Date si vienen como ISO
+        const medsConFecha = data.map(m => ({
+          ...m,
+          horaInicio: new Date(m.horaInicio)
+        }));
+        setMedicamentos(medsConFecha);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    cargarMedicamentos();
+
+    // Solicitar permisos de notificación
     if ("Notification" in window) {
       Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          console.log("Permiso para notificaciones concedido");
-        }
+        if (permission === "granted") console.log("Permiso concedido");
       });
     }
-    
-    // Crear elemento de audio
+
+    // Configurar audio
     audioRef.current = new Audio();
-    audioRef.current.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=="; // Sonido base64
+    audioRef.current.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
     audioRef.current.loop = true;
-    
-    // Limpiar al desmontar
+
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -107,60 +71,82 @@ const Inicio = () => {
       }
     };
   }, []);
-  
-  // Función para manejar cambios en el formulario
-  const manejarCambio = (e) => {
-    const { name, value } = e.target;
-    setFormulario(prev => ({ ...prev, [name]: value }));
-  };
-  
-  // Función para manejar cambio de hora
-  const manejarCambioHora = (date) => {
-    setFormulario(prev => ({ ...prev, horaInicio: date }));
-  };
-  
-  // Función para guardar el medicamento
-  const guardarMedicamento = () => {
-    if (editando !== null) {
-      // Editar medicamento existente
-      const nuevosMedicamentos = [...medicamentos];
-      nuevosMedicamentos[editando] = formulario;
-      setMedicamentos(nuevosMedicamentos);
-      setEditando(null);
-    } else {
-      // Agregar nuevo medicamento
-      const nuevoMedicamento = {
-        ...formulario,
-        id: medicamentos.length > 0 ? Math.max(...medicamentos.map(m => m.id)) + 1 : 1
-      };
-      setMedicamentos([...medicamentos, nuevoMedicamento]);
+
+  // --- Guardar medicamento en API ---
+  const guardarMedicamento = async () => {
+    try {
+      let res, data;
+      if (editando !== null) {
+        // Editar
+        res = await fetch(`http://localhost:8000/api/medicamentos/${formulario.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify(formulario)
+        });
+      } else {
+        // Nuevo
+        res = await fetch(`http://localhost:8000/api/medicamentos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify(formulario)
+        });
+      }
+      if (!res.ok) throw new Error('Error al guardar medicamento');
+      data = await res.json();
+
+      // Actualizar estado local
+      if (editando !== null) {
+        const nuevosMedicamentos = [...medicamentos];
+        nuevosMedicamentos[editando] = data;
+        setMedicamentos(nuevosMedicamentos);
+        setEditando(null);
+      } else {
+        setMedicamentos([...medicamentos, data]);
+      }
+
+      // Reset formulario
+      setFormulario({ nombre: '', tipo: '', dosis: '', frecuencia: '', duracion: '', horaInicio: new Date() });
+      setModalAbierto(false);
+
+    } catch (err) {
+      console.error(err);
     }
-    
-    // Limpiar formulario y cerrar modal
-    setFormulario({
-      nombre: '',
-      tipo: '',
-      dosis: '',
-      frecuencia: '',
-      duracion: '',
-      horaInicio: new Date()
-    });
-    setModalAbierto(false);
   };
-  
-  // Función para editar un medicamento
-  const editarMedicamento = (index) => {
-    setFormulario(medicamentos[index]);
-    setEditando(index);
-    setModalAbierto(true);
+
+  // --- Eliminar medicamento en API ---
+  const eliminarMedicamento = async (index) => {
+    try {
+      const med = medicamentos[index];
+      const res = await fetch(`http://localhost:8000/api/medicamentos/${med.id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (!res.ok) throw new Error('Error al eliminar medicamento');
+
+      const nuevosMedicamentos = [...medicamentos];
+      nuevosMedicamentos.splice(index, 1);
+      setMedicamentos(nuevosMedicamentos);
+    } catch (err) {
+      console.error(err);
+    }
   };
-  
-  // Función para eliminar un medicamento
-  const eliminarMedicamento = (index) => {
-    const nuevosMedicamentos = [...medicamentos];
-    nuevosMedicamentos.splice(index, 1);
-    setMedicamentos(nuevosMedicamentos);
-  };
+
+  //funcion para editar el medicamento temporal
+  const editarMedicamento = (medicamento) => {
+  // Lógica para editar medicamento
+  console.log('Editar:', medicamento);
+};
+
+//Funcion de manejo de cambios temporal
+const manejarCambio = (e) => {
+  const { name, value } = e.target;
+  setFormulario(prev => ({ ...prev, [name]: value }));
+};
+
+//funcion manejo de hora temporal
+const manejarCambioHora = (e) => {
+  setFormulario(prev => ({ ...prev, hora: e.target.value }));
+};
   
   // Generar eventos para el calendario basados en medicamentos
   useEffect(() => {
@@ -706,7 +692,7 @@ const Inicio = () => {
   );
 };
 
-const locales = { es: esES };
+const locales = { es };
 
 const localizer = dateFnsLocalizer({
   format,
