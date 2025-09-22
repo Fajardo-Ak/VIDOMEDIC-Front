@@ -6,6 +6,7 @@
   align-items: center;
   position: relative;
   padding: 0 1rem;
+   overflow: hidden;
 }
 
 .top-wave {
@@ -42,7 +43,6 @@
   flex-direction: column;
   width: 100%;
   max-width: 450px;
-  height: 500px; /* mismo alto que login */
   box-sizing: border-box;
   overflow-y: auto;
   z-index: 2;
