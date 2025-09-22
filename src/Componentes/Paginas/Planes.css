@@ -1,0 +1,127 @@
+/* Planes.css */
+
+
+.planes-container {
+  padding: 40px;
+  min-height: 100vh;
+}
+
+
+.planes-light {
+  background-color: #fff;
+}
+.planes-dark {
+  background-color: #0f172a;
+}
+
+
+.planes-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.planes-title {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+.planes-title-light {
+  color: #23747b;
+}
+.planes-title-dark {
+  color: #38bdf8;
+}
+.planes-subtitle {
+  font-size: 16px;
+}
+.planes-subtitle-light {
+  color: #333;
+}
+.planes-subtitle-dark {
+  color: #a5b4fc;
+}
+
+
+.planes-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+
+.plan-card {
+  border-radius: 12px;
+  width: 280px;
+  padding: 30px 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.plan-card-light {
+  background-color: #23747b;
+  color: #fff;
+}
+.plan-card-dark {
+  background-color: #1e293b;
+  color: #e0e7ff;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.plan-title {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.plan-price {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+.plan-divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+.plan-divider-dark {
+  border-color: #475569;
+}
+.plan-features {
+  list-style: disc;
+  padding-left: 20px;
+  margin-bottom: 30px;
+}
+.plan-features li {
+  margin-bottom: 8px;
+}
+.plan-features-light {
+  color: #f0f0f0;
+}
+.plan-features-dark {
+  color: #cbd5e1;
+}
+
+/* Botón */
+.plan-button {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.plan-button-light {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.plan-button-dark {
+  background-color: #334155;
+  color: #a5b4fc;
+}
+.plan-button-light:hover {
+  background-color: #cfcfcf;
+}
+.plan-button-dark:hover {
+  background-color: #475569;
+}
