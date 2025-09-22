@@ -6,7 +6,9 @@
   align-items: center;
   position: relative;
   min-height: 100vh;
+  padding: 0 1rem;
 }
+
 .top-wave {
   position: absolute;
   top: 0;
@@ -18,7 +20,6 @@
   transform: scaleX(1.1); 
   z-index: 1;
 }
-
 
 .top-wave-transparent {
   position: absolute;
@@ -32,20 +33,21 @@
   z-index: 0;
 }
 
-
 .login-form {
   position: relative;
   z-index: 2;
   background-color: white;
-  padding: 3rem 2rem;
-  border: 2px ;
+  padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.25);
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 100%;
+  max-width: 450px;
+  height: 500px; /* alto fijo */
+  box-sizing: border-box;
+  overflow-y: auto; /* scroll si es necesario */
 }
-
 
 .login-title {
   color: #1F7A8C;
@@ -54,10 +56,12 @@
 }
 
 .login-form input {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 0.8rem;
   border: 1px solid #ccc;
   border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .login-form button {
@@ -69,9 +73,20 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-bottom: 2rem;
+  margin-top: auto; /* empuja el botón al final */
 }
 
 .login-form button:hover {
   background-color: #145f6b;
+}
+
+@media screen and (max-width: 500px) {
+  .top-wave, .top-wave-transparent {
+    height: 25vh;
+  }
+
+  .login-form {
+    height: 480px; /* ajusta si quieres un poco más pequeño en móviles */
+    padding: 1.5rem;
+  }
 }

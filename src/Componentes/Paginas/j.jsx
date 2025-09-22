@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registro.css';
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const Registro = () => {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ const Registro = () => {
     password: '',
     confirmar: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,6 +40,8 @@ const Registro = () => {
       <div className="top-wave"></div>
   <div className="top-wave-transparent"></div>
       <form className="registro-form" onSubmit={handleSubmit}>
+<img src="vidomedilogo.png" alt="Logo" className="logo" />
+
         <h2>Crear Cuenta</h2>
         <input
           type="text"
@@ -53,22 +59,39 @@ const Registro = () => {
           onChange={handleChange}
           required
         />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
+  <div className="password-wrapper">
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    placeholder="Contraseña"
+    value={form.password}
+    onChange={handleChange}
+    required
+  />
+  <span
+    className="toggle-password"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+    {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
+  </span>
+</div>
+
+ <div className="password-wrapper">
+  <input
+    type={showPassword ? "text" : "password"}
           name="confirmar"
           placeholder="Confirmar contraseña"
           value={form.confirmar}
           onChange={handleChange}
           required
         />
+        <span
+    className="toggle-password"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+    {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
+  </span>
+</div>
         <button type="submit">Registrarse</button>
 
         <div
@@ -76,7 +99,7 @@ const Registro = () => {
           className="registro-login-button"
           onClick={() => navigate('/login')}
         >
-          ¿Ya tienes cuenta? <a href="/registro">Regístrate aquí</a>
+          ¿Ya tienes cuenta? <a href="/registro">Inicia sesión</a>
         </div>
       </form>
     </div>

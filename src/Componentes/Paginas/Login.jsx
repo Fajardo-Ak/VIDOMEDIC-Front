@@ -49,7 +49,7 @@ const Login = () => {
         <div className="top-wave"></div>
   <div className="top-wave-transparent"></div>
       <form className="login-form" onSubmit={handleSubmit}>
-
+<img src="vidomedilogo.png" alt="Logo" className="logo" />
         <h2 className="login-title">Ingresa a tu cuenta </h2>
 
         <input
