@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
 
-import Inicio from './Componentes/Paginas/Inicio.jsx';
+import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
 import Planes from './Componentes/Paginas/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
 import Usuarios from './Componentes/Paginas/Usuarios.jsx';
@@ -20,7 +20,7 @@ import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
 // Layout para las rutas privadas (dashboard)
 const DashboardLayout = () => {
   return (
-    <div className="flex">
+    <div className="d-flex">
       <Sidebar />
       <div className="content w-100">
         <Navbar />

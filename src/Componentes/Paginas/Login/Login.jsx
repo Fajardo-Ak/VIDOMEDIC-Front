@@ -39,7 +39,7 @@ const Login = () => {
         setError('Datos incorrectos'); //feedback al usuario
       }
     } catch (err) {
-      setError('Datos del usuario Incorrectos'); // error de red
+      setError('Error de Conexion'); // error de red
       console.error('Login error:', err);
     }
   };

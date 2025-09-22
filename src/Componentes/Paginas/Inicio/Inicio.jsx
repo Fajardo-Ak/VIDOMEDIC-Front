@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay, addHours, differenceInMilliseconds } from 'date-fns';
 import { es } from 'date-fns/locale';
-
+import './Inicio.css'; // Importar el archivo CSS
 
 const Inicio = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -289,21 +289,21 @@ const manejarCambioHora = (e) => {
   }, [medicamentos]);
 
   return (
-    <div style={styles.container}>
+    <div className="inicio-container">
       {/* Encabezado */}
-      <div style={styles.header}>
-        <div style={styles.registerLink} onClick={() => setModalAbierto(true)}>
-          <FaPlus style={styles.addIcon} />
+      <div className="inicio-header">
+        <div className="register-link" onClick={() => setModalAbierto(true)}>
+          <FaPlus className="add-icon" />
           <span>Registrar Medicamento</span>
         </div>
       </div>
 
       {/* Sección Calendario */}
-      <div style={styles.calendarContainer}>
-        <h2 style={styles.sectionTitle}>
+      <div className="calendar-container">
+        <h2 className="section-title">
           Calendario de Medicamentos
         </h2>
-        <div style={styles.calendarWrapper}>
+        <div className="calendar-wrapper">
           <Calendar
             localizer={localizer}
             events={eventos}
@@ -332,41 +332,41 @@ const manejarCambioHora = (e) => {
       </div>
 
       {/* Separador */}
-      <div style={styles.divider} />
+      <div className="divider" />
 
       {/* Secciones en columnas */}
-      <div style={styles.columnsContainer}>
+      <div className="columns-container">
         {/* Columna izquierda - Contacto y Alarmas */}
-        <div style={styles.leftColumn}>
-          <div style={styles.section}>
-            <div style={styles.contactCard}> 
-              <div style={styles.contactName}>Contacto de Emergencia</div>
-              <div style={styles.contactInfo}>
-                <div style={styles.contactName}>Ana Torres</div>
-                <div style={styles.contactPhone}>Tel: +34 612 345 678</div>
+        <div className="left-column">
+          <div className="section">
+            <div className="contact-card"> 
+              <div className="contact-name">Contacto de Emergencia</div>
+              <div className="contact-info">
+                <div className="contact-name">Ana Torres</div>
+                <div className="contact-phone">Tel: +34 612 345 678</div>
               </div>
-              <div style={styles.contactNote}>
+              <div className="contact-note">
                 Se le notificará a este contacto en caso de omitir la toma de medicamentos.
               </div>
             </div>
           </div>
           
-          <div style={styles.section}>
-            <div style={styles.sectionHeader}>
-              <FaBell style={styles.sectionIcon} />
-              <h2 style={styles.sectionTitle}>Próximas Alarmas</h2>
+          <div className="section">
+            <div className="section-header">
+              <FaBell className="section-icon" />
+              <h2 className="section-title">Próximas Alarmas</h2>
             </div>
-            <div style={styles.alarmsList}>
+            <div className="alarms-list">
               {alarmasActivas.map((alarma, index) => (
-                <div key={index} style={styles.alarmItem}>
-                  <div style={styles.alarmTime}>
+                <div key={index} className="alarm-item">
+                  <div className="alarm-time">
                     {format(alarma.proximaAlarma, "HH:mm")}
                   </div>
-                  <div style={styles.alarmContent}>
-                    <div style={styles.alarmMedName}>
+                  <div className="alarm-content">
+                    <div className="alarm-med-name">
                       {alarma.medicamento.nombre}
                     </div>
-                    <div style={styles.alarmDetails}>
+                    <div className="alarm-details">
                       {alarma.medicamento.dosis} • {alarma.medicamento.frecuencia}
                     </div>
                   </div>
@@ -374,7 +374,7 @@ const manejarCambioHora = (e) => {
               ))}
               
               {alarmasActivas.length === 0 && (
-                <div style={styles.noAlarms}>
+                <div className="no-alarms">
                   No hay alarmas programadas
                 </div>
               )}
@@ -383,34 +383,34 @@ const manejarCambioHora = (e) => {
         </div>
         
         {/* Columna derecha - Medicamentos */}
-        <div style={styles.rightColumn}>
-          <div style={styles.section}>
-            <div style={styles.sectionHeader}>
-              <h1 style={styles.sectionTitle}>Medicamentos</h1>
+        <div className="right-column">
+          <div className="section">
+            <div className="section-header">
+              <h1 className="section-title">Medicamentos</h1>
             </div>
             
             {/* Vista de tarjetas para móviles */}
-            <div style={styles.medicationsCards}>
+            <div className="medications-cards">
               {medicamentos.map((med, index) => (
-                <div key={med.id} style={styles.medCard}>
-                  <div style={styles.medCardHeader}>
-                    <div style={styles.medCardName}>{med.nombre}</div>
-                    <div style={styles.medCardActions}>
+                <div key={med.id} className="med-card">
+                  <div className="med-card-header">
+                    <div className="med-card-name">{med.nombre}</div>
+                    <div className="med-card-actions">
                       <button 
-                        style={styles.actionButton} 
+                        className="action-button" 
                         onClick={() => editarMedicamento(index)}
                       >
                         <FaEdit />
                       </button>
                       <button 
-                        style={styles.actionButton} 
+                        className="action-button" 
                         onClick={() => eliminarMedicamento(index)}
                       >
                         <FaTrash />
                       </button>
                     </div>
                   </div>
-                  <div style={styles.medCardDetails}>
+                  <div className="med-card-details">
                     <div><strong>Tipo:</strong> {med.tipo}</div>
                     <div><strong>Dosis:</strong> {med.dosis}</div>
                     <div><strong>Frecuencia:</strong> {med.frecuencia}</div>
@@ -422,34 +422,34 @@ const manejarCambioHora = (e) => {
             </div>
             
             {/* Vista de tabla para escritorio */}
-            <div style={styles.tableContainer}>
-              <div style={styles.medicationsTable}>
-                <div style={styles.tableRow}>
-                  <div style={styles.tableHeader}>Medicamento</div>
-                  <div style={styles.tableHeader}>Dosis</div>
-                  <div style={styles.tableHeader}>Frecuencia</div>
-                  <div style={styles.tableHeader}>Próxima</div>
-                  <div style={styles.tableHeader}>Acciones</div>
+            <div className="table-container">
+              <div className="medications-table">
+                <div className="table-row">
+                  <div className="table-header">Medicamento</div>
+                  <div className="table-header">Dosis</div>
+                  <div className="table-header">Frecuencia</div>
+                  <div className="table-header">Próxima</div>
+                  <div className="table-header">Acciones</div>
                 </div>
                 
                 {medicamentos.map((med, index) => (
-                  <div key={med.id} style={styles.tableRow}>
-                    <div style={styles.tableCell}>
-                      <div style={styles.medName}>{med.nombre}</div>
-                      <div style={styles.medType}>{med.tipo}</div>
+                  <div key={med.id} className="table-row">
+                    <div className="table-cell">
+                      <div className="med-name">{med.nombre}</div>
+                      <div className="med-type">{med.tipo}</div>
                     </div>
-                    <div style={styles.tableCell}>{med.dosis}</div>
-                    <div style={styles.tableCell}>{med.frecuencia}</div>
-                    <div style={styles.tableCell}>{format(med.horaInicio, "dd/MM HH:mm")}</div>
-                    <div style={styles.actionsCell}>
+                    <div className="table-cell">{med.dosis}</div>
+                    <div className="table-cell">{med.frecuencia}</div>
+                    <div className="table-cell">{format(med.horaInicio, "dd/MM HH:mm")}</div>
+                    <div className="actions-cell">
                       <button 
-                        style={styles.actionButton} 
+                        className="action-button" 
                         onClick={() => editarMedicamento(index)}
                       >
                         <FaEdit />
                       </button>
                       <button 
-                        style={styles.actionButton} 
+                        className="action-button" 
                         onClick={() => eliminarMedicamento(index)}
                       >
                         <FaTrash />
@@ -464,25 +464,25 @@ const manejarCambioHora = (e) => {
       </div>
 
       {/* Botón Agregar flotante solo para móviles */}
-      <div style={styles.floatingButtonContainer}>
+      <div className="floating-button-container">
         <button 
-          style={styles.floatingButton}
+          className="floating-button"
           onClick={() => setModalAbierto(true)}
         >
-          <FaPlus style={styles.floatingButtonIcon} />
+          <FaPlus className="floating-button-icon" />
         </button>
       </div>
       
       {/* Modal para agregar/editar medicamentos */}
       {modalAbierto && (
-        <div style={styles.modalOverlay}>
-          <div style={styles.modal}>
-            <div style={styles.modalHeader}>
-              <h2 style={styles.modalTitle}>
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2 className="modal-title">
                 {editando !== null ? 'Editar Medicamento' : 'Nuevo Medicamento'}
               </h2>
               <button 
-                style={styles.closeButton}
+                className="close-button"
                 onClick={() => {
                   setModalAbierto(false);
                   setEditando(null);
@@ -500,25 +500,25 @@ const manejarCambioHora = (e) => {
               </button>
             </div>
             
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Nombre del Medicamento</label>
+            <div className="form-group">
+              <label className="label">Nombre del Medicamento</label>
               <input
                 type="text"
                 name="nombre"
                 value={formulario.nombre}
                 onChange={manejarCambio}
-                style={styles.input}
+                className="input"
                 placeholder="Ej: Paracetamol"
               />
             </div>
             
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Tipo</label>
+            <div className="form-group">
+              <label className="label">Tipo</label>
               <select
                 name="tipo"
                 value={formulario.tipo}
                 onChange={manejarCambio}
-                style={styles.input}
+                className="input"
               >
                 <option value="">Seleccione un tipo</option>
                 <option value="Tableta">Tableta</option>
@@ -530,25 +530,25 @@ const manejarCambioHora = (e) => {
               </select>
             </div>
             
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Dosis</label>
+            <div className="form-group">
+              <label className="label">Dosis</label>
               <input
                 type="text"
                 name="dosis"
                 value={formulario.dosis}
                 onChange={manejarCambio}
-                style={styles.input}
+                className="input"
                 placeholder="Ej: 500 mg, 10 ml"
               />
             </div>
             
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Frecuencia</label>
+            <div className="form-group">
+              <label className="label">Frecuencia</label>
               <select
                 name="frecuencia"
                 value={formulario.frecuencia}
                 onChange={manejarCambio}
-                style={styles.input}
+                className="input"
               >
                 <option value="">Seleccione frecuencia</option>
                 <option value="cada 8 horas">Cada 8 horas</option>
@@ -559,13 +559,13 @@ const manejarCambioHora = (e) => {
               </select>
             </div>
             
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Duración del Tratamiento</label>
+            <div className="form-group">
+              <label className="label">Duración del Tratamiento</label>
               <select
                 name="duracion"
                 value={formulario.duracion}
                 onChange={manejarCambio}
-                style={styles.input}
+                className="input"
               >
                 <option value="">Seleccione duración</option>
                 <option value="3 días">3 días</option>
@@ -577,19 +577,19 @@ const manejarCambioHora = (e) => {
               </select>
             </div>
             
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Hora de la Primera Dosis</label>
+            <div className="form-group">
+              <label className="label">Hora de la Primera Dosis</label>
               <input
                 type="datetime-local"
                 value={format(formulario.horaInicio, "yyyy-MM-dd'T'HH:mm")}
                 onChange={(e) => manejarCambioHora(new Date(e.target.value))}
-                style={styles.input}
+                className="input"
               />
             </div>
             
-            <div style={styles.modalActions}>
+            <div className="modal-actions">
               <button 
-                style={styles.cancelButton}
+                className="cancel-button"
                 onClick={() => {
                   setModalAbierto(false);
                   setEditando(null);
@@ -606,7 +606,7 @@ const manejarCambioHora = (e) => {
                 Cancelar
               </button>
               <button 
-                style={styles.saveButton}
+                className="save-button"
                 onClick={guardarMedicamento}
               >
                 {editando !== null ? 'Actualizar' : 'Guardar'}
@@ -618,15 +618,15 @@ const manejarCambioHora = (e) => {
       
       {/* Modal de alarma activa */}
       {alarmaModal.visible && (
-        <div style={styles.alarmModalOverlay}>
-          <div style={styles.alarmModal}>
-            <div style={styles.alarmModalHeader}>
+        <div className="alarm-modal-overlay">
+          <div className="alarm-modal">
+            <div className="alarm-modal-header">
               <FaBell style={{ fontSize: '3rem', color: '#e74c3c', marginBottom: '20px' }} />
-              <h2 style={styles.alarmModalTitle}>¡Recordatorio de Medicamento!</h2>
+              <h2 className="alarm-modal-title">¡Recordatorio de Medicamento!</h2>
             </div>
             
-            <div style={styles.alarmModalContent}>
-              <div style={styles.alarmMedInfo}>
+            <div className="alarm-modal-content">
+              <div className="alarm-med-info">
                 <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
                   {alarmaModal.medicamento.nombre}
                 </div>
@@ -638,9 +638,9 @@ const manejarCambioHora = (e) => {
                 </div>
               </div>
               
-              <div style={styles.alarmActions}>
+              <div className="alarm-actions">
                 <button 
-                  style={styles.snoozeButton}
+                  className="snooze-button"
                   onClick={() => {
                     // Posponer la alarma 5 minutos
                     const nuevaHora = new Date(alarmaModal.hora);
@@ -671,7 +671,7 @@ const manejarCambioHora = (e) => {
                   Posponer (5 min)
                 </button>
                 <button 
-                  style={styles.dismissButton}
+                  className="dismiss-button"
                   onClick={() => {
                     // Detener sonido y cerrar modal
                     if (audioRef.current) {
@@ -701,630 +701,5 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
-
-// Estilos completamente responsivos
-const styles = {
-  container: {
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '15px',
-    backgroundColor: '#f8f9fa',
-    position: 'relative',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: '15px',
-    paddingBottom: '10px',
-  },
-  registerLink: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    fontSize: '1rem',
-    color: '#3498db',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    padding: '10px 15px',
-    backgroundColor: '#e8f4fc',
-    borderRadius: '30px',
-    transition: 'all 0.3s',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    '&:hover': {
-      backgroundColor: '#d1e8f7',
-      transform: 'translateY(-2px)',
-    },
-  },
-  addIcon: {
-    fontSize: '1rem',
-  },
-  section: {
-    marginBottom: '15px',
-    padding: '15px',
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-  },
-  sectionHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '15px',
-  },
-  sectionIcon: {
-    color: '#3498db',
-    fontSize: '1.5rem',
-    marginRight: '10px',
-  },
-  sectionTitle: {
-    color: '#2c3e50',
-    marginTop: '0',
-    fontSize: '1.3rem',
-    marginBottom: '0',
-  },
-  divider: {
-    height: '1px',
-    background: '#e0e0e0',
-    border: 'none',
-    margin: '20px 0',
-  },
-  columnsContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-    marginBottom: '20px',
-  },
-  leftColumn: {
-    flex: 1,
-    minWidth: 0,
-  },
-  rightColumn: {
-    flex: 1,
-    minWidth: 0,
-  },
-  contactCard: {
-    backgroundColor: '#e8f4fc',
-    padding: '20px',
-    borderRadius: '12px',
-    borderLeft: '4px solid #3498db',
-  },
-  contactName: {
-    fontWeight: 'bold',
-    fontSize: '1.2rem',
-    marginBottom: '10px',
-    color: '#2c3e50',
-  },
-  contactInfo: {
-    marginBottom: '15px',
-  },
-  contactPhone: {
-    color: '#3498db',
-    fontWeight: '500',
-  },
-  contactNote: {
-    color: '#555',
-    fontSize: '0.9rem',
-    lineHeight: '1.4',
-  },
-  addButton: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '5px',
-    padding: '8px 15px',
-    backgroundColor: '#3498db',
-    color: 'white',
-    border: 'none',
-    borderRadius: '20px',
-    cursor: 'pointer',
-    fontSize: '0.9rem',
-    fontWeight: 'bold',
-    transition: 'all 0.3s',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    '&:hover': {
-      backgroundColor: '#2980b9',
-    },
-  },
-  // Estilos para alarmas
-  alarmsList: {
-    marginTop: '10px',
-  },
-  alarmItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '15px',
-    backgroundColor: '#fff8e1',
-    borderRadius: '10px',
-    marginBottom: '10px',
-    borderLeft: '4px solid #ffc107',
-  },
-  alarmTime: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    color: '#e74c3c',
-    minWidth: '60px',
-    textAlign: 'center',
-  },
-  alarmContent: {
-    flex: 1,
-  },
-  alarmMedName: {
-    fontWeight: 'bold',
-    fontSize: '1.1rem',
-    marginBottom: '5px',
-  },
-  alarmDetails: {
-    color: '#555',
-    fontSize: '0.9rem',
-  },
-  noAlarms: {
-    textAlign: 'center',
-    padding: '15px',
-    color: '#7f8c8d',
-    fontStyle: 'italic',
-  },
-  // Vista de tarjetas para móviles
-  medicationsCards: {
-    display: 'block',
-  },
-  medCard: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: '12px',
-    padding: '15px',
-    marginBottom: '15px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-  },
-  medCardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '10px',
-  },
-  medCardName: {
-    fontWeight: 'bold',
-    fontSize: '1.1rem',
-    color: '#2c3e50',
-  },
-  medCardActions: {
-    display: 'flex',
-    gap: '5px',
-  },
-  medCardDetails: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-    gap: '8px',
-    fontSize: '0.9rem',
-  },
-  // Vista de tabla para escritorio
-  tableContainer: {
-    display: 'none',
-    overflowX: 'auto',
-    WebkitOverflowScrolling: 'touch',
-    borderRadius: '10px',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-  },
-  medicationsTable: {
-    display: 'flex',
-    flexDirection: 'column',
-    minWidth: '600px',
-  },
-  tableRow: {
-    display: 'flex',
-    borderBottom: '1px solid #e0e0e0',
-    '&:last-child': {
-      borderBottom: 'none',
-    },
-    '&:nth-child(odd)': {
-      backgroundColor: '#f9f9f9',
-    },
-    '&:hover': {
-      backgroundColor: '#f0f8ff',
-    },
-  },
-  tableHeader: {
-    flex: 1,
-    padding: '12px 15px',
-    backgroundColor: '#2c3e50',
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'left',
-    minWidth: '0',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontSize: '0.9rem',
-  },
-  tableCell: {
-    flex: 1,
-    padding: '12px 15px',
-    textAlign: 'left',
-    display: 'flex',
-    alignItems: 'center',
-    minWidth: '0',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontSize: '0.9rem',
-  },
-  medName: {
-    fontWeight: 'bold',
-  },
-  medType: {
-    fontSize: '0.8rem',
-    color: '#7f8c8d',
-  },
-  actionsCell: {
-    flex: '0 0 100px',
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  actionButton: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '1.1rem',
-    color: '#3498db',
-    padding: '6px',
-    transition: 'all 0.2s',
-    borderRadius: '50%',
-    width: '32px',
-    height: '32px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    '&:hover': {
-      color: '#2980b9',
-      backgroundColor: '#f0f8ff',
-    },
-  },
-  // Botón flotante solo para móviles
-  floatingButtonContainer: {
-    position: 'fixed',
-    bottom: '20px',
-    right: '20px',
-    zIndex: 10,
-    display: 'block',
-  },
-  floatingButton: {
-    width: '60px',
-    height: '60px',
-    borderRadius: '50%',
-    backgroundColor: '#3498db',
-    border: 'none',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    transition: 'all 0.3s',
-    '&:hover': {
-      backgroundColor: '#2980b9',
-      transform: 'scale(1.05)',
-    },
-  },
-  floatingButtonIcon: {
-    color: 'white',
-    fontSize: '1.5rem',
-  },
-  calendarContainer: {
-    marginTop: '20px',
-    backgroundColor: 'white',
-    padding: '15px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  calendarWrapper: {
-    height: '350px',
-  },
-  // Estilos para modales
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2000,
-    backdropFilter: 'blur(3px)',
-    padding: '15px',
-  },
-  modal: {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-    width: '100%',
-    maxWidth: '500px',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-  },
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '20px',
-    background: 'linear-gradient(to right, #3498db, #2ecc71)',
-    color: 'white',
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
-  },
-  modalTitle: {
-    margin: 0,
-    fontSize: '1.5rem',
-    fontWeight: '600',
-  },
-  closeButton: {
-    background: 'none',
-    border: 'none',
-    color: 'white',
-    fontSize: '1.5rem',
-    cursor: 'pointer',
-    padding: '5px',
-    transition: 'transform 0.2s',
-    '&:hover': {
-      transform: 'rotate(90deg)',
-    },
-  },
-  formGroup: {
-    padding: '15px 20px',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '8px',
-    fontWeight: '600',
-    color: '#2c3e50',
-    fontSize: '1rem',
-  },
-  input: {
-    width: '100%',
-    padding: '12px',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    boxSizing: 'border-box',
-    transition: 'all 0.3s',
-    '&:focus': {
-      outline: 'none',
-      borderColor: '#3498db',
-      boxShadow: '0 0 0 3px rgba(52, 152, 219, 0.2)',
-    },
-  },
-  modalActions: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    padding: '15px 20px',
-    backgroundColor: '#f8f9fa',
-    borderTop: '1px solid #eee',
-    gap: '10px',
-  },
-  cancelButton: {
-    padding: '10px 20px',
-    backgroundColor: '#e74c3c',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    transition: 'all 0.3s',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    '&:hover': {
-      backgroundColor: '#c0392b',
-    },
-  },
-  saveButton: {
-    padding: '10px 20px',
-    backgroundColor: '#2ecc71',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    transition: 'all 0.3s',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    '&:hover': {
-      backgroundColor: '#27ae60',
-    },
-  },
-  // Estilos para el modal de alarma
-  alarmModalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 3000,
-    backdropFilter: 'blur(5px)',
-    padding: '15px',
-  },
-  alarmModal: {
-    backgroundColor: 'white',
-    borderRadius: '15px',
-    boxShadow: '0 0 0 10px rgba(231, 76, 60, 0.5)',
-    width: '100%',
-    maxWidth: '400px',
-    textAlign: 'center',
-    padding: '25px',
-    animation: 'pulse 1.5s infinite',
-  },
-  alarmModalHeader: {
-    marginBottom: '20px',
-  },
-  alarmModalTitle: {
-    margin: 0,
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    color: '#e74c3c',
-  },
-  alarmModalContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-  },
-  alarmMedInfo: {
-    backgroundColor: '#f9f9f9',
-    padding: '15px',
-    borderRadius: '10px',
-    marginBottom: '15px',
-    border: '2px solid #ffeb3b',
-  },
-  alarmActions: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '10px',
-    flexWrap: 'wrap',
-  },
-  snoozeButton: {
-    padding: '10px 20px',
-    backgroundColor: '#ff9800',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    transition: 'all 0.3s',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    '&:hover': {
-      backgroundColor: '#f57c00',
-    },
-  },
-  dismissButton: {
-    padding: '10px 20px',
-    backgroundColor: '#4caf50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    transition: 'all 0.3s',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    '&:hover': {
-      backgroundColor: '#388e3c',
-    },
-  },
-  // Animación para el modal de alarma
-  '@keyframes pulse': {
-    '0%': {
-      boxShadow: '0 0 0 0 rgba(231, 76, 60, 0.7)',
-    },
-    '70%': {
-      boxShadow: '0 0 0 15px rgba(231, 76, 60, 0)',
-    },
-    '100%': {
-      boxShadow: '0 0 0 0 rgba(231, 76, 60, 0)',
-    },
-  },
-  
-  // Media Queries para diferentes tamaños de pantalla
-  '@media (min-width: 576px)': {
-    container: {
-      padding: '20px',
-    },
-    section: {
-      padding: '20px',
-    },
-    calendarContainer: {
-      padding: '20px',
-    },
-    contactCard: {
-      padding: '25px',
-    },
-    modal: {
-      width: '500px',
-    },
-  },
-  
-  '@media (min-width: 768px)': {
-    columnsContainer: {
-      flexDirection: 'row',
-    },
-    leftColumn: {
-      flex: '0 0 35%',
-      maxWidth: '35%',
-    },
-    medicationsCards: {
-      display: 'none',
-    },
-    tableContainer: {
-      display: 'block',
-    },
-    floatingButtonContainer: {
-      display: 'none',
-    },
-    calendarWrapper: {
-      height: '400px',
-    },
-  },
-  
-  '@media (min-width: 992px)': {
-    container: {
-      padding: '25px',
-    },
-    calendarWrapper: {
-      height: '450px',
-    },
-  },
-  
-  '@media (max-width: 576px)': {
-    sectionTitle: {
-      fontSize: '1.2rem',
-    },
-    contactName: {
-      fontSize: '1.1rem',
-    },
-    alarmTime: {
-      fontSize: '1.3rem',
-    },
-    alarmMedName: {
-      fontSize: '1rem',
-    },
-    modalTitle: {
-      fontSize: '1.3rem',
-    },
-    modalHeader: {
-      padding: '15px',
-    },
-  },
-};
-
-// Función para aplicar media queries
-const applyMediaQueries = (styles) => {
-  const finalStyles = { ...styles };
-  
-  Object.keys(styles).forEach(key => {
-    if (typeof styles[key] === 'object' && styles[key]['@media']) {
-      const mediaStyles = styles[key]['@media'];
-      delete finalStyles[key]['@media'];
-      
-      Object.keys(mediaStyles).forEach(mediaQuery => {
-        const mediaStyle = mediaStyles[mediaQuery];
-        if (!finalStyles[`@media ${mediaQuery}`]) {
-          finalStyles[`@media ${mediaQuery}`] = {};
-        }
-        finalStyles[`@media ${mediaQuery}`][key] = {
-          ...(finalStyles[`@media ${mediaQuery}`][key] || {}),
-          ...mediaStyle
-        };
-      });
-    }
-  });
-  
-  return finalStyles;
-};
 
 export default Inicio;

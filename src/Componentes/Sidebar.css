@@ -1,0 +1,170 @@
+/* Variables CSS para fácil mantenimiento */
+:root {
+  --sidebar-bg: #1F7A8C;
+  --sidebar-width-open: 250px;
+  --sidebar-width-closed: 70px;
+  --transition-speed: 0.3s;
+  --white: #ffffff;
+  --active-bg: rgba(255, 255, 255, 0.95);
+  --hover-bg: rgba(255, 255, 255, 0.1);
+  --border-light: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenedor principal del Sidebar */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-width-open);
+  background-color: var(--sidebar-bg);
+  padding: 30px 0;
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition-speed) ease;
+  overflow: hidden;
+}
+
+.sidebar-container.closed {
+  width: var(--sidebar-width-closed);
+}
+
+/* Header del Sidebar */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px 20px;
+  color: var(--white);
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 15px;
+  min-height: 40px;
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-container.closed .sidebar-title {
+  opacity: 0;
+}
+
+/* Botón de toggle */
+.sidebar-toggle-btn {
+  background-color: transparent;
+  color: var(--white);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #166477;
+  transform: scale(1.05);
+}
+
+/* Menú de navegación */
+.sidebar-nav {
+  flex-grow: 1;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu-item {
+  margin: 5px 0;
+}
+
+/* Enlaces del menú */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 1.05rem;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.85);
+  border-left: 3px solid transparent;
+}
+
+.sidebar-link.active {
+  background-color: var(--active-bg);
+  color: var(--sidebar-bg);
+  border-left: 3px solid var(--white);
+}
+
+.sidebar-link:hover:not(.active) {
+  background-color: var(--hover-bg);
+  color: var(--white);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-link i {
+  font-size: 1.2rem;
+  min-width: 30px;
+  text-align: center;
+  margin-right: 10px;
+  transition: all var(--transition-speed) ease;
+}
+
+.sidebar-link-text {
+  transition: opacity var(--transition-speed) ease;
+}
+
+/* Cuando el sidebar está cerrado */
+.sidebar-container.closed .sidebar-link i {
+  margin-right: 0;
+}
+
+.sidebar-container.closed .sidebar-link-text {
+  opacity: 0;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: var(--sidebar-width-open);
+  transition: margin-left var(--transition-speed) ease;
+  padding: 0px;
+  min-height: 100vh;
+}
+
+.main-content.sidebar-closed {
+  margin-left: var(--sidebar-width-closed);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: var(--sidebar-width-closed);
+  }
+  
+  .sidebar-container.open {
+    width: var(--sidebar-width-open);
+  }
+  
+  .main-content {
+    margin-left: var(--sidebar-width-closed);
+  }
+  
+  .main-content.sidebar-open {
+    margin-left: var(--sidebar-width-open);
+  }
+}
+
+/* Bootstrap Icons - Asegurar que se carguen */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css');
