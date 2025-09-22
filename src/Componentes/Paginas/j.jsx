@@ -33,6 +33,8 @@ const Registro = () => {
 
   return (
     <div className="registro-container">
+      <div className="top-wave"></div>
+  <div className="top-wave-transparent"></div>
       <form className="registro-form" onSubmit={handleSubmit}>
         <h2>Crear Cuenta</h2>
         <input
@@ -69,13 +71,13 @@ const Registro = () => {
         />
         <button type="submit">Registrarse</button>
 
-        <button
+        <div
           type="button"
           className="registro-login-button"
           onClick={() => navigate('/login')}
         >
-          ¿Ya tienes cuenta? Inicia sesión
-        </button>
+          ¿Ya tienes cuenta? <a href="/registro">Regístrate aquí</a>
+        </div>
       </form>
     </div>
   );
