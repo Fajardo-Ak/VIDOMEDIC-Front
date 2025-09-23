@@ -38,15 +38,17 @@ const Planes = () => {
       <div className="planes-cards">
         {planes.map((plan, index) => (
           <div key={index} className={`plan-card ${temaOscuro ? "plan-card-dark" : "plan-card-light"}`}>
+           <section className="plancard">
             <h3 className="plan-title">{plan.nombre}</h3>
             <p className="plan-price">{plan.precio}</p>
+            </section> 
             <hr className={`plan-divider ${temaOscuro ? "plan-divider-dark" : ""}`} />
             <ul className={`plan-features ${temaOscuro ? "plan-features-dark" : "plan-features-light"}`}>
               {plan.caracteristicas.map((item, i) => (
                 <li key={i}>{item}</li>
               ))}
             </ul>
-            <button className={`plan-button ${temaOscuro ? "plan-button-dark" : "plan-button-light"}`}>
+            <button type="button" class="btn btn-dark">
               Obtener plan
             </button>
           </div>
