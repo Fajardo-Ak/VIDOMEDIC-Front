@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import './Registro.css';
 
 const Registro = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    nombre: '',
+  const [form, setForm] = useState({ 
+    nombre: '', 
     correo: '',
-    contraseña: ''
+    password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,41 +43,50 @@ const Registro = () => {
 
   return (
     <div className="registro-container">
+      <div className="top-wave"></div>
+      <div className="top-wave-transparent"></div>
+      
       <form className="registro-form" onSubmit={handleSubmit}>
+        <img src="vidomedilogo.png" alt="Logo" className="logo" />
         <h2>Crear Cuenta</h2>
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre de usuario"
-          value={form.nombre}
-          onChange={handleChange}
-          required
+
+        <input 
+          type="text" 
+          name="nombre" 
+          placeholder="Nombre de usuario" 
+          value={form.nombre} 
+          onChange={handleChange} 
+          required 
         />
-        <input
-          type="email"
-          name="correo"
-          placeholder="Correo electrónico"
-          value={form.correo}
-          onChange={handleChange}
-          required
+
+        <input 
+          type="email" 
+          name="correo" 
+          placeholder="Correo electrónico" 
+          value={form.correo} 
+          onChange={handleChange} 
+          required 
         />
-        <input
-          type="password"
-          name="contraseña"
-          placeholder="Contraseña"
-          value={form.contraseña}
-          onChange={handleChange}
-          required
-        />
+
+        <div className="password-wrapper">
+          <input 
+            type={showPassword ? "text" : "password"} 
+            name="password"
+            placeholder="Contraseña" 
+            value={form.password}
+            onChange={handleChange} 
+            required 
+          />
+          <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
+          </span>
+        </div>
+
         <button type="submit">Registrarse</button>
 
-        <button
-          type="button"
-          className="registro-login-button"
-          onClick={() => navigate('/login')}
-        >
-          ¿Ya tienes cuenta? Inicia sesión
-        </button>
+        <div className="registro-login-button" onClick={() => navigate('/login')}>
+          ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+        </div>
       </form>
     </div>
   );
