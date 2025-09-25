@@ -72,7 +72,6 @@ const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
     className="toggle-password"
     onClick={() => setShowPassword(!showPassword)}
   >
-    {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
   </span>
 </div>
 
@@ -89,7 +88,6 @@ const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
     className="toggle-password"
     onClick={() => setShowPassword(!showPassword)}
   >
-    {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
   </span>
 </div>
         <button type="submit">Registrarse</button>
