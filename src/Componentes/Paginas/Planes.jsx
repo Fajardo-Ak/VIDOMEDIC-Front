@@ -30,7 +30,7 @@ const Planes = () => {
           Planes
         </h2>
         <p className={`planes-subtitle ${temaOscuro ? "planes-subtitle-dark" : "planes-subtitle-light"}`}>
-          Conoce nuestros planes y elige el que se adapte a tus necesidades
+          Conoce nuestros planes y elige el que se adapte a tus necesidades.
         </p>
       </div>
 
