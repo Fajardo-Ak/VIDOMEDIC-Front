@@ -1,21 +1,23 @@
 import './App.scss';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
-
-import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
-import Planes from './Componentes/Paginas/Planes.jsx';
-import Ventas from './Componentes/Paginas/Ventas.jsx';
-import Usuarios from './Componentes/Paginas/Usuarios.jsx';
-import Config from './Componentes/Paginas/Config.jsx';
 
 import Login from './Componentes/Paginas/Login/Login.jsx';
 import Registro from './Componentes/Paginas/Registro/Registro.jsx';
 import NotFound from './Componentes/Paginas/NotFound.jsx';
 import Home from './Componentes/Paginas/Home.jsx';
 
-import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
+import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
+import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
+import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
+import Planes from './Componentes/Paginas/Planes.jsx';
+import Ventas from './Componentes/Paginas/Ventas.jsx';
+import Usuarios from './Componentes/Paginas/Usuarios.jsx';
+import Config from './Componentes/Paginas/Config.jsx';
+
 
 // Layout para las rutas privadas (dashboard)
 const DashboardLayout = () => {
@@ -26,6 +28,8 @@ const DashboardLayout = () => {
         <Navbar />
         <Routes>
           <Route path="/inicio" element={<Inicio />} />
+          <Route path="/medicamento" element={<Medi/>} />
+          <Route path="/historial" element={<Agend/>} />
           <Route path="/ventas" element={<Ventas />} />
           <Route path="/planes" element={<Planes />} />
           <Route path="/contactos" element={<Usuarios />} />

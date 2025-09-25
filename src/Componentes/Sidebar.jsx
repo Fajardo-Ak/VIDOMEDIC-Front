@@ -13,10 +13,12 @@ const Sidebar = () => {
 
   // Array de items del menú para mejor mantenimiento
   const menuItems = [
-    { path: '/inicio', icon: 'bi-house-fill', label: 'Inicio' },
-    { path: '/planes', icon: 'bi-clipboard2-data-fill', label: 'Planes' },
-    { path: '/contactos', icon: 'bi-file-person-fill', label: 'Contactos' },
-    { path: '/config', icon: 'bi-person-square', label: 'Configuraciones' }
+    { path: '/inicio', icon: 'bi-calendar-week', label: 'Inicio' },
+    { path: '/medicamento', icon: 'bi-capsule', label: 'Medicamentos' },
+    { path: '/historial', icon: 'bi-journal-text', label: 'Historial Agendas' },
+    { path: '/planes', icon: 'bi-credit-card', label: 'Planes' },
+    { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' }
+    
   ];
 
   // Verificar si una ruta está activa
@@ -30,7 +32,7 @@ const Sidebar = () => {
         
         {/* Header del Sidebar */}
         <div className="sidebar-header">
-          {isSidebarOpen && <h3 className="sidebar-title">Panel</h3>}
+          {isSidebarOpen && <h3 className="sidebar-title">VIDOMEDI</h3>}
           <button 
             className="sidebar-toggle-btn"
             onClick={toggleSidebar}
