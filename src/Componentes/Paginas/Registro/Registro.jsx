@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Registro.css';
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import './Registro.css';
 
 const Registro = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ 
     nombre: '', 
-    correo: '',  // Mantener "correo" para tu backend
-    password: '', // Cambiar a "password" (mejor práctica)
-    confirmar: '' 
+    correo: '',
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,41 +18,31 @@ const Registro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validación de compañera
-    if (form.password !== form.confirmar) {
-      alert("Las contraseñas no coinciden");
-      return;
-    }
 
-    // Tu lógica de backend
     try {
       const response = await fetch("http://127.0.0.1:8000/api/registro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre: form.nombre,
-          correo: form.correo,
-          contraseña: form.password // Adaptar nombre para tu backend
-        }),
+        body: JSON.stringify(form),
       });
 
       if (response.ok) {
+        const data = await response.json();
+        console.log("Usuario registrado:", data);
         alert("Registro exitoso");
         navigate('/login');
       } else {
         const error = await response.json();
-        alert("Error: " + (error.message || "Intenta de nuevo"));
+        alert("Error en el registro: " + (error.message || "Intenta de nuevo"));
       }
     } catch (err) {
       console.error("Error:", err);
-      alert("Error de conexión");
+      alert("Error de conexión con el servidor");
     }
   };
 
   return (
     <div className="registro-container">
-      {/* Diseño de compañera */}
       <div className="top-wave"></div>
       <div className="top-wave-transparent"></div>
       
@@ -71,7 +59,6 @@ const Registro = () => {
           required 
         />
 
-        {/* Mantener "correo" para tu backend */}
         <input 
           type="email" 
           name="correo" 
@@ -81,32 +68,17 @@ const Registro = () => {
           required 
         />
 
-        {/* Iconos de ojo de compañera */}
         <div className="password-wrapper">
           <input 
             type={showPassword ? "text" : "password"} 
-            name="password" 
+            name="password"
             placeholder="Contraseña" 
-            value={form.password} 
+            value={form.password}
             onChange={handleChange} 
             required 
           />
           <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
-          </span>
-        </div>
-
-        <div className="password-wrapper">
-          <input 
-            type={showPasswordConfirm ? "text" : "password"} 
-            name="confirmar" 
-            placeholder="Confirmar contraseña" 
-            value={form.confirmar} 
-            onChange={handleChange} 
-            required 
-          />
-          <span className="toggle-password" onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>
-            {showPasswordConfirm ? <AiFillEye /> : <AiFillEyeInvisible />}
           </span>
         </div>
 
