@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registro.css';
+import { CgPassword } from 'react-icons/cg';
 
 const Registro = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     nombre: '',
     correo: '',
-    contraseña: ''
+    password: ''
   });
 
   const handleChange = (e) => {
@@ -61,9 +62,9 @@ const Registro = () => {
         />
         <input
           type="password"
-          name="contraseña"
+          name="password"
           placeholder="Contraseña"
-          value={form.contraseña}
+          value={form.password}
           onChange={handleChange}
           required
         />
