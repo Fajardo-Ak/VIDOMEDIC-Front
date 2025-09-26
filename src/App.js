@@ -1,7 +1,7 @@
 import './App.scss';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
+//import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
 
@@ -53,9 +53,9 @@ function App() {
         <Route
           path="/*"
           element={
-            <RutaPrivada>
+            //<RutaPrivada>
               <DashboardLayout />
-            </RutaPrivada>
+            //</RutaPrivada>
           }
         />
 

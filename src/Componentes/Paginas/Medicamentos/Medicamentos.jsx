@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './Medi.css';
 
 const Medi = () => {
   const [medicamentos, setMedicamentos] = useState([]);
@@ -112,11 +113,11 @@ const Medi = () => {
   }, []);
 
   return (
-    <div>
+    <div className="Container">
       <h2>Gestión de Medicamentos</h2>
 
       {/* Formulario */}
-      <form onSubmit={guardarMedicamento}>
+      <form className="medi-form" onSubmit={guardarMedicamento}>
         <div>
           <label>Nombre:</label>
           <input 
