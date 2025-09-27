@@ -7,6 +7,7 @@ const Medi = () => {
     via_administracion: 'Oral',
     via_administracion_personalizada: '',
     dosis: '',
+    frecuencia: '',
     importancia: 'Baja'
   });
   const [editandoId, setEditandoId] = useState(null);
@@ -89,6 +90,7 @@ const Medi = () => {
       via_administracion: medicamento.via_administracion,
       via_administracion_personalizada: medicamento.via_administracion_personalizada || '',
       dosis: medicamento.dosis,
+      frecuencia: medicamento.frecuencia,
       importancia: medicamento.importancia
     });
     setEditandoId(medicamento.id);
@@ -101,6 +103,7 @@ const Medi = () => {
       via_administracion: 'Oral',
       via_administracion_personalizada: '',
       dosis: '',
+      frecuencia:'',
       importancia: 'Baja'
     });
     setEditandoId(null);
@@ -163,6 +166,16 @@ const Medi = () => {
         </div>
 
         <div>
+          <label>Frecuencia:</label>
+          <input 
+            type="text" 
+            value={formData.frecuencia}
+            onChange={(e) => setFormData({...formData, frecuencia: e.target.value})}
+            required 
+          />
+        </div>
+
+        <div>
           <label>Importancia:</label>
           <select 
             value={formData.importancia}
@@ -195,7 +208,7 @@ const Medi = () => {
           <ul>
             {medicamentos.map(med => (
               <li key={med.id}>
-                <strong>{med.nombre}</strong> - {med.dosis} 
+                <strong>{med.nombre}</strong> - {med.dosis} - {med.frecuencia}
                 <br/>
                 Vía: {med.via_administracion === 'Otro' 
                   ? med.via_administracion_personalizada 
