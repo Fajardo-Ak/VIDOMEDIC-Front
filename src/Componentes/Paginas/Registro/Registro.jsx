@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registro.css';
-import { CgPassword } from 'react-icons/cg';
 
 const Registro = () => {
   const navigate = useNavigate();
