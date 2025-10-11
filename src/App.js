@@ -9,6 +9,7 @@ import Login from './Componentes/Paginas/Login/Login.jsx';
 import Registro from './Componentes/Paginas/Registro/Registro.jsx';
 import NotFound from './Componentes/Paginas/NotFound.jsx';
 import Home from './Componentes/Paginas/Home.jsx';
+import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
 import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
@@ -16,7 +17,7 @@ import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
 import Planes from './Componentes/Paginas/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
 import Usuarios from './Componentes/Paginas/Usuarios.jsx';
-import Config from './Componentes/Paginas/Config.jsx';
+import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
 //import Cosa1 from './Componentes/Paginas/Cosa1.jsx';
 
 // Layout para las rutas privadas (dashboard)
@@ -33,7 +34,7 @@ const DashboardLayout = () => {
           <Route path="/ventas" element={<Ventas />} />
           <Route path="/planes" element={<Planes />} />
           <Route path="/contactos" element={<Usuarios />} />
-          <Route path="/config" element={<Config />} />
+          <Route path="/config" element={<Configuracion />} />
           {/*<Route path="/1" element={<Cosa1 />} />*/}
         </Routes>
       </div>
@@ -47,6 +48,7 @@ function App() {
       <Routes>
         {/* Rutas públicas (sin layout de dashboard) */}
         <Route path="/login" element={<Login />} />
+        <Route path="/oauth/callback" element={<OAuthCallback />}/>
         <Route path="/registro" element={<Registro />} />
         <Route path="/home" element={<Home />} />
 
