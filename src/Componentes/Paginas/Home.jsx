@@ -130,7 +130,7 @@ const Home = () => {
                 <button className="btn-elegir">Elegir</button>
               </div>
               <div className="plan-card">
-                <div class="plan-header">
+                <div className="plan-header">
                   <h3>Plan Anual</h3>
                   <span className="price">$692.00/año</span>
                   <span className="descuento">$864.00/año</span>

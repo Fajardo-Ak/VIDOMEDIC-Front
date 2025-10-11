@@ -17,7 +17,7 @@ import Planes from './Componentes/Paginas/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
 import Usuarios from './Componentes/Paginas/Usuarios.jsx';
 import Config from './Componentes/Paginas/Config.jsx';
-import Cosa1 from './Componentes/Paginas/Cosa1.jsx';
+//import Cosa1 from './Componentes/Paginas/Cosa1.jsx';
 
 // Layout para las rutas privadas (dashboard)
 const DashboardLayout = () => {
@@ -34,8 +34,7 @@ const DashboardLayout = () => {
           <Route path="/planes" element={<Planes />} />
           <Route path="/contactos" element={<Usuarios />} />
           <Route path="/config" element={<Config />} />
-                    <Route path="/1" element={<Cosa1 />} />
-          
+          {/*<Route path="/1" element={<Cosa1 />} />*/}
         </Routes>
       </div>
     </div>
@@ -55,8 +54,9 @@ function App() {
         <Route
           path="/*"
           element={
+            <RutaPrivada>
               <DashboardLayout />
-            
+            </RutaPrivada>            
           }
         />
 
