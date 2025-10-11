@@ -1,88 +1,72 @@
-.Container {
-  max-width: 700px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.08);
-  text-align: justify; 
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem 2rem;
+  color: #145f6b;
 }
 
-.medi-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 450px;
-  margin: 0 auto;
+.section-title {
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid #cdd4d6;
+  color: #145f6b;
 }
+.Container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #fdffff;
+  border-radius: 16px;
+  border: 2px solid #145f6b8f;
+  border-left: 6px solid #145f6b; /* solo borde grande */
+}
+
+/* Contenedor interno horizontal */
+.medi-inner {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  border-top: 1px solid #ccc; /* línea divisoria simple */
+  padding-top: 20px;
+}
+
+/* Columnas sin bordes ni sombras adicionales */
+.medi-column {
+  flex: 1;
+}
+
 
 .medi-form input,
 .medi-form select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 8px 14px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fafafa;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
+}
+
+.medi-form input:focus,
+.medi-form select:focus {
+  border-color: #1F7A8C;
+  box-shadow: 0 0 6px rgba(31, 122, 140, 0.3);
+  outline: none;
 }
 
 .medi-form button {
-  padding: 8px 14px;
+  padding: 12px 18px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #1F7A8C;
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
-  margin-right: 6px;
-  margin-bottom: 2rem;
+  transition: transform 0.2s, background 0.3s;
+  margin-top: 2rem;
 }
+
 .medi-form button:hover {
   background: #145f6b;
-}
-
-
-.Container ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 16px;
-}
-
-.Container li {
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  text-align: left;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.Container li button {
-  padding: 6px 12px;
-  margin-left: 6px;
-  font-size: 0.9em;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .Container {
-    padding: 15px;
-  }
-
-  .medi-form {
-    max-width: 100%;
-  }
-
-  .Container li {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .Container li button {
-    margin-top: 6px;
-  }
+  transform: translateY(-2px);
 }

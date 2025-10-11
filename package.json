@@ -12,6 +12,7 @@
     "bootstrap-icons": "^1.11.3",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "lucide-react": "^0.545.0",
     "react": "^19.1.0",
     "react-big-calendar": "^1.19.4",
     "react-bootstrap": "^2.10.10",
@@ -47,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }

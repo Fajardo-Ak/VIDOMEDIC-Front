@@ -116,119 +116,129 @@ const Medi = () => {
   }, []);
 
   return (
-    <div className="Container">
-      <h2>Gestión de Medicamentos</h2>
+   <div>
+  <h2 className="page-title">Gestión de Medicamentos</h2>
 
-      {/* Formulario */}
-      <form className="medi-form" onSubmit={guardarMedicamento}>
-        <div>
-          <label>Nombre:</label>
-          <input 
-            type="text" 
-            value={formData.nombre}
-            onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-            required 
-          />
-        </div>
-
-        <div>
-          <label>Vía de administración:</label>
-          <select 
-            value={formData.via_administracion}
-            onChange={(e) => setFormData({...formData, via_administracion: e.target.value})}
-          >
-            <option value="Oral">Oral</option>
-            <option value="Inyectable">Inyectable</option>
-            <option value="Tópica">Tópica</option>
-            <option value="Otro">Otro</option>
-          </select>
-        </div>
-
-        {formData.via_administracion === 'Otro' && (
+  <div className="Container">
+    {/* Contenedor interno para alinear horizontalmente */}
+    <div className="medi-inner">
+      
+      {/* Columna de formulario */}
+      <div className="medi-column">
+        <h3 className="section-title">Rellena los campos</h3>
+        <form className="medi-form" onSubmit={guardarMedicamento}>
           <div>
-            <label>Especificar vía:</label>
+            <label>Nombre:</label>
             <input 
               type="text" 
-              value={formData.via_administracion_personalizada}
-              onChange={(e) => setFormData({...formData, via_administracion_personalizada: e.target.value})}
-              required 
+              value={formData.nombre}
+              onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+              required
             />
           </div>
-        )}
 
-        <div>
-          <label>Dosis:</label>
-          <input 
-            type="text" 
-            value={formData.dosis}
-            onChange={(e) => setFormData({...formData, dosis: e.target.value})}
-            required 
-          />
-        </div>
+          <div>
+            <label>Vía de administración:</label>
+            <select 
+              value={formData.via_administracion}
+              onChange={(e) => setFormData({...formData, via_administracion: e.target.value})}
+            >
+              <option value="Oral">Oral</option>
+              <option value="Inyectable">Inyectable</option>
+              <option value="Tópica">Tópica</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
 
-        <div>
-          <label>Frecuencia:</label>
-          <input 
-            type="text" 
-            value={formData.frecuencia}
-            onChange={(e) => setFormData({...formData, frecuencia: e.target.value})}
-            required 
-          />
-        </div>
+          {formData.via_administracion === 'Otro' && (
+            <div>
+              <label>Especificar vía:</label>
+              <input 
+                type="text" 
+                value={formData.via_administracion_personalizada}
+                onChange={(e) => setFormData({...formData, via_administracion_personalizada: e.target.value})}
+                required
+              />
+            </div>
+          )}
 
-        <div>
-          <label>Importancia:</label>
-          <select 
-            value={formData.importancia}
-            onChange={(e) => setFormData({...formData, importancia: e.target.value})}
-          >
-            <option value="Alta">Alta</option>
-            <option value="Media">Media</option>
-            <option value="Baja">Baja</option>
-          </select>
-        </div>
+          <div>
+            <label>Dosis:</label>
+            <input 
+              type="text" 
+              value={formData.dosis}
+              onChange={(e) => setFormData({...formData, dosis: e.target.value})}
+              required
+            />
+          </div>
 
-        <button type="submit">
-          {editandoId ? 'Actualizar' : 'Crear'} Medicamento
-        </button>
-        
-        {editandoId && (
-          <button type="button" onClick={limpiarFormulario}>
-            Cancelar
+          <div>
+            <label>Frecuencia:</label>
+            <input 
+              type="text" 
+              value={formData.frecuencia}
+              onChange={(e) => setFormData({...formData, frecuencia: e.target.value})}
+              required
+            />
+          </div>
+
+          <div>
+            <label>Importancia:</label>
+            <select 
+              value={formData.importancia}
+              onChange={(e) => setFormData({...formData, importancia: e.target.value})}
+            >
+              <option value="Alta">Alta</option>
+              <option value="Media">Media</option>
+              <option value="Baja">Baja</option>
+            </select>
+          </div>
+
+          <button type="submit">
+            {editandoId ? 'Actualizar' : 'Crear'} Medicamento
           </button>
-        )}
-      </form>
+          
+          {editandoId && (
+            <button type="button" onClick={limpiarFormulario}>
+              Cancelar
+            </button>
+          )}
+        </form>
+      </div>
 
-      {/* Lista de medicamentos */}
-      <div>
-        <h3>Medicamentos ({medicamentos.length})</h3>
-        
+      {/* Columna de lista */}
+      <div className="medi-column">
+        <h3 className="section-title">Medicamentos ({medicamentos.length})</h3>
         {medicamentos.length === 0 ? (
           <p>No hay medicamentos registrados</p>
         ) : (
-          <ul>
+          <ul className="med-list">
             {medicamentos.map(med => (
-              <li key={med.id}>
-                <strong>{med.nombre}</strong> - {med.dosis} - {med.frecuencia}
-                <br/>
-                Vía: {med.via_administracion === 'Otro' 
-                  ? med.via_administracion_personalizada 
-                  : med.via_administracion
-                } | Importancia: {med.importancia}
-                
-                <button onClick={() => editarMedicamento(med)}>
-                  Editar
-                </button>
-                
-                <button onClick={() => eliminarMedicamento(med.id)}>
-                  Eliminar
-                </button>
+              <li key={med.id} className={`med-item ${med.importancia.toLowerCase()}`}>
+                <div className="med-info">
+                  <strong>{med.nombre}</strong>
+                  <p>{med.dosis} - {med.frecuencia}</p>
+                  <small>
+                    Vía: {med.via_administracion === 'Otro' 
+                      ? med.via_administracion_personalizada 
+                      : med.via_administracion
+                    } | Importancia: {med.importancia}
+                  </small>
+                </div>
+                <div className="med-actions">
+                  <button onClick={() => editarMedicamento(med)}>Editar</button>
+                  <button onClick={() => eliminarMedicamento(med.id)}>Eliminar</button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </div>
+
     </div>
+  </div>
+</div>
+
   );
 };
 
