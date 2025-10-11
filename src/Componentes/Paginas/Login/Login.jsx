@@ -44,7 +44,14 @@ const Login = () => {
     }
   };
 
-  return (
+// Función para iniciar login con OAuth
+const loginWithProvider = (provider) => {
+    // Redirigir directamente al endpoint del backend
+    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
+};
+
+
+return (
      //<img src="vidomedilogo.png" alt="Logo" className="logo" />
 
     <div className="login-container">
@@ -73,6 +80,15 @@ const Login = () => {
         {error && <div className="error-message">{error}</div>}
 
         <button type="submit">Iniciar Sesión</button>
+
+        {/* Botón Google */}
+        <button onClick={() => loginWithProvider('google')}>
+          Login con Google
+        </button>
+
+        <button onClick={() => loginWithProvider('microsoft')}>
+          Login con Microsoft
+        </button>
 
         <div className="register-link">
           ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
