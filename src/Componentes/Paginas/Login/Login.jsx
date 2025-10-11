@@ -20,24 +20,26 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
 
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+          //'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
         },
         body: JSON.stringify({
           correo: email, 
-          contraseña: password
+          password: password
         })
       });
 
       const data = await response.json();
 
       if (data.success) {
+        localStorage.setItem('token', data.token); //guarda el token
+        localStorage.setItem('user', JSON.stringify(data.user)); //datos del usuario
         // Redireccionar al dashboard después de login exitoso
         navigate('/inicio');
       } else {
-        setError('Credenciales incorrectas'); //feedback al usuario
+        setError('Datos incorrectos'); //feedback al usuario
       }
     } catch (err) {
-      setError('Error al conectar con el servidor'); // error de red
+      setError('Error de Conexion'); // error de red
       console.error('Login error:', err);
     }
   };
@@ -49,9 +51,8 @@ const Login = () => {
         <div className="top-wave"></div>
   <div className="top-wave-transparent"></div>
       <form className="login-form" onSubmit={handleSubmit}>
-<img src="vidomedilogo.png" alt="Logo" className="logo" />
+      <img src="vidomedilogo.png" alt="Logo" className="logo" />
         <h2 className="login-title">Ingresa a tu cuenta </h2>
-
         <input
           type="email"
           placeholder="Correo Electrónico"

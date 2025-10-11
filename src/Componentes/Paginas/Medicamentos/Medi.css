@@ -1,0 +1,72 @@
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem 2rem;
+  color: #145f6b;
+}
+
+.section-title {
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid #cdd4d6;
+  color: #145f6b;
+}
+.Container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #fdffff;
+  border-radius: 16px;
+  border: 2px solid #145f6b8f;
+  border-left: 6px solid #145f6b; /* solo borde grande */
+}
+
+/* Contenedor interno horizontal */
+.medi-inner {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  border-top: 1px solid #ccc; /* línea divisoria simple */
+  padding-top: 20px;
+}
+
+/* Columnas sin bordes ni sombras adicionales */
+.medi-column {
+  flex: 1;
+}
+
+
+.medi-form input,
+.medi-form select {
+  width: 100%;
+  padding: 8px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.medi-form input:focus,
+.medi-form select:focus {
+  border-color: #1F7A8C;
+  box-shadow: 0 0 6px rgba(31, 122, 140, 0.3);
+  outline: none;
+}
+
+.medi-form button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #1F7A8C;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+  margin-top: 2rem;
+}
+
+.medi-form button:hover {
+  background: #145f6b;
+  transform: translateY(-2px);
+}
