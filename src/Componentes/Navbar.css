@@ -1,0 +1,170 @@
+/* Variables CSS */
+:root {
+  --navbar-bg: #1F7A8C;
+  --navbar-text: #ffffff;
+  --navbar-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  --dropdown-bg: #ffffff;
+  --dropdown-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  --hover-bg: #d4edf4;
+  --active-bg: #c1e9f2;
+  --user-avatar-color: #BFDB38;
+}
+
+/* Navbar principal */
+.custom-navbar {
+  background-color: var(--navbar-bg);
+  box-shadow: var(--navbar-shadow);
+  padding: 0.5rem 1rem;
+  z-index: 1100;
+  position: relative;
+}
+
+/* Brand/Logo */
+.navbar-brand-custom {
+  font-weight: 600;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  color: var(--navbar-text) !important;
+  text-decoration: none;
+}
+
+.navbar-brand-custom:hover {
+  color: var(--navbar-text) !important;
+}
+
+/* Toggler para móviles */
+.navbar-toggler-custom {
+  border: none;
+  padding: 0.25rem;
+  font-size: 1.5rem;
+  color: var(--navbar-text);
+  background: transparent;
+}
+
+.navbar-toggler-custom:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Contenedor del menú */
+.navbar-collapse-custom {
+  justify-content: flex-end;
+}
+
+.nav-custom {
+  align-items: center;
+}
+
+/* Dropdown de usuario */
+.user-dropdown {
+  margin-left: 0.5rem;
+}
+
+.user-toggle {
+  color: var(--navbar-text) !important;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+}
+
+.user-toggle:hover {
+  background-color: transparent !important;
+  color: var(--navbar-text) !important;
+}
+
+/* Avatar del usuario */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--navbar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navbar-bg);
+  font-weight: bold;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.user-name {
+  margin-left: 0.25rem;
+}
+
+/* Menú dropdown */
+.dropdown-menu-custom {
+  border-radius: 8px;
+  box-shadow: var(--dropdown-shadow);
+  border: none;
+  margin-top: 10px;
+  min-width: 220px;
+}
+
+.dropdown-header-custom {
+  font-weight: 600;
+  color: var(--navbar-bg);
+  font-size: 0.9rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.dropdown-item-custom {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s ease;
+  border: none;
+  text-decoration: none;
+  color: #333;
+}
+
+.dropdown-item-custom:hover {
+  background-color: var(--hover-bg);
+  color: var(--navbar-bg);
+}
+
+.dropdown-item-custom:active {
+  background-color: var(--active-bg);
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+  .custom-navbar {
+    padding: 0.5rem;
+  }
+  
+  .user-name {
+    display: none;
+  }
+  
+  .dropdown-menu-custom {
+    position: absolute;
+    right: 0;
+    left: auto;
+  }
+  
+  .nav-custom {
+    padding: 1rem 0;
+  }
+  
+  .user-dropdown {
+    margin-left: 0;
+  }
+}
+
+/* Estados de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-item-custom {
+    transition: none;
+  }
+}
+
+/* Focus para accesibilidad */
+.dropdown-item-custom:focus {
+  outline: 2px solid var(--navbar-bg);
+  outline-offset: -2px;
+}

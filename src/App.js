@@ -1,32 +1,42 @@
 import './App.scss';
-import { 
-  BrowserRouter as Router, 
-  Routes, 
-  Route, 
-  Navigate,
-  Outlet  // <<<< AÑADE ESTO
-} from "react-router-dom"; // <<<< CAMBIA ESTE IMPORT
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
-import Inicio from './Componentes/Paginas/Inicio';
-import Planes from './Componentes/Paginas/Planes';
-import Ventas from './Componentes/Paginas/Ventas';
-import Usuarios from './Componentes/Paginas/Usuarios';
-import Config from './Componentes/Paginas/Config';
-import Login from './Componentes/Paginas/Login.jsx'; // <<<< AÑADE LA EXTENSIÓN
-import Registro from './Componentes/Paginas/j.jsx'; // <<<< AÑADE LA EXTENSIÓN
-import NotFound from './Componentes/Paginas/NotFound'; // 👈 Importa el 404
 
-import Home from './Componentes/Paginas/Home.jsx'; // <<<< AÑADE LA EXTENSIÓN
+import Login from './Componentes/Paginas/Login/Login.jsx';
+import Registro from './Componentes/Paginas/Registro/Registro.jsx';
+import NotFound from './Componentes/Paginas/NotFound.jsx';
+import Home from './Componentes/Paginas/Home.jsx';
+import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
-// Layout para rutas autenticadas (con navbar y sidebar)
-const AuthenticatedLayout = () => {
+import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
+import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
+import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
+import Planes from './Componentes/Paginas/Planes.jsx';
+import Ventas from './Componentes/Paginas/Ventas.jsx';
+import Usuarios from './Componentes/Paginas/Usuarios.jsx';
+import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
+//import Cosa1 from './Componentes/Paginas/Cosa1.jsx';
+
+// Layout para las rutas privadas (dashboard)
+const DashboardLayout = () => {
   return (
-    <div className="flex">
+    <div className="d-flex">
       <Sidebar />
       <div className="content w-100">
         <Navbar />
-        <Outlet /> {/* Esto ahora funciona */}
+        <Routes>
+          <Route path="/inicio" element={<Inicio />} />
+          <Route path="/medicamento" element={<Medi/>} />
+          <Route path="/historial" element={<Agend/>} />
+          <Route path="/ventas" element={<Ventas />} />
+          <Route path="/planes" element={<Planes />} />
+          <Route path="/contactos" element={<Usuarios />} />
+          <Route path="/config" element={<Configuracion />} />
+          {/*<Route path="/1" element={<Cosa1 />} />*/}
+        </Routes>
       </div>
     </div>
   );
@@ -34,30 +44,28 @@ const AuthenticatedLayout = () => {
 
 function App() {
   return (
-      <Router>
-        <Routes>
-          {/* Ruta pública sin layout */}
-           <Route path="/registro" element={<Registro />} />
-           
-          <Route path="/login" element={<Login />} />
-          <Route path="/Home" element={<Home />} />
-          {/* Rutas autenticadas con layout */}
-          <Route element={<AuthenticatedLayout />}>
-            <Route path="/inicio" element={<Inicio />} />
-            <Route path="/ventas" element={<Ventas />} />
-            <Route path="/planes" element={<Planes />} />
-            <Route path="/contactos" element={<Usuarios />} />
-            <Route path="/config" element={<Config />} />
-          </Route>
-          
-          {/* Redirección desde raíz */}
-          <Route path="/" element={<NotFound />} />
+    <Router>
+      <Routes>
+        {/* Rutas públicas (sin layout de dashboard) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/oauth/callback" element={<OAuthCallback />}/>
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/home" element={<Home />} />
 
-          
-          {/* Redirección para rutas no encontradas */}
-            <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+        {/* Rutas privadas (con layout de dashboard) */}
+        <Route
+          path="/*"
+          element={
+            <RutaPrivada>
+              <DashboardLayout />
+            </RutaPrivada>            
+          }
+        />
+
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
