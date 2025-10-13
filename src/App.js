@@ -1,7 +1,10 @@
 import './App.scss';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from 'react';
 
 import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
+//import { setupAuthInterceptor } from './Componentes/Paginas/Seguridad/authInterceptor.jsx';
+import useAutoLogout from './Componentes/Paginas/Seguridad/useAutoLogout.jsx';
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
 
@@ -22,20 +25,71 @@ import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
 
 // Layout para las rutas privadas (dashboard)
 const DashboardLayout = () => {
+  const { showWarning, stayLoggedIn } = useAutoLogout(120, 1); // 5 min total, 1 min antes aviso
+
   return (
     <div className="d-flex">
       <Sidebar />
-      <div className="content w-100">
+      <div className="content w-100 position-relative">
         <Navbar />
+
+        {/* MODAL de aviso */}
+        {showWarning && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              backgroundColor: "rgba(0,0,0,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 9999,
+            }}
+          >
+            <div
+              style={{
+                background: "#fff",
+                padding: "24px 32px",
+                borderRadius: "12px",
+                boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
+                maxWidth: "400px",
+                textAlign: "center",
+              }}
+            >
+              <h4 style={{ marginBottom: "10px" }}>⏳ Sesión por expirar</h4>
+              <p style={{ color: "#555" }}>
+                Tu sesión se cerrará automáticamente en menos de un minuto.
+              </p>
+              <button
+                onClick={stayLoggedIn}
+                style={{
+                  marginTop: "16px",
+                  padding: "8px 16px",
+                  backgroundColor: "#007bff",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                Seguir conectado
+              </button>
+            </div>
+          </div>
+        )}
+
         <Routes>
           <Route path="/inicio" element={<Inicio />} />
-          <Route path="/medicamento" element={<Medi/>} />
-          <Route path="/historial" element={<Agend/>} />
+          <Route path="/medicamento" element={<Medi />} />
+          <Route path="/historial" element={<Agend />} />
           <Route path="/ventas" element={<Ventas />} />
           <Route path="/planes" element={<Planes />} />
           <Route path="/contactos" element={<Usuarios />} />
           <Route path="/config" element={<Configuracion />} />
-          {/*<Route path="/1" element={<Cosa1 />} />*/}
         </Routes>
       </div>
     </div>
@@ -43,6 +97,10 @@ const DashboardLayout = () => {
 };
 
 function App() {
+  // Configurar interceptor de autenticación
+  //React.useEffect(() => {
+    //setupAuthInterceptor();
+  //}, []);
   return (
     <Router>
       <Routes>

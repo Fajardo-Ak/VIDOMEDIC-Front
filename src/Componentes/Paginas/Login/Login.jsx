@@ -15,6 +15,7 @@ const Login = () => {
     setError('');
 
     try {
+      //obtener el CSRF token de Sanctum  
       const response = await fetch('http://localhost:8000/api/login', {
         method: 'POST',
         headers: {
