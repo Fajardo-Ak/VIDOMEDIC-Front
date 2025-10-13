@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Función para toggle del sidebar
   const toggleSidebar = () => {
@@ -20,6 +21,46 @@ const Sidebar = () => {
     { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' }
     
   ];
+
+  // Función para cerrar sesión
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Llamar al endpoint de logout
+      const response = await fetch('http://localhost:8000/api/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Limpiar localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        
+        // Redirigir al login
+        navigate('/login');
+      } else {
+        console.error('Error al cerrar sesión:', data.message);
+        // Forzar logout aunque falle el endpoint
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+      // Forzar logout en caso de error
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
+  };
 
   // Verificar si una ruta está activa
   const isActiveLink = (path) => {
@@ -59,6 +100,16 @@ const Sidebar = () => {
               </li>
             ))}
           </ul>
+          {/* Botón Cerrar Sesión - Posición fija en la parte inferior */}
+          <div className="sidebar-logout-section">
+            <button 
+              className="sidebar-logout-btn"
+              onClick={handleLogout}
+            >
+              <i className="bi bi-box-arrow-right"></i>
+              <span className="sidebar-link-text">Cerrar Sesión</span>
+            </button>
+          </div>
         </nav>
       </div>
 
