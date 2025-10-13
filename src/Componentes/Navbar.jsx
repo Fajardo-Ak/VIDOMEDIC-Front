@@ -1,81 +1,65 @@
-import React, { useState } from 'react';
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
-} from 'reactstrap';
-import './Navbar.css';
+import React, { useEffect, useState } from "react";
+import { Navbar, NavbarBrand } from "reactstrap";
+import "./Navbar.css";
 
 const CustomNavbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [usuario, setUsuario] = useState(null);
 
-  const toggle = () => setIsOpen(!isOpen);
-
-  // Datos del usuario (podrían venir de props o contexto)
-  const userData = {
-    name: 'Angel Fajardo',
-    email: 'angel.fajardo@ejemplo.com',
-    initials: 'AF',
-    color: '#BFDB38'
+  // === Obtener datos del usuario ===
+  const obtenerPerfilUsuario = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/usuario/perfil", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUsuario(data.usuario);
+      } else {
+        console.error("Error al obtener perfil:", data.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
+
+  // === Obtener foto (con fallback) ===
+  const obtenerFotoPerfil = () => {
+    if (usuario?.foto_perfil) {
+      return `http://localhost:8000/${usuario.foto_perfil}`;
+    } else {
+      return "http://localhost:8000/images/usuario-default.png";
+    }
+  };
+
+  useEffect(() => {
+    obtenerPerfilUsuario();
+  }, []);
 
   return (
     <Navbar expand="md" className="custom-navbar">
-      {/* Logo y Brand */}
+      {/* Brand o título a la izquierda */}
       <NavbarBrand href="/" className="navbar-brand-custom">
         <i className="bi bi-people-fill me-2"></i>
         Gestión CRM
       </NavbarBrand>
-      
-      {/* Toggler para móviles */}
-      <NavbarToggler onClick={toggle} className="navbar-toggler-custom">
-        <i className="bi bi-list"></i>
-      </NavbarToggler>
-      
-      {/* Menú colapsable */}
-      <Collapse isOpen={isOpen} navbar className="navbar-collapse-custom">
-        <Nav navbar className="nav-custom">
-          {/* Dropdown de usuario */}
-          <UncontrolledDropdown nav inNavbar className="user-dropdown">
-            <DropdownToggle nav caret className="user-toggle">
-              <div 
-                className="user-avatar"
-                style={{ backgroundColor: userData.color }}
-              >
-                {userData.initials}
-              </div>
-              <span className="user-name">{userData.name}</span>
-            </DropdownToggle>
-            
-            <DropdownMenu end className="dropdown-menu-custom">
-              <DropdownItem header className="dropdown-header-custom">
-                <i className="bi bi-person-circle me-2"></i>
-                {userData.email}
-              </DropdownItem>
-              
-              <DropdownItem className="dropdown-item-custom">
-                <i className="bi bi-person me-2"></i> Mi Perfil
-              </DropdownItem>
-              
-              <DropdownItem className="dropdown-item-custom">
-                <i className="bi bi-gear me-2"></i> Configuraciones
-              </DropdownItem>
-              
-              <DropdownItem divider />
-              
-              <DropdownItem className="dropdown-item-custom">
-                <i className="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
-              </DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-        </Nav>
-      </Collapse>
+
+      {/* Info del usuario a la derecha */}
+      <div className="navbar-user-section ms-auto">
+        {usuario ? (
+          <div className="navbar-user-info">
+            <img
+              src={obtenerFotoPerfil()}
+              alt="Foto de perfil"
+              className="navbar-user-avatar"
+            />
+            <span className="navbar-user-name">{usuario.nombre}</span>
+          </div>
+        ) : (
+          <span className="navbar-loading">Cargando...</span>
+        )}
+      </div>
     </Navbar>
   );
 };
