@@ -15,7 +15,7 @@ const Login = () => {
     setError('');
 
     try {
-      //obtener el CSRF token de Sanctum  
+      //obtener el CSRF token de Sanctum 
       const response = await fetch('http://localhost:8000/api/login', {
         method: 'POST',
         headers: {
@@ -56,45 +56,57 @@ return (
      //<img src="vidomedilogo.png" alt="Logo" className="logo" />
 
     <div className="login-container">
-        <div className="top-wave"></div>
+  <div className="top-wave"></div>
   <div className="top-wave-transparent"></div>
-      <form className="login-form" onSubmit={handleSubmit}>
-      <img src="vidomedilogo.png" alt="Logo" className="logo" />
-        <h2 className="login-title">Ingresa a tu cuenta </h2>
-        <input
-          type="email"
-          placeholder="Correo Electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
 
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+  <form className="login-form" onSubmit={handleSubmit}>
+    <img src="vidomedilogo.png" alt="Logo" className="logo" />
+    <h2 className="login-title">Ingresa a tu cuenta</h2>
 
-        {error && <div className="error-message">{error}</div>}
+    <input
+      type="email"
+      placeholder="Correo Electrónico"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      required
+    />
 
-        <button type="submit">Iniciar Sesión</button>
+    <input
+      type="password"
+      placeholder="Contraseña"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+    />
 
-        {/* Botón Google */}
-        <button onClick={() => loginWithProvider('google')}>
-          Login con Google
-        </button>
+    {error && <div className="error-message">{error}</div>}
 
-        <button onClick={() => loginWithProvider('microsoft')}>
-          Login con Microsoft
-        </button>
+    <button className="loguear" type="submit">
+      Iniciar Sesión
+    </button>
 
-        <div className="register-link">
-          ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
-        </div>
-      </form>
+    <button
+      type="button"
+      className="access-with"
+      onClick={() => loginWithProvider("google")}
+    >
+      Iniciar sesión con Google
+    </button>
+
+    <button
+      type="button"
+      className="access-with"
+      onClick={() => loginWithProvider("microsoft")}
+    >
+      Iniciar sesión con Microsoft
+    </button>
+
+    <div className="register-link">
+      ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
     </div>
+  </form>
+</div>
+
   );
 };
 

@@ -1,7 +1,7 @@
 /* Variables CSS */
 :root {
-  --navbar-bg: #1F7A8C;
-  --navbar-text: #ffffff;
+  --navbar-bg: #ffffff;
+  --navbar-text: #013f4a;
   --navbar-shadow: 0 2px 5px rgba(0,0,0,0.1);
   --hover-bg: #d4edf4;
   --active-bg: #c1e9f2;
@@ -41,6 +41,9 @@
   color: var(--navbar-text);
   background: transparent;
 }
+.span{
+  color: #013f4a;
+}
 
 .navbar-toggler-custom:focus {
   box-shadow: none;
@@ -57,7 +60,7 @@
 
 .navbar-user-info {
   display: flex;
-  flex-direction: column; /* pone los elementos en vertical */
+  flex-direction: row; /* pone los elementos en vertical */
   align-items: center;    /* centra horizontalmente */
 }
 
@@ -66,7 +69,8 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 4px; /* espacio entre foto y nombre */
+  margin-bottom: 4px;
+  
 }
 
 .navbar-user-avatar:hover {
@@ -75,7 +79,7 @@
 
 .navbar-user-name {
   font-size: 0.9rem;
-  color: #fff; /* ajusta al color de tu navbar */
+  color: #013f4a; 
 }
 
 /* Texto de carga */

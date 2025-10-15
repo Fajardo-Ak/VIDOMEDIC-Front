@@ -49,12 +49,13 @@ const CustomNavbar = () => {
       <div className="navbar-user-section ms-auto">
         {usuario ? (
           <div className="navbar-user-info">
+            <span className="navbar-user-name">{usuario.nombre}</span>
             <img
               src={obtenerFotoPerfil()}
               alt="Foto de perfil"
               className="navbar-user-avatar"
             />
-            <span className="navbar-user-name">{usuario.nombre}</span>
+            
           </div>
         ) : (
           <span className="navbar-loading">Cargando...</span>

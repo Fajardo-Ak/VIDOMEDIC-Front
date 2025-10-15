@@ -1,0 +1,146 @@
+.planes-container {
+  text-align: center;
+  padding: 1rem 6% 7rem;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.planes-container::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 180px;
+  background-color: rgba(31, 122, 140, 0.04);
+  clip-path: ellipse(80% 100% at 50% 0%);
+  z-index: 0;
+}
+
+.planes-title {
+  font-size: 2.2rem;
+  color: #1F7A8C;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+.planes-subtitle {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.plans-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.plan-card {
+  background-color: #ffffff;
+  border-radius: 18px;
+  border: 2px solid rgba(31, 122, 140, 0.15);
+  padding: 2rem 1.5rem;
+  width: 300px;
+  max-width: 100%;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.plan-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 22px rgba(31, 122, 140, 0.15);
+}
+
+.plan-card h3 {
+  color: #0f2e33;
+  font-size: 1.3rem;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+
+.price {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1F7A8C;
+  margin-bottom: 1rem;
+}
+
+.plan-card ul {
+  list-style: none;
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.plan-card li::before {
+  content: "✔";
+  color: #1F7A8C;
+  margin-right: 8px;
+}
+
+.btn-elegir {
+  background-color: #1F7A8C;
+  color: #fff;
+  border-color: 7px solid #061618;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.btn-elegir:hover {
+  background-color: #145f6b;
+}
+
+.descuento {
+  display: block;
+  font-size: 1rem;
+  color: #999;
+  text-decoration: line-through;
+  margin-bottom: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .plan-card {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .planes-container {
+    padding: 5rem 4%;
+  }
+
+  .plans-grid {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .planes-container {
+    padding: 4rem 4%;
+  }
+}

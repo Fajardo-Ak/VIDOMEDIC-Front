@@ -19,7 +19,6 @@ const Sidebar = () => {
     { path: '/historial', icon: 'bi-journal-text', label: 'Historial Agendas' },
     { path: '/planes', icon: 'bi-credit-card', label: 'Planes' },
     { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' }
-    
   ];
 
   // Función para cerrar sesión
@@ -68,7 +67,7 @@ const Sidebar = () => {
   };
 
   return (
-    <>
+    <><div className="layout">
       <div className={`sidebar-container ${isSidebarOpen ? 'open' : 'closed'}`}>
         
         {/* Header del Sidebar */}
@@ -100,6 +99,8 @@ const Sidebar = () => {
               </li>
             ))}
           </ul>
+              
+
           {/* Botón Cerrar Sesión - Posición fija en la parte inferior */}
           <div className="sidebar-logout-section">
             <button 
@@ -116,6 +117,7 @@ const Sidebar = () => {
       {/* Espacio para el contenido principal */}
       <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Tu contenido principal irá aquí */}
+      </div>
       </div>
     </>
   );

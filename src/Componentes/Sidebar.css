@@ -1,12 +1,12 @@
 /* Variables CSS para fácil mantenimiento */
 :root {
-  --sidebar-bg: #1F7A8C;
+  --sidebar-bg: #013f4a;
   --sidebar-width-open: 250px;
   --sidebar-width-closed: 70px;
   --transition-speed: 0.3s;
   --white: #ffffff;
   --active-bg: rgba(255, 255, 255, 0.95);
-  --hover-bg: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(114, 221, 180, 0.1);
   --border-light: rgba(255, 255, 255, 0.1);
 }
 
@@ -18,8 +18,9 @@
   height: 100vh;
   width: var(--sidebar-width-open);
   background-color: var(--sidebar-bg);
-  padding: 25px 0;
-  z-index: 1000;
+  padding: 20px 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 1;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -39,12 +40,11 @@
   padding: 0 15px 20px;
   color: var(--white);
   border-bottom: 1px solid var(--border-light);
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   min-height: 40px;
 }
 
 .sidebar-title {
-  margin: 0;
   font-size: 1.4rem;
   font-weight: 500;
   transition: opacity 0.2s ease;
@@ -59,7 +59,7 @@
   background-color: transparent;
   color: var(--white);
   border: none;
-  border-radius: 50%;
+  border-radius: 60%;
   width: 36px;
   height: 36px;
   display: flex;
@@ -99,7 +99,6 @@
   align-items: center;
   padding: 12px 15px;
   text-decoration: none;
-  transition: all 0.2s ease;
   font-size: 1.05rem;
   white-space: nowrap;
   color: rgba(255, 255, 255, 0.85);
@@ -109,13 +108,15 @@
 .sidebar-link.active {
   background-color: var(--active-bg);
   color: var(--sidebar-bg);
-  border-left: 3px solid var(--white);
+  border-left: 0px solid var(--white);
+  border-radius: 60px;
 }
 
 .sidebar-link:hover:not(.active) {
   background-color: var(--hover-bg);
   color: var(--white);
   border-left: 3px solid rgba(255, 255, 255, 0.5);
+  border-radius: 60px;
 }
 
 .sidebar-link i {
@@ -151,6 +152,7 @@
   margin-left: var(--sidebar-width-closed);
 }
 
+
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar-container {
@@ -177,7 +179,7 @@
 /* === SECCIÓN CERRAR SESIÓN === */
 .sidebar-logout-section {
   margin-top: auto;
-  padding: 10px 0 0 0;
+  padding: 55px 0 0 0;
   border-top: 1px solid var(--border-light);
   position: relative;
 }
@@ -187,7 +189,7 @@
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  padding: 14px 18px;
+  padding: 10px 18px;
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.85);

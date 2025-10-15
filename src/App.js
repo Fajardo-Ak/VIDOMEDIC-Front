@@ -11,13 +11,13 @@ import Sidebar from './Componentes/Sidebar';
 import Login from './Componentes/Paginas/Login/Login.jsx';
 import Registro from './Componentes/Paginas/Registro/Registro.jsx';
 import NotFound from './Componentes/Paginas/NotFound.jsx';
-import Home from './Componentes/Paginas/Home.jsx';
+import Home from './Componentes/Paginas/Home/Home.jsx';
 import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
 import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
 import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
-import Planes from './Componentes/Paginas/Planes.jsx';
+import Planes from './Componentes/Paginas/Planes/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
 import Usuarios from './Componentes/Paginas/Usuarios.jsx';
 import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
@@ -68,7 +68,7 @@ const DashboardLayout = () => {
                 style={{
                   marginTop: "16px",
                   padding: "8px 16px",
-                  backgroundColor: "#007bff",
+                  backgroundColor: "#00ffeeff",
                   color: "#fff",
                   border: "none",
                   borderRadius: "8px",
