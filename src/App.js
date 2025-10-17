@@ -2,7 +2,7 @@ import './App.scss';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from 'react';
 
-import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
+//import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
 //import { setupAuthInterceptor } from './Componentes/Paginas/Seguridad/authInterceptor.jsx';
 import useAutoLogout from './Componentes/Paginas/Seguridad/useAutoLogout.jsx';
 import Navbar from './Componentes/Navbar';
@@ -114,9 +114,9 @@ function App() {
         <Route
           path="/*"
           element={
-            <RutaPrivada>
+            //<RutaPrivada>
               <DashboardLayout />
-            </RutaPrivada>            
+            //</RutaPrivada>            
           }
         />
 
