@@ -15,7 +15,7 @@ const Sidebar = () => {
   // Array de items del menú para mejor mantenimiento
   const menuItems = [
     { path: '/inicio', icon: 'bi-calendar-week', label: 'Inicio' },
-    { path: '/medicamento', icon: 'bi-capsule', label: 'Medicamentos' },
+    //{ path: '/medicamento', icon: 'bi-capsule', label: 'Medicamentos' },
     { path: '/historial', icon: 'bi-journal-text', label: 'Historial Agendas' },
     { path: '/planes', icon: 'bi-credit-card', label: 'Planes' },
     { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' }

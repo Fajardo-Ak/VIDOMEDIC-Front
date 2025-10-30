@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from 'react';
 
 import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
-//import { setupAuthInterceptor } from './Componentes/Paginas/Seguridad/authInterceptor.jsx';
 import useAutoLogout from './Componentes/Paginas/Seguridad/useAutoLogout.jsx';
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
@@ -15,7 +14,7 @@ import Home from './Componentes/Paginas/Home.jsx';
 import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
-import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
+//import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
 import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
 import Planes from './Componentes/Paginas/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
@@ -25,7 +24,7 @@ import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
 
 // Layout para las rutas privadas (dashboard)
 const DashboardLayout = () => {
-  const { showWarning, stayLoggedIn } = useAutoLogout(120, 1); // 5 min total, 1 min antes aviso
+  const { showWarning, stayLoggedIn } = useAutoLogout(12, 1); // 5 min total, 1 min antes aviso
 
   return (
     <div className="d-flex">
@@ -84,7 +83,7 @@ const DashboardLayout = () => {
 
         <Routes>
           <Route path="/inicio" element={<Inicio />} />
-          <Route path="/medicamento" element={<Medi />} />
+          {/*<Route path="/medicamento" element={<Medi />} />*/}
           <Route path="/historial" element={<Agend />} />
           <Route path="/ventas" element={<Ventas />} />
           <Route path="/planes" element={<Planes />} />
@@ -97,10 +96,6 @@ const DashboardLayout = () => {
 };
 
 function App() {
-  // Configurar interceptor de autenticación
-  //React.useEffect(() => {
-    //setupAuthInterceptor();
-  //}, []);
   return (
     <Router>
       <Routes>
