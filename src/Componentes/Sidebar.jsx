@@ -4,7 +4,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import './Sidebar.css';
 
 const Sidebar = ({ onToggle }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [open, setOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
@@ -16,32 +16,20 @@ const Sidebar = ({ onToggle }) => {
     { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' },
   ];
 
-  // Detectar si es móvil
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth <= 768) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      setOpen(!mobile);
     };
-
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Notificar al padre cuando cambie el estado
   useEffect(() => {
-    if (onToggle) {
-      onToggle(isSidebarOpen);
-    }
-  }, [isSidebarOpen, onToggle]);
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
-  const openSidebar = () => setIsSidebarOpen(true);
+    if (onToggle) onToggle(open);
+  }, [open, onToggle]);
 
   const handleLogout = async () => {
     try {
@@ -65,31 +53,24 @@ const Sidebar = ({ onToggle }) => {
 
   return (
     <>
-      {/* Overlay solo en móvil cuando sidebar está abierto */}
-      {isMobile && isSidebarOpen && (
-        <div className="sidebar-overlay active" onClick={closeSidebar} />
-      )}
+      {isMobile && open && <div className="sidebar-overlay active" onClick={() => setOpen(false)} />}
 
-      {/* Hamburguesa para MÓVIL */}
-      {isMobile && (
-        <button className="sidebar-hamburger" onClick={openSidebar}>
+      {isMobile && !open && (
+        <button className="sidebar-hamburger" onClick={() => setOpen(true)}>
           <FiMenu />
         </button>
       )}
 
-      {/* Hamburguesa para WEB (cuando sidebar está cerrado) */}
-      {!isMobile && !isSidebarOpen && (
-        <button className="sidebar-hamburger web" onClick={openSidebar}>
+      {!isMobile && !open && (
+        <button className="sidebar-hamburger web" onClick={() => setOpen(true)}>
           <FiMenu />
         </button>
       )}
 
-      {/* Sidebar - comportamiento diferente en web vs móvil */}
-      <div className={`sidebar-container ${isSidebarOpen ? 'open' : 'closed'}`}>
+      <div className={`sidebar-container ${open ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
           <img src="/logoblanco.png" alt="logo" className="logo-full" />
-          {/* Botón cerrar visible en web y móvil */}
-          <button className="sidebar-close-btn" onClick={closeSidebar}>
+          <button className="sidebar-close-btn" onClick={() => setOpen(false)}>
             <FiX />
           </button>
         </div>
@@ -101,7 +82,7 @@ const Sidebar = ({ onToggle }) => {
                 <NavLink
                   to={item.path}
                   className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-                  onClick={() => isMobile && closeSidebar()}
+                  onClick={() => isMobile && setOpen(false)}
                 >
                   <i className={`bi ${item.icon}`}></i>
                   <span>{item.label}</span>

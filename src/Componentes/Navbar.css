@@ -9,17 +9,17 @@
 }
 
 .custom-navbar {
-  background-color: var(--color-blanco);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  position: sticky; /* CAMBIA fixed por sticky */
-  top: 0; /* Se pega arriba */
-  left: 0;
-  right: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
   height: var(--navbar-height);
-  z-index: 900;
+  background-color: var(--color-blanco);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 1100; 
   margin: 0;
   padding: 0;
-  border: none;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .navbar-content {
@@ -40,7 +40,9 @@
   transition: background-color 0.3s ease;
 }
 
-.navbar-user-info:hover { background-color: var(--color-hover); }
+.navbar-user-info:hover { 
+  background-color: var(--color-hover); 
+}
 
 .user-greeting {
   display: flex;
@@ -66,7 +68,9 @@
   transition: transform 0.3s ease;
 }
 
-.navbar-user-avatar:hover { transform: scale(1.05); }
+.navbar-user-avatar:hover { 
+  transform: scale(1.05); 
+}
 
 .navbar-loading {
   display: flex;
@@ -76,24 +80,40 @@
   font-size: 1.2rem;
 }
 
-/* RESPONSIVE - STICKY EN TODOS LOS DISPOSITIVOS */
+/* RESPONSIVE - SOLO FIXED, NO STICKY */
 @media (max-width: 991.98px) {
   .custom-navbar { 
-    left: 0 !important;
-    position: sticky !important; /* STICKY en móvil también */
+    position: fixed !important; /* MANTIENE FIXED EN MÓVIL */
     top: 0 !important;
+    left: 0 !important;
   }
-  .navbar-content { padding: 0 1.5rem; }
+  .navbar-content { 
+    padding: 0 1.5rem; 
+  }
 }
 
 @media (max-width: 767.98px) {
-  .custom-navbar { height: 60px; }
-  .navbar-content { padding: 0 1rem; }
-  .user-greeting { font-size: 1.1rem; }
-  .navbar-user-avatar { width: 40px; height: 40px; }
+  .custom-navbar { 
+    height: 60px; 
+  }
+  .navbar-content { 
+    padding: 0 1rem; 
+  }
+  .user-greeting { 
+    font-size: 1.1rem; 
+  }
+  .navbar-user-avatar { 
+    width: 40px; 
+    height: 40px; 
+  }
 }
 
 @media (max-width: 480px) {
-  .user-greeting span { font-size: 1rem; }
-  .navbar-user-info { gap: 10px; padding: 8px 15px; }
+  .user-greeting span { 
+    font-size: 1rem; 
+  }
+  .navbar-user-info { 
+    gap: 10px; 
+    padding: 8px 15px; 
+  }
 }
