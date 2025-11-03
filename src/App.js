@@ -1,9 +1,8 @@
-import './App.scss';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import React from 'react';
+ import './App.scss';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 
 import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
-//import { setupAuthInterceptor } from './Componentes/Paginas/Seguridad/authInterceptor.jsx';
 import useAutoLogout from './Componentes/Paginas/Seguridad/useAutoLogout.jsx';
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
@@ -21,17 +20,48 @@ import Planes from './Componentes/Paginas/Planes/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
 import Usuarios from './Componentes/Paginas/Usuarios.jsx';
 import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
-//import Cosa1 from './Componentes/Paginas/Cosa1.jsx';
+
+// Componente para manejar el scroll automático
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 // Layout para las rutas privadas (dashboard)
 const DashboardLayout = () => {
-  const { showWarning, stayLoggedIn } = useAutoLogout(120, 1); // 5 min total, 1 min antes aviso
+  const { showWarning, stayLoggedIn } = useAutoLogout(120, 1);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Escuchar cambios en el tamaño de ventana
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <div className="d-flex">
-      <Sidebar />
-      <div className="content w-100 position-relative">
+    <div className="dashboard-container">
+      <Sidebar onToggle={(open) => setIsSidebarOpen(open)} />
+      
+      {/* CONTENIDO PRINCIPAL - SIN position-relative */}
+      <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <Navbar />
+
+        {/* Scroll automático */}
+        <ScrollToTop />
 
         {/* MODAL de aviso */}
         {showWarning && (
@@ -82,25 +112,24 @@ const DashboardLayout = () => {
           </div>
         )}
 
-        <Routes>
-          <Route path="/inicio" element={<Inicio />} />
-          <Route path="/medicamento" element={<Medi />} />
-          <Route path="/historial" element={<Agend />} />
-          <Route path="/ventas" element={<Ventas />} />
-          <Route path="/planes" element={<Planes />} />
-          <Route path="/contactos" element={<Usuarios />} />
-          <Route path="/config" element={<Configuracion />} />
-        </Routes>
+        {/* CONTENIDO DE LAS RUTAS */}
+        <div className="routes-content">
+          <Routes>
+            <Route path="/inicio" element={<Inicio />} />
+            <Route path="/medicamento" element={<Medi />} />
+            <Route path="/historial" element={<Agend />} />
+            <Route path="/ventas" element={<Ventas />} />
+            <Route path="/planes" element={<Planes />} />
+            <Route path="/contactos" element={<Usuarios />} />
+            <Route path="/config" element={<Configuracion />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );
 };
 
 function App() {
-  // Configurar interceptor de autenticación
-  //React.useEffect(() => {
-    //setupAuthInterceptor();
-  //}, []);
   return (
     <Router>
       <Routes>

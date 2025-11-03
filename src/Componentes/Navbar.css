@@ -1,112 +1,99 @@
-/* Variables CSS */
 :root {
-  --navbar-bg: #ffffff;
-  --navbar-text: #013f4a;
-  --navbar-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  --hover-bg: #d4edf4;
-  --active-bg: #c1e9f2;
-  --user-avatar-color: #BFDB38;
+  --sidebar-width: 280px;
+  --navbar-height: 70px;
+  --color-principal: #097D91;
+  --color-texto: #013F4A;
+  --color-blanco: #FFFFFF;
+  --color-hover: #BFE7EF;
+  --color-avatar-borde: #0f8e70;
 }
 
-/* Navbar principal */
 .custom-navbar {
-  background-color: var(--navbar-bg);
-  box-shadow: var(--navbar-shadow);
-  padding: 0.6rem 1.2rem;
-  z-index: 1100;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-/* Brand/Logo */
-.navbar-brand-custom {
-  font-weight: 600;
-  font-size: 1.4rem;
-  display: flex;
-  align-items: center;
-  color: var(--navbar-text) !important;
-  text-decoration: none;
-}
-
-.navbar-brand-custom:hover {
-  color: var(--navbar-text) !important;
-}
-
-/* Toggler para móviles */
-.navbar-toggler-custom {
+  background-color: var(--color-blanco);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky; /* CAMBIA fixed por sticky */
+  top: 0; /* Se pega arriba */
+  left: 0;
+  right: 0;
+  height: var(--navbar-height);
+  z-index: 900;
+  margin: 0;
+  padding: 0;
   border: none;
-  padding: 0.25rem;
-  font-size: 1.5rem;
-  color: var(--navbar-text);
-  background: transparent;
-}
-.span{
-  color: #013f4a;
 }
 
-.navbar-toggler-custom:focus {
-  box-shadow: none;
-  outline: none;
-}
-
-/* === NUEVA SECCIÓN USUARIO (solo foto + nombre) === */
-.navbar-user-section {
-  margin-left: auto;
+.navbar-content {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 10px;
+  height: 100%;
+  width: 100%;
+  padding: 0 2rem;
 }
 
 .navbar-user-info {
   display: flex;
-  flex-direction: row; /* pone los elementos en vertical */
-  align-items: center;    /* centra horizontalmente */
+  align-items: center;
+  gap: 15px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-user-info:hover { background-color: var(--color-hover); }
+
+.user-greeting {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--color-texto);
+  white-space: nowrap;
+}
+
+.user-greeting .bi-person-fill {
+  color: var(--color-principal);
+  font-size: 1.4rem;
+  margin-right: 10px;
 }
 
 .navbar-user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 4px;
-  
+  border: 2px solid var(--color-avatar-borde);
+  transition: transform 0.3s ease;
 }
 
-.navbar-user-avatar:hover {
-  transform: scale(1.05);
-}
+.navbar-user-avatar:hover { transform: scale(1.05); }
 
-.navbar-user-name {
-  font-size: 0.9rem;
-  color: #013f4a; 
-}
-
-/* Texto de carga */
 .navbar-loading {
-  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  color: #94B5C3;
   font-style: italic;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
-/* --- Responsivo --- */
+/* RESPONSIVE - STICKY EN TODOS LOS DISPOSITIVOS */
+@media (max-width: 991.98px) {
+  .custom-navbar { 
+    left: 0 !important;
+    position: sticky !important; /* STICKY en móvil también */
+    top: 0 !important;
+  }
+  .navbar-content { padding: 0 1.5rem; }
+}
+
 @media (max-width: 767.98px) {
-  .navbar-user-name {
-    display: none; /* en móviles solo se muestra la foto */
-  }
-
-  .navbar-user-avatar {
-    width: 34px;
-    height: 34px;
-  }
+  .custom-navbar { height: 60px; }
+  .navbar-content { padding: 0 1rem; }
+  .user-greeting { font-size: 1.1rem; }
+  .navbar-user-avatar { width: 40px; height: 40px; }
 }
 
-/* --- Animación sutil de entrada --- */
-@keyframes fadeInUser {
-  from { opacity: 0; transform: translateY(-3px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.navbar-user-section {
-  animation: fadeInUser 0.4s ease;
+@media (max-width: 480px) {
+  .user-greeting span { font-size: 1rem; }
+  .navbar-user-info { gap: 10px; padding: 8px 15px; }
 }

@@ -1,114 +1,116 @@
-// src/components/Login.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     try {
-      //obtener el CSRF token de Sanctum 
-      const response = await fetch('http://localhost:8000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-
-          //'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-        },
-        body: JSON.stringify({
-          correo: email, 
-          password: password
-        })
+      const response = await fetch("http://localhost:8000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correo: email, password }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        localStorage.setItem('token', data.token); //guarda el token
-        localStorage.setItem('user', JSON.stringify(data.user)); //datos del usuario
-        // Redireccionar al dashboard después de login exitoso
-        navigate('/inicio');
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/inicio");
       } else {
-        setError('Datos incorrectos'); //feedback al usuario
+        setError("Datos incorrectos");
       }
     } catch (err) {
-      setError('Error de Conexion'); // error de red
-      console.error('Login error:', err);
+      setError("Error de conexión");
+      console.error("Login error:", err);
     }
   };
 
-// Función para iniciar login con OAuth
-const loginWithProvider = (provider) => {
-    // Redirigir directamente al endpoint del backend
+  const loginWithProvider = (provider) => {
     window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
-};
+  };
 
+  return (
+    <div className="login-wrapper">
+      <div className="login-container">
 
-return (
-     //<img src="vidomedilogo.png" alt="Logo" className="logo" />
+        {/* PANEL AZUL */}
+        <div className="login-info">
+          <div className="info-content">
+            <p className="info-text">¡Hola de nuevo!</p>
+            <p className="info-text" style={{ fontSize: "1rem", fontWeight: 400 }}>
+              Ingresa para continuar gestionando tus recetas
+            </p>
+          </div>
+        </div>
 
-    <div className="login-container">
-  <div className="top-wave"></div>
-  <div className="top-wave-transparent"></div>
+        {/* FORMULARIO */}
+        <div className="login-form-section">
+          <form onSubmit={handleSubmit} className="login-form">
+            <img src="logoazul.png" alt="Logo" className="logo" />
+            <h2>Inicia sesión</h2>
 
-  <form className="login-form" onSubmit={handleSubmit}>
-    <img src="vidomedilogo.png" alt="Logo" className="logo" />
-    <h2 className="login-title">Ingresa a tu cuenta</h2>
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-    <input
-      type="email"
-      placeholder="Correo Electrónico"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      required
-    />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-    <input
-      type="password"
-      placeholder="Contraseña"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      required
-    />
+            {error && <div className="error-message">{error}</div>}
 
-    {error && <div className="error-message">{error}</div>}
+            <button className="loguear" type="submit">
+              Ingresar
+            </button>
 
-    <button className="loguear" type="submit">
-      Iniciar Sesión
-    </button>
+            <p className="no-cuenta">
+              ¿No tienes cuenta?{" "}
+              <span onClick={() => navigate("/registro")}>Regístrate</span>
+            </p>
 
-    <button
-      type="button"
-      className="access-with"
-      onClick={() => loginWithProvider("google")}
-    >
-      Iniciar sesión con Google
-    </button>
+            <div className="divider">
+              <span>o continuar con</span>
+            </div>
 
-    <button
-      type="button"
-      className="access-with"
-      onClick={() => loginWithProvider("microsoft")}
-    >
-      Iniciar sesión con Microsoft
-    </button>
+            <div className="login-providers">
+              <button
+                type="button"
+                className="access-with google" 
+                onClick={() => loginWithProvider("google")}
+              >
+                <i className="bi bi-google"></i> Google
+              </button>
 
-    <div className="register-link">
-      ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
+              <button
+                type="button"
+                className="access-with microsoft"
+                onClick={() => loginWithProvider("microsoft")}
+              >
+                <i className="bi bi-microsoft"></i> Microsoft
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-  </form>
-</div>
-
   );
 };
 
 export default Login;
-
