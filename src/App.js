@@ -14,7 +14,7 @@ import Home from './Componentes/Paginas/Home/Home.jsx';
 import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
-import Medicamentos from './Componentes/Paginas/Medicamentos/Medicamentos.jsx'; // Cambié 'Medi' por 'Medicamentos'
+//import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx'; // ✅ DESCOMENTADO
 import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
 import Planes from './Componentes/Paginas/Planes/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
@@ -31,10 +31,18 @@ const ScrollToTop = () => {
 // 🧱 Layout del Dashboard
 const DashboardLayout = () => {
   const { showWarning, stayLoggedIn } = useAutoLogout(120, 1);
-  const [sidebarOpen, setSidebarOpen] = useState(true); // ✅ DEFINIDO AQUÍ
+  const [sidebarOpen, setSidebarOpen] = useState(true); // ✅ NOMBRE CORREGIDO
 
+  // Escuchar cambios en el tamaño de ventana
   useEffect(() => {
-    const handleResize = () => setSidebarOpen(window.innerWidth > 768);
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -42,9 +50,9 @@ const DashboardLayout = () => {
 
   return (
     <div className="dashboard-container">
-      <Sidebar onToggle={setSidebarOpen} /> {/* ✅ setSidebarOpen definido */}
+      <Sidebar onToggle={setSidebarOpen} /> {/* ✅ setSidebarOpen EXISTE */}
 
-      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}> {/* ✅ sidebarOpen definido */}
+      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}> {/* ✅ sidebarOpen EXISTE */}
         <Navbar />
         <ScrollToTop />
 
@@ -59,11 +67,11 @@ const DashboardLayout = () => {
           </div>
         )}
 
-        {/* RUTAS INTERNAS */}
+        {/* CONTENIDO DE LAS RUTAS */}
         <div className="routes-content">
           <Routes>
             <Route path="/inicio" element={<Inicio />} />
-            <Route path="/medicamento" element={<Medicamentos />} /> {/* ✅ Cambié Medi por Medicamentos */}
+            {/* <Route path="/medicamento" element={<Medi />} /> ✅ Medi DESCOMENTADO */}
             <Route path="/historial" element={<Agend />} />
             <Route path="/ventas" element={<Ventas />} />
             <Route path="/planes" element={<Planes />} />
