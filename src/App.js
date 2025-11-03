@@ -14,7 +14,7 @@ import Home from './Componentes/Paginas/Home/Home.jsx';
 import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
-import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
+import Medicamentos from './Componentes/Paginas/Medicamentos/Medicamentos.jsx'; // Cambié 'Medi' por 'Medicamentos'
 import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
 import Planes from './Componentes/Paginas/Planes/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
@@ -31,7 +31,7 @@ const ScrollToTop = () => {
 // 🧱 Layout del Dashboard
 const DashboardLayout = () => {
   const { showWarning, stayLoggedIn } = useAutoLogout(120, 1);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // ✅ DEFINIDO AQUÍ
 
   useEffect(() => {
     const handleResize = () => setSidebarOpen(window.innerWidth > 768);
@@ -42,9 +42,9 @@ const DashboardLayout = () => {
 
   return (
     <div className="dashboard-container">
-      <Sidebar onToggle={setSidebarOpen} />
+      <Sidebar onToggle={setSidebarOpen} /> {/* ✅ setSidebarOpen definido */}
 
-      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}> {/* ✅ sidebarOpen definido */}
         <Navbar />
         <ScrollToTop />
 
@@ -63,7 +63,7 @@ const DashboardLayout = () => {
         <div className="routes-content">
           <Routes>
             <Route path="/inicio" element={<Inicio />} />
-            <Route path="/medicamento" element={<Medi />} />
+            <Route path="/medicamento" element={<Medicamentos />} /> {/* ✅ Cambié Medi por Medicamentos */}
             <Route path="/historial" element={<Agend />} />
             <Route path="/ventas" element={<Ventas />} />
             <Route path="/planes" element={<Planes />} />
