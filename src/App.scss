@@ -1,90 +1,35 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 
-*{
+:root {
+  --sidebar-width: 280px;
+  --navbar-height: 70px;
+  --transition-speed: 0.3s;
+}
+
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-body {
-  font-family: "Rubik", sans-serif;
-}
-
-$light: #ffff;
-$gray: #e7e9eb;
-
-//.layout {
-  //display: flex;
-//}
-
-//.navbar {
-  //background-color: $light;
-  //padding: 1rem 2rem;
-  //border-bottom: 1px solid $gray;
-//}
-
-//.sidebar{
-  //width: 14rem;
-  //height: calc(100vh - 52px);
-  //border-right: 1px solid $gray;
-  //ul {
-    //list-style: none;
-    //padding: 1rem 2rem;
-    //li {
-      //margin-bottom: 1rem;
-      //a {
-        //text-decoration: none;
-        //&.active{
-          //background-color: $gray;
-        //}
-      //}
-    //}
-  //}
-//}
-// App.scss - AGREGA ESTO
-.dashboard-container {
-  display: flex;
-  min-height: 100vh;
-  position: relative; // Importante para sticky
-}
-
-.main-content {
-  flex: 1;
-  margin-left: 280px;
-  transition: margin-left 0.3s ease;
-  min-height: 100vh;
-  position: relative;
-  // Asegura que el contenido sea scrollable
-  overflow-y: auto;
-  height: 100vh;
-}
-
-.main-content.sidebar-closed {
-  margin-left: 0;
-}
-
-.routes-content {
-  padding: 20px;
-  // El navbar es sticky, así que no necesitamos margen superior
-}
-
-// Reset para asegurar posicionamiento
 html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   height: 100%;
+  font-family: "Rubik", sans-serif;
 }
 
 #root {
   min-height: 100vh;
 }
-// En App.scss - SOLO esto
+
 .main-content-desktop {
   margin-left: var(--sidebar-width);
   min-height: 100vh;
-  padding: 80px 20px 20px 20px; /* MANTIENE padding-top para el navbar fixed */
+  padding: calc(var(--navbar-height) + 20px) 20px 20px 20px;
   transition: margin-left var(--transition-speed) ease;
+  background-color: #f8fafc;
 }
 
 .main-content-desktop.sidebar-closed {
@@ -94,6 +39,43 @@ html, body {
 @media (max-width: 768px) {
   .main-content-desktop {
     margin-left: 0 !important;
-    padding: 70px 15px 20px 15px;
+    padding: calc(var(--navbar-height) + 15px) 15px 15px 15px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content-desktop {
+    padding: calc(var(--navbar-height) + 10px) 10px 10px 10px;
+  }
+}
+
+
+body:has(.login-wrapper),
+body:has(.registro-container) {
+  .custom-navbar,
+  .sidebar-container,
+  .main-content-desktop {
+    display: none !important;
+  }
+}
+
+body:has(.login-wrapper),
+body:has(.registro-container) {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow-x: hidden;
+}
+
+.login-wrapper,
+.registro-container {
+  width: 100vw !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  
+  & ~ .custom-navbar,
+  & ~ .sidebar-container {
+    display: none !important;
   }
 }
