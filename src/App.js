@@ -31,18 +31,10 @@ const ScrollToTop = () => {
 // 🧱 Layout del Dashboard
 const DashboardLayout = () => {
   const { showWarning, stayLoggedIn } = useAutoLogout(120, 1);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Escuchar cambios en el tamaño de ventana
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
-        setIsSidebarOpen(true);
-      } else {
-        setIsSidebarOpen(false);
-      }
-    };
-
+    const handleResize = () => setSidebarOpen(window.innerWidth > 768);
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -50,9 +42,9 @@ const DashboardLayout = () => {
 
   return (
     <div className="dashboard-container">
-      <Sidebar onToggle={setSidebarOpen} />
+      <Sidebar onToggle={setSidebarOpen} /> {/* ✅ setSidebarOpen EXISTE */}
 
-      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}> {/* ✅ sidebarOpen EXISTE */}
         <Navbar />
         <ScrollToTop />
 
@@ -71,7 +63,7 @@ const DashboardLayout = () => {
         <div className="routes-content">
           <Routes>
             <Route path="/inicio" element={<Inicio />} />
-            <Route path="/medicamento" element={<Medi />} />
+            {/* <Route path="/medicamento" element={<Medi />} /> */}
             <Route path="/historial" element={<Agend />} />
             <Route path="/ventas" element={<Ventas />} />
             <Route path="/planes" element={<Planes />} />
