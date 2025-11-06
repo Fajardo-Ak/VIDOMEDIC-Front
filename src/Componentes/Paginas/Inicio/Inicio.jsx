@@ -1,23 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiCheck, FiEdit, FiTrash2 } from 'react-icons/fi';
+import './Inicio.css';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, endOfWeek } from 'date-fns';
 import es from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './Inicio.css';
+
+// --- NUEVO: Async creatable select ---
+import AsyncCreatableSelect from 'react-select/async-creatable';
+// ------------------------------------------------
 
 // --- CONFIGURACIÓN DEL LOCALIZER ---
 const locales = {
   'es': es,
 };
-
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek: (date) => startOfWeek(date, { locale: es }), // Asegurar que la semana empiece en Lunes
+  startOfWeek: (date) => startOfWeek(date, { locale: es }),
   getDay,
   locales,
 });
+
+// --- ESTADO INICIAL PARA EL FORMULARIO (incluye nuevos campos) ---
+const estadoInicialFormulario = {
+  nombre_tratamiento: '',
+  fecha_inicio: new Date().toISOString().split('T')[0],
+  fecha_fin: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  notas: '',
+  medicamentos: [
+    {
+      // nuevos campos para soporte de creación/selección
+      medicamento_id: null,            // id si existe en BD
+      medicamento_nombre: '',         // si es creado por el usuario
+      via_administracion: 'Oral',
+      presentacion: '',
+      importancia: 'media',
+      es_nuevo: true,                 // true => campos vía/presentación/importancia habilitados
+
+      // anteriores:
+      tipo_frecuencia: 'horarios_fijos',
+      valor_frecuencia: 8,
+      horarios_fijos: ['08:00', '14:00', '20:00'],
+      dias_semana: [],
+      cantidad_por_toma: '',
+    }
+  ]
+};
+// ---------------------------------------------------------------
 
 const Inicio = () => {
   const [semanaActual, setSemanaActual] = useState(new Date());
@@ -26,44 +56,46 @@ const Inicio = () => {
   const [modalTratamiento, setModalTratamiento] = useState(false);
   const [tratamientoActivo, setTratamientoActivo] = useState(null);
 
-  // --- OBTENER DOSIS ---
+  // estado edición / formulario
+  const [editId, setEditId] = useState(null); // null = crear, id = editar
+  const [tratamientoData, setTratamientoData] = useState(estadoInicialFormulario);
+
+  const [guardando, setGuardando] = useState(false);
+
+  // NOTA: ya no usamos un catálogo cargado al inicio; Async select carga a demanda
+
+  // --- OBTENER DOSIS SEMANA ---
   const obtenerDosisSemana = async (fechaInicio, fechaFin) => {
     setCargando(true);
     try {
       const params = new URLSearchParams({
         fecha_inicio: fechaInicio.toISOString().split('T')[0],
-        fecha_fin: fechaFin.toISOString().split('T')[0], 
+        fecha_fin: fechaFin.toISOString().split('T')[0],
       });
-    
+
       const response = await fetch(`http://localhost:8000/api/dosis/agenda-semanal?${params}`, {
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
       });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // Los datos ya vienen listos para el calendario
-        // convertimos los "starts" y "end" que son strings
-        // en objetos Date que react-big-calendar pueda entender.
-        const eventosParseados = data.data.dosis.map(dosis => ({
-          ...dosis, // Copia todas las propiedades (id, title, estado...)
-          start: new Date(dosis.start), // Convierte el string 'start' en un objeto Date
-          end: new Date(dosis.end),     // Convierte el string 'end' en un objeto Date
-        }));
 
-        setDosisSemana(eventosParseados); //guarda el array con los objetos Date correctos
-        
-        if (tratamientoActivo === null) { 
+      const data = await response.json();
+
+      if (data.success) {
+        const eventosParseados = data.data.dosis.map(dosis => ({
+          ...dosis,
+          start: new Date(dosis.start),
+          end: new Date(dosis.end),
+        }));
+        setDosisSemana(eventosParseados);
+
+        if (tratamientoActivo === null) {
           const tratamientoResponse = await fetch('http://localhost:8000/api/tratamientos/verificar-activo', {
-            headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
           });
-          const tratamientoData = await tratamientoResponse.json();
-          if (tratamientoData.success) {
-            setTratamientoActivo(tratamientoData.tratamiento);
+          const tratamientoDataResp = await tratamientoResponse.json();
+          if (tratamientoDataResp.success) {
+            setTratamientoActivo(tratamientoDataResp.tratamiento);
           }
         }
       } else {
@@ -76,20 +108,16 @@ const Inicio = () => {
     }
   };
 
-  // --- USE EFFECT  ---
-  // Se dispara cada vez que `semanaActual` cambia
+  // useEffects
   useEffect(() => {
     const inicioSemana = startOfWeek(semanaActual, { locale: es });
     const finSemana = endOfWeek(semanaActual, { locale: es });
     obtenerDosisSemana(inicioSemana, finSemana);
-  }, [semanaActual]); 
+  }, [semanaActual]);
 
-  // Se dispara solo una vez al montar
-  useEffect(() => {
-    cargarMedicamentosCatalogo();
-  }, []); 
+  // NOTA: antes cargábamos catálogo aquí; ahora lo carga AsyncCreatableSelect a demanda
 
-  // --- NAVEGACIÓN  ---
+  // navegación
   const semanaAnterior = () => {
     const nuevaSemana = new Date(semanaActual);
     nuevaSemana.setDate(nuevaSemana.getDate() - 7);
@@ -106,7 +134,7 @@ const Inicio = () => {
     setSemanaActual(new Date());
   };
 
-  // --- HANDLERS DEL CALENDARIO  ---
+  // handlers calendario
   const handleNavigate = (newDate) => {
     setSemanaActual(newDate);
   };
@@ -115,7 +143,6 @@ const Inicio = () => {
     marcarDosis(dosis.id, dosis.estado !== 'tomada');
   };
 
-  // --- MARCAR DOSIS ---
   const marcarDosis = async (dosisId, estado) => {
     try {
       const response = await fetch(`http://localhost:8000/api/dosis/${dosisId}/marcar`, {
@@ -124,78 +151,111 @@ const Inicio = () => {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           estado: estado ? 'tomada' : 'omitida',
           notas_toma: estado ? 'Tomada correctamente' : 'Omitida'
         })
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
-        setDosisSemana(prevDosis => 
-          prevDosis.map(dosis => 
-            dosis.id === dosisId ? { 
-              ...dosis, 
+        setDosisSemana(prevDosis =>
+          prevDosis.map(dosis =>
+            dosis.id === dosisId ? {
+              ...dosis,
               estado: estado ? 'tomada' : 'omitida',
-              tomada: estado 
+              tomada: estado
             } : dosis
           )
         );
       } else {
-        alert(data.error);
+        alert(data.error || 'Error al marcar la dosis');
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-  // --- LÓGICA DEL MODAL ---
-  const [tratamientoData, setTratamientoData] = useState({
-    nombre_tratamiento: '',
-    fecha_inicio: new Date().toISOString().split('T')[0],
-    fecha_fin: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    notas: '',
-    medicamentos: [
-      {
-        medicamento_id: '',
-        tipo_frecuencia: 'horarios_fijos',
-        valor_frecuencia: 8,
-        horarios_fijos: ['08:00', '14:00', '20:00'],
-        dias_semana: [],
-        cantidad_por_toma: '',
-        instrucciones: ''
-      }
-    ]
-  });
-
-  const [guardando, setGuardando] = useState(false);
-  const [medicamentosCatalogo, setMedicamentosCatalogo] = useState([]);
-
-  const cargarMedicamentosCatalogo = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/medicamentos', {
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        setMedicamentosCatalogo(data.data);
-      }
-    } catch (error) {
-      console.error('Error cargando medicamentos:', error);
-    }
+  // --- MODAL: nuevo / modificar ---
+  const abrirModalNuevo = () => {
+    setTratamientoData(estadoInicialFormulario);
+    setEditId(null);
+    setModalTratamiento(true);
   };
 
+  const abrirModalModificar = () => {
+    if (!tratamientoActivo) return;
+
+    const datosFormulario = {
+      nombre_tratamiento: tratamientoActivo.nombre_tratamiento,
+      fecha_inicio: tratamientoActivo.fecha_inicio ? tratamientoActivo.fecha_inicio.split('T')[0] : new Date().toISOString().split('T')[0],
+      fecha_fin: tratamientoActivo.fecha_fin ? tratamientoActivo.fecha_fin.split('T')[0] : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      notas: tratamientoActivo.notas || '',
+      medicamentos: (tratamientoActivo.detalle_tratamientos || []).map(det => ({
+        // mapeo a nueva estructura: si el detalle tiene relación medicamento, incluir datos
+        medicamento_id: det.medicamento_id ?? null,
+        medicamento_nombre: det.medicamento ? (det.medicamento.nombre || '') : '',
+        via_administracion: det.medicamento ? (det.medicamento.via_administracion || 'Oral') : 'Oral',
+        presentacion: det.medicamento ? (det.medicamento.presentacion || '') : '',
+        importancia: det.medicamento ? (det.medicamento.importancia || 'media') : 'media',
+        es_nuevo: false, // es un medicamento existente, por tanto deshabilitar campos de edición de metadatos
+
+        tipo_frecuencia: det.tipo_frecuencia,
+        valor_frecuencia: det.valor_frecuencia,
+        horarios_fijos: det.horarios_fijos ? (() => {
+          try { return JSON.parse(det.horarios_fijos); } catch (e) { return Array.isArray(det.horarios_fijos) ? det.horarios_fijos : []; }
+        })() : [],
+        dias_semana: det.dias_semana ? (() => {
+          try { return JSON.parse(det.dias_semana); } catch (e) { return Array.isArray(det.dias_semana) ? det.dias_semana : []; }
+        })() : [],
+        cantidad_por_toma: det.cantidad_por_toma,
+      }))
+    };
+
+    if (!datosFormulario.medicamentos || datosFormulario.medicamentos.length === 0) {
+      datosFormulario.medicamentos = estadoInicialFormulario.medicamentos;
+    }
+
+    setTratamientoData(datosFormulario);
+    setEditId(tratamientoActivo.id);
+    setModalTratamiento(true);
+  };
+
+  const cerrarModal = () => {
+    setModalTratamiento(false);
+    setEditId(null);
+  };
+
+  // guardar router
   const guardarTratamiento = async () => {
-    if (!tratamientoData.nombre_tratamiento.trim()) {
+    // validaciones básicas
+    if (!tratamientoData.nombre_tratamiento || !tratamientoData.nombre_tratamiento.trim()) {
       alert('Por favor ingresa un nombre para el tratamiento');
+      return;
+    }
+    if (!tratamientoData.fecha_inicio || !tratamientoData.fecha_fin) {
+      alert('Por favor ingresa fechas de inicio y fin válidas');
+      return;
+    }
+    if (!tratamientoData.medicamentos || tratamientoData.medicamentos.length === 0) {
+      alert('Por favor agrega al menos un medicamento');
       return;
     }
 
     setGuardando(true);
+
+    if (editId) {
+      await actualizarTratamiento();
+    } else {
+      await crearTratamiento();
+    }
+
+    setGuardando(false);
+  };
+
+  // crear
+  const crearTratamiento = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/tratamientos', {
         method: 'POST',
@@ -210,33 +270,59 @@ const Inicio = () => {
 
       if (data.success) {
         alert('Tratamiento creado exitosamente!');
-        setModalTratamiento(false);
-        
-        // --- RECARGAR DATOS DESPUÉS DE GUARDAR ---
-        // Llama a la función con el rango de la semana actual
+        cerrarModal();
+
         const inicioSemana = startOfWeek(semanaActual, { locale: es });
         const finSemana = endOfWeek(semanaActual, { locale: es });
         await obtenerDosisSemana(inicioSemana, finSemana);
-        
-        setTratamientoActivo(data.data); // Asumimos que el nuevo tratamiento es el activo
-        
-        // Limpiar formulario
-        setTratamientoData({
-        });
+
+        setTratamientoActivo(data.data);
+        setTratamientoData(estadoInicialFormulario);
       } else {
         alert('Error al crear tratamiento: ' + (data.error || 'Error desconocido'));
       }
     } catch (error) {
       console.error('Error:', error);
       alert('Error de conexión al guardar el tratamiento');
-    } finally {
-      setGuardando(false);
     }
   };
 
+  // actualizar
+  const actualizarTratamiento = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/tratamientos/${editId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify(tratamientoData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('Tratamiento actualizado exitosamente!');
+        cerrarModal();
+
+        const inicioSemana = startOfWeek(semanaActual, { locale: es });
+        const finSemana = endOfWeek(semanaActual, { locale: es });
+        await obtenerDosisSemana(inicioSemana, finSemana);
+
+        setTratamientoActivo(data.data);
+      } else {
+        alert('Error al actualizar tratamiento: ' + (data.error || 'Error desconocido'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al actualizar el tratamiento');
+    }
+  };
+
+  // eliminar
   const eliminarTratamiento = async () => {
     if (!tratamientoActivo) return;
-    
+
     if (!window.confirm('¿Estás seguro de que quieres eliminar este tratamiento? Se eliminarán todas las dosis programadas.')) {
       return;
     }
@@ -254,12 +340,12 @@ const Inicio = () => {
       if (data.success) {
         alert('Tratamiento eliminado correctamente');
         setTratamientoActivo(null);
-        // --- RECARGAR DATOS DESPUÉS DE ELIMINAR ---
+
         const inicioSemana = startOfWeek(semanaActual, { locale: es });
         const finSemana = endOfWeek(semanaActual, { locale: es });
         await obtenerDosisSemana(inicioSemana, finSemana);
       } else {
-        alert('Error al eliminar tratamiento: ' + data.error);
+        alert('Error al eliminar tratamiento: ' + (data.error || 'Error desconocido'));
       }
     } catch (error) {
       console.error('Error:', error);
@@ -267,36 +353,104 @@ const Inicio = () => {
     }
   };
 
-  // Actualizar medicamento en el formulario
-  const actualizarMedicamento = (index, campo, valor) => {
+  // --- NUEVO: loadOptions para AsyncCreatableSelect ---
+  const loadOptions = async (inputValue) => {
+    if (!inputValue || inputValue.length < 2) {
+      return [];
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/medicamentos/buscar?q=${encodeURIComponent(inputValue)}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        return data.data.map(med => ({
+          value: med, // objeto completo
+          label: `${med.nombre}${med.presentacion ? ` (${med.presentacion})` : ''}`
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error('Error buscando medicamentos:', error);
+      return [];
+    }
+  };
+
+  // cuando el usuario selecciona o crea una opción
+  const handleMedicamentoChange = (opcionSeleccionada, index) => {
     const nuevosMedicamentos = [...tratamientoData.medicamentos];
-    nuevosMedicamentos[index][campo] = valor;
+    const medActual = nuevosMedicamentos[index] || {};
+
+    if (!opcionSeleccionada) {
+      // limpia selección
+      nuevosMedicamentos[index] = {
+        ...medActual,
+        medicamento_id: null,
+        medicamento_nombre: '',
+        via_administracion: 'Oral',
+        presentacion: '',
+        importancia: 'media',
+        es_nuevo: true,
+      };
+    } else if (opcionSeleccionada.__isNew__) {
+      // crear nuevo medicamento localmente
+      nuevosMedicamentos[index] = {
+        ...medActual,
+        medicamento_id: null,
+        medicamento_nombre: opcionSeleccionada.label,
+        via_administracion: 'Oral',
+        presentacion: '',
+        importancia: 'media',
+        es_nuevo: true,
+      };
+    } else {
+      // seleccionó un medicamento existente (value = objeto completo)
+      const medExistente = opcionSeleccionada.value;
+      nuevosMedicamentos[index] = {
+        ...medActual,
+        medicamento_id: medExistente.id ?? medExistente.id,
+        medicamento_nombre: medExistente.nombre ?? (medExistente.nombre_completo || ''),
+        via_administracion: medExistente.via_administracion ?? 'Oral',
+        presentacion: medExistente.presentacion ?? '',
+        importancia: medExistente.importancia ?? 'media',
+        es_nuevo: false,
+      };
+    }
+
     setTratamientoData({
       ...tratamientoData,
       medicamentos: nuevosMedicamentos
     });
   };
-  
-  // Agregar nuevo medicamento al formulario
+
+  // actualizarMedicamento ahora soporta nuevos campos
+  const actualizarMedicamento = (index, campo, valor) => {
+    const nuevosMedicamentos = [...tratamientoData.medicamentos];
+    nuevosMedicamentos[index] = {
+      ...nuevosMedicamentos[index],
+      [campo]: valor
+    };
+    setTratamientoData({
+      ...tratamientoData,
+      medicamentos: nuevosMedicamentos
+    });
+  };
+
+  // agregarMedicamento usa la plantilla inicial
   const agregarMedicamento = () => {
     setTratamientoData({
       ...tratamientoData,
       medicamentos: [
         ...tratamientoData.medicamentos,
-        {
-          medicamento_id: '',
-          tipo_frecuencia: 'horarios_fijos',
-          valor_frecuencia: 8,
-          horarios_fijos: ['08:00', '14:00', '20:00'],
-          dias_semana: [],
-          cantidad_por_toma: '',
-          instrucciones: ''
-        }
+        estadoInicialFormulario.medicamentos[0]
       ]
     });
   };
 
-  // Eliminar medicamento del formulario
   const eliminarMedicamento = (index) => {
     const nuevosMedicamentos = tratamientoData.medicamentos.filter((_, i) => i !== index);
     setTratamientoData({
@@ -305,10 +459,11 @@ const Inicio = () => {
     });
   };
 
+  // utilitarios del calendario
   const getDiasSemana = () => {
     const dias = [];
     const inicioSemana = startOfWeek(semanaActual, { locale: es });
-    
+
     for (let i = 0; i < 7; i++) {
       const fecha = new Date(inicioSemana);
       fecha.setDate(inicioSemana.getDate() + i);
@@ -316,21 +471,20 @@ const Inicio = () => {
     }
     return dias;
   };
-  
-  // (Para dar estilo a los eventos del calendario)
+
   const eventPropGetter = (event) => {
     const esTomada = event.estado === 'tomada';
     const esOmitida = event.estado === 'omitida';
     const esPasada = new Date(event.start) < new Date() && event.estado === 'pendiente';
 
-    let backgroundColor = event.color || '#F59E0B'; // Color por defecto (importancia)
-    
+    let backgroundColor = event.color || '#F59E0B';
+
     if (esTomada) {
-      backgroundColor = '#9CA3AF'; // Gris
+      backgroundColor = '#9CA3AF';
     } else if (esOmitida) {
-      backgroundColor = '#EF4444'; // Rojo
+      backgroundColor = '#EF4444';
     } else if (esPasada) {
-      backgroundColor = '#6B7280'; // Gris oscuro
+      backgroundColor = '#6B7280';
     }
 
     return {
@@ -344,39 +498,29 @@ const Inicio = () => {
 
   const diasSemana = getDiasSemana();
 
-  // 1. Definimos los formatos AM/PM
   const formats = {
-    /**
-     * Formato para la barra lateral (la "canaleta" de horas)
-     * 'h a' = '1 am', '2 am'...
-     */
     timeGutterFormat: (date, culture, local) =>
       local.format(date, 'h a', culture),
-
-    /**
-     * Formato para la hora DENTRO de un evento
-     * 'h:mm a' = '1:00 PM'
-     */
     eventTimeRangeFormat: ({ start }, culture, local) =>
       local.format(start, 'h:mm a', culture)
   };
 
   return (
     <div className="vidomedic-agenda">
+      {/* Header */}
       <div className="agenda-header-custom">
         <div className="header-left">
           <div className="agenda-title-custom">
             <FiCalendar /> Mi Agenda de Medicamentos
           </div>
-          {/* Se asegura que diasSemana tenga datos antes de renderizar */}
-          {diasSemana.length > 0 && ( 
+          {diasSemana.length > 0 && (
             <div className="semana-rango">
-              {diasSemana[0].toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} - 
+              {diasSemana[0].toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} -{' '}
               {diasSemana[6].toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
           )}
         </div>
-        
+
         <div className="header-controls">
           <div className="nav-buttons">
             <button onClick={semanaAnterior} className="nav-btn">
@@ -395,7 +539,7 @@ const Inicio = () => {
               <span className="tratamiento-activo-info">
                 Tratamiento activo: <strong>{tratamientoActivo.nombre_tratamiento}</strong>
               </span>
-              <button className="edit-treatment-btn">
+              <button className="edit-treatment-btn" onClick={abrirModalModificar}>
                 <FiEdit /> Modificar
               </button>
               <button className="delete-treatment-btn" onClick={eliminarTratamiento}>
@@ -403,9 +547,9 @@ const Inicio = () => {
               </button>
             </div>
           ) : (
-            <button 
+            <button
               className="create-treatment-btn"
-              onClick={() => setModalTratamiento(true)}
+              onClick={abrirModalNuevo}
             >
               <FiPlus /> Nuevo Tratamiento
             </button>
@@ -413,7 +557,7 @@ const Inicio = () => {
         </div>
       </div>
 
-      {/* 2. AÑADIMOS EL NUEVO CONTENEDOR Y CALENDARIO */}
+      {/* Calendario */}
       <div className="calendar-container" style={{ height: '75vh' }}>
         <Calendar
           localizer={localizer}
@@ -421,43 +565,43 @@ const Inicio = () => {
           startAccessor="start"
           endAccessor="end"
           culture="es"
-          views={['week', 'day']} // Solo vista de semana y día
+          views={['week', 'day']}
           defaultView="week"
-          date={semanaActual} // Sincroniza la vista del calendario con el estado
-          onNavigate={handleNavigate} // Se activa si el usuario navega en el calendario
-          onSelectEvent={handleSelectEvent} // Se activa al hacer clic en una dosis
-          toolbar={false} // ¡Oculta la barra de navegación propia del calendario!
-          eventPropGetter={eventPropGetter} // Aplica estilos dinámicos
-          min={new Date(0, 0, 0, 0, 0, 0)} // Opcional: Empezar el día a las 00:00 AM
-          max={new Date(0, 0, 0, 23, 59, 0)} // Opcional: Terminar el día a las 23:59 PM
+          date={semanaActual}
+          onNavigate={handleNavigate}
+          onSelectEvent={handleSelectEvent}
+          toolbar={false}
+          eventPropGetter={eventPropGetter}
+          min={new Date(0, 0, 0, 0, 0, 0)}
+          max={new Date(0, 0, 0, 23, 59, 0)}
           formats={formats}
         />
       </div>
 
-      {/* --- MODAL --- */}
+      {/* Modal */}
       {modalTratamiento && (
-        <div 
+        <div
           className="config-modal-overlay"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
-              setModalTratamiento(false);
+              cerrarModal();
             }
           }}
         >
           <div className="config-modal tratamiento-modal expanded-modal">
             <div className="config-modal-header">
-              <h3>Nuevo Tratamiento</h3>
+              <h3>{editId ? "Modificar Tratamiento" : "Nuevo Tratamiento"}</h3>
             </div>
-            
+
             <div className="tratamiento-form">
-              {/* SECCIÓN 1: INFORMACIÓN GLOBAL */}
+              {/* Información general */}
               <div className="form-section">
                 <h4>Información del Tratamiento</h4>
-                
+
                 <div className="form-row">
                   <div className="form-group full-width">
                     <label>Nombre del Tratamiento *</label>
-                    <input 
+                    <input
                       type="text"
                       className="modal-input"
                       placeholder="Ej: Tratamiento para gripe, Control de presión..."
@@ -473,7 +617,7 @@ const Inicio = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Fecha de Inicio *</label>
-                    <input 
+                    <input
                       type="date"
                       className="modal-input"
                       value={tratamientoData.fecha_inicio}
@@ -483,10 +627,10 @@ const Inicio = () => {
                       })}
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Fecha de Fin *</label>
-                    <input 
+                    <input
                       type="date"
                       className="modal-input"
                       value={tratamientoData.fecha_fin}
@@ -497,11 +641,11 @@ const Inicio = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group full-width">
                     <label>Notas (opcional)</label>
-                    <textarea 
+                    <textarea
                       className="modal-input"
                       placeholder="Instrucciones adicionales, observaciones..."
                       value={tratamientoData.notas}
@@ -514,12 +658,12 @@ const Inicio = () => {
                   </div>
                 </div>
               </div>
-              
-              {/* SECCIÓN 2: MEDICAMENTOS */}
+
+              {/* Medicamentos */}
               <div className="form-section">
                 <div className="medicamentos-header">
                   <h4>Medicamentos</h4>
-                  <button 
+                  <button
                     type="button"
                     className="add-medicamento-btn"
                     onClick={agregarMedicamento}
@@ -528,32 +672,81 @@ const Inicio = () => {
                   </button>
                 </div>
 
-                {/* LISTA DE MEDICAMENTOS */}
                 {tratamientoData.medicamentos.map((medicamento, index) => (
                   <div key={index} className="medicamento-row expanded-row">
                     <div className="medicamento-fields">
-                      
-                      {/* SELECCIÓN DE MEDICAMENTO */}
+                      {/* Async creatable select */}
                       <div className="form-group">
                         <label>Medicamento *</label>
-                        <select 
+                        <AsyncCreatableSelect
+                          key={`med-select-${index}`}
+                          isClearable
+                          // Si es existente, construimos value con objeto
+                          value={
+                            medicamento.es_nuevo || !medicamento.medicamento_id
+                              ? (medicamento.medicamento_nombre ? { label: medicamento.medicamento_nombre, value: { nombre: medicamento.medicamento_nombre, id: null, presentacion: medicamento.presentacion, via_administracion: medicamento.via_administracion, importancia: medicamento.importancia } } : null)
+                              : { value: { id: medicamento.medicamento_id, nombre: medicamento.medicamento_nombre, presentacion: medicamento.presentacion, via_administracion: medicamento.via_administracion, importancia: medicamento.importancia }, label: `${medicamento.medicamento_nombre}${medicamento.presentacion ? ` (${medicamento.presentacion})` : ''}` }
+                          }
+                          placeholder="Escribe para buscar o crear..."
+                          loadOptions={loadOptions}
+                          onChange={(opcion) => handleMedicamentoChange(opcion, index)}
+                          formatCreateLabel={(inputValue) => `Crear "${inputValue}"`}
+                        />
+                      </div>
+
+                      {/* Nuevos campos: vía, presentación, importancia */}
+                      <div className="form-group">
+                        <label>Vía de Administración *</label>
+                        <select
                           className="modal-input"
-                          value={medicamento.medicamento_id}
-                          onChange={(e) => actualizarMedicamento(index, 'medicamento_id', e.target.value)}
+                          value={medicamento.via_administracion}
+                          onChange={(e) => actualizarMedicamento(index, 'via_administracion', e.target.value)}
+                          disabled={!medicamento.es_nuevo}
                         >
-                          <option value="">Seleccionar medicamento</option>
-                          {medicamentosCatalogo.map(med => (
-                            <option key={med.id} value={med.id}>
-                              {med.nombre} {med.presentacion ? `(${med.presentacion})` : ''}
-                            </option>
-                          ))}
+                          <option value="Oral">Oral</option>
+                          <option value="Inyectable">Inyectable</option>
+                          <option value="Tópica">Tópica</option>
+                          <option value="Oftálmica">Oftálmica</option>
+                          <option value="Ótica">Ótica</option>
+                          <option value="Nasal">Nasal</option>
+                          <option value="Rectal">Rectal</option>
+                          <option value="Vaginal">Vaginal</option>
+                          <option value="Inhalada">Inhalada</option>
+                          <option value="Otro">Otro</option>
                         </select>
                       </div>
 
-                      {/* TIPO DE FRECUENCIA */}
+                      <div className="form-group">
+                        <label>Presentación (ej: 500mg, 10ml)</label>
+                        <input
+                          type="text"
+                          className="modal-input"
+                          placeholder="Ej: 500mg"
+                          value={medicamento.presentacion}
+                          onChange={(e) => actualizarMedicamento(index, 'presentacion', e.target.value)}
+                          disabled={!medicamento.es_nuevo}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Importancia *</label>
+                        <select
+                          className="modal-input"
+                          value={medicamento.importancia}
+                          onChange={(e) => actualizarMedicamento(index, 'importancia', e.target.value)}
+                          disabled={!medicamento.es_nuevo}
+                        >
+                          <option value="baja">Baja</option>
+                          <option value="media">Media</option>
+                          <option value="alta">Alta</option>
+                          <option value="critica">Crítica</option>
+                        </select>
+                      </div>
+
+                      {/* Frecuencia y demás campos */}
                       <div className="form-group">
                         <label>Tipo de Frecuencia</label>
-                        <select 
+                        <select
                           className="modal-input"
                           value={medicamento.tipo_frecuencia}
                           onChange={(e) => actualizarMedicamento(index, 'tipo_frecuencia', e.target.value)}
@@ -565,12 +758,11 @@ const Inicio = () => {
                         </select>
                       </div>
 
-                      {/* CONFIGURACIÓN SEGÚN TIPO DE FRECUENCIA */}
                       {medicamento.tipo_frecuencia === 'horas' && (
                         <>
                           <div className="form-group">
                             <label>Cada cuántas horas</label>
-                            <input 
+                            <input
                               type="number"
                               min="1"
                               max="24"
@@ -579,10 +771,10 @@ const Inicio = () => {
                               onChange={(e) => actualizarMedicamento(index, 'valor_frecuencia', parseInt(e.target.value))}
                             />
                           </div>
-                          
+
                           <div className="form-group">
                             <label>Hora de primera toma</label>
-                            <input 
+                            <input
                               type="time"
                               className="modal-input"
                               value={medicamento.horarios_fijos ? (medicamento.horarios_fijos[0] || '08:00') : '08:00'}
@@ -595,7 +787,7 @@ const Inicio = () => {
                       {medicamento.tipo_frecuencia === 'dias' && (
                         <div className="form-group">
                           <label>Cada cuántos días</label>
-                          <input 
+                          <input
                             type="number"
                             min="1"
                             className="modal-input"
@@ -605,31 +797,29 @@ const Inicio = () => {
                         </div>
                       )}
 
-                      {/* HORARIOS FIJOS */}
                       {(medicamento.tipo_frecuencia === 'horarios_fijos' || medicamento.tipo_frecuencia === 'semanal') && (
                         <div className="form-group full-width">
                           <label>Horarios</label>
                           <div className="horarios-input">
-                            <input 
+                            <input
                               type="text"
                               className="modal-input"
                               placeholder="Ej: 08:00,14:00,20:00"
                               value={medicamento.horarios_fijos?.join(',') || ''}
-                              onChange={(e) => actualizarMedicamento(index, 'horarios_fijos', e.target.value.split(','))}
+                              onChange={(e) => actualizarMedicamento(index, 'horarios_fijos', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
                             />
                             <small>Separar horarios con comas (formato: HH:MM)</small>
                           </div>
                         </div>
                       )}
 
-                      {/* DÍAS DE LA SEMANA */}
                       {medicamento.tipo_frecuencia === 'semanal' && (
                         <div className="form-group full-width">
                           <label>Días de la semana</label>
                           <div className="dias-semana-checkboxes">
                             {['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'].map(dia => (
                               <label key={dia} className="checkbox-label">
-                                <input 
+                                <input
                                   type="checkbox"
                                   checked={medicamento.dias_semana?.includes(dia) || false}
                                   onChange={(e) => {
@@ -646,10 +836,9 @@ const Inicio = () => {
                         </div>
                       )}
 
-                      {/* CANTIDAD POR TOMA */}
                       <div className="form-group">
                         <label>Cantidad por toma *</label>
-                        <input 
+                        <input
                           type="text"
                           className="modal-input"
                           placeholder="Ej: 1 tableta, 15ml, 2 gotas"
@@ -658,23 +847,11 @@ const Inicio = () => {
                         />
                       </div>
 
-                      {/* INSTRUCCIONES ESPECIALES */}
-                      <div className="form-group full-width">
-                        <label>Instrucciones (opcional)</label>
-                        <input 
-                          type="text"
-                          className="modal-input"
-                          placeholder="Ej: Tomar con comida, No manejar..."
-                          value={medicamento.instrucciones}
-                          onChange={(e) => actualizarMedicamento(index, 'instrucciones', e.target.value)}
-                        />
-                      </div>
-
                     </div>
 
-                    {/* BOTÓN ELIMINAR */}
+                    {/* eliminar */}
                     {tratamientoData.medicamentos.length > 1 && (
-                      <button 
+                      <button
                         type="button"
                         className="remove-medicamento-btn"
                         onClick={() => eliminarMedicamento(index)}
@@ -685,22 +862,22 @@ const Inicio = () => {
                   </div>
                 ))}
               </div>
-              
-              {/* BOTONES */}
+
+              {/* botones modal */}
               <div className="modal-buttons">
-                <button 
+                <button
                   className="cancel-button"
-                  onClick={() => setModalTratamiento(false)}
+                  onClick={cerrarModal}
                   disabled={guardando}
                 >
                   Cancelar
                 </button>
-                <button 
-                  className="save-button" 
+                <button
+                  className="save-button"
                   onClick={guardarTratamiento}
                   disabled={guardando}
                 >
-                  {guardando ? "Guardando..." : "Guardar Tratamiento"}
+                  {guardando ? "Guardando..." : (editId ? "Actualizar" : "Guardar Tratamiento")}
                 </button>
               </div>
             </div>
