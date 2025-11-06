@@ -172,6 +172,138 @@ html, body {
   transition: transform var(--transition-fast);
 }
 
+/* ===== MODAL DE CAMBIO DE FOTO MEJORADO ===== */
+.area-subida {
+  border: 2px dashed var(--color-gray-medium);
+  border-radius: var(--border-radius-lg);
+  padding: 40px 30px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--color-background);
+  margin: 24px;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.area-subida:hover {
+  border-color: var(--color-primary);
+  background: rgba(0, 166, 166, 0.05);
+}
+
+.area-subida p {
+  margin: 8px 0;
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+}
+
+.area-subida p:last-child {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-dark);
+}
+
+/* PREVIEW DE IMAGEN COMPACTO */
+.preview-imagen {
+  text-align: center;
+  margin: 24px;
+  padding: 20px;
+  background: var(--color-background);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-gray-light);
+  position: relative;
+}
+
+.preview-imagen p {
+  margin-bottom: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.preview-imagen img {
+  width: 120px; /* Tamaño reducido y consistente */
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-primary);
+  margin: 0 auto;
+  display: block;
+}
+
+.info-archivo {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-dark);
+  margin-top: 12px;
+  background: var(--color-white);
+  padding: 6px 12px;
+  border-radius: var(--border-radius-a);
+  display: inline-block;
+  border: 1px solid var(--color-gray-light);
+}
+
+/* Botón para elegir otra foto más compacto */
+.btn-elegir-otra {
+  margin-top: 16px;
+  background: var(--color-gray-medium);
+  color: var(--color-text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-a);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-elegir-otra:hover {
+  background: var(--color-gray-dark);
+  color: var(--color-white);
+  transform: translateY(-1px);
+}
+
+/* Input de archivo oculto */
+.input-foto-oculto {
+  display: none;
+}
+
+/* ===== RESPONSIVE PARA MODAL DE FOTO ===== */
+@media (max-width: 768px) {
+  .area-subida {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+  
+  .preview-imagen {
+    margin: 20px;
+    padding: 16px;
+  }
+  
+  .preview-imagen img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .area-subida p {
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .area-subida {
+    padding: 24px 16px;
+    margin: 16px;
+  }
+  
+  .preview-imagen {
+    margin: 16px;
+    padding: 12px;
+  }
+  
+  .preview-imagen img {
+    width: 80px;
+    height: 80px;
+  }
+}
 .cuenta-foto img:hover,
 .foto-perfil:hover .foto-usuario {
   transform: scale(1.05);

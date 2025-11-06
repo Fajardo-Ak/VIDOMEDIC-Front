@@ -92,13 +92,12 @@
 }
 
 .plan-card li::before {
-  content: "✔";
   color: #1F7A8C;
   margin-right: 8px;
 }
 
 .btn-elegir {
-  background-color: #1F7A8C;
+  background-color: #00A6A6;
   color: #fff;
   border-color: 7px solid #061618;
   padding: 10px 24px;
@@ -112,7 +111,7 @@
 }
 
 .btn-elegir:hover {
-  background-color: #145f6b;
+  background-color: #097D91;
 }
 
 .descuento {

@@ -60,7 +60,7 @@ const Home = () => {
     },
     {
       name: "Premium",
-      price: "$72",
+      price: "$80",
       period: "/mes",
       features: [
         "Todo lo del plan Básico",
@@ -69,7 +69,7 @@ const Home = () => {
         "Notificaciones avanzadas",
         "Sin anuncios"
       ],
-      buttonText: "Elegir Premium"
+      buttonText: "Elegir Plan"
     },
     {
       name: "Plan Anual",
@@ -82,7 +82,7 @@ const Home = () => {
         "Soporte prioritario incluido",
         "Actualizaciones gratuitas"
       ],
-      buttonText: "Elegir Anual"
+      buttonText: "Elegir Plan"
     }
   ];
 
@@ -97,7 +97,7 @@ const Home = () => {
         "Soporte estándar",
         "25% de comisión"
       ],
-      buttonText: "Contactar Ventas"
+      buttonText: "Elegir plan"
     },
     {
       name: "Colaborador Premium",
@@ -110,7 +110,7 @@ const Home = () => {
         "30% de comisión",
         "Reportes avanzados"
       ],
-      buttonText: "Contactar Ventas"
+      buttonText: "Elegir plan"
     }
   ];
 

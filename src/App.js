@@ -40,11 +40,12 @@ const DashboardLayout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return (
-    <div className="dashboard-container">
-      <Sidebar onToggle={setSidebarOpen} /> {/* ✅ setSidebarOpen EXISTE */}
 
-      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}> {/* ✅ sidebarOpen EXISTE */}
+  return (
+     <div className={`dashboard-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <Sidebar onToggle={setSidebarOpen} />{/* ✅ setSidebarOpen EXISTE */}
+
+      <div className="main-content"> {/* ✅ sidebarOpen EXISTE */}
         <Navbar />
         <ScrollToTop />
 
