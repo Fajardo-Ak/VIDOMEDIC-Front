@@ -130,231 +130,105 @@
   box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
 }
 
-/* GRID DEL CALENDARIO */
-.calendar-grid-custom {
-  display: grid;
-  grid-template-columns: 100px repeat(7, 1fr);
-  flex: 1;
-  overflow: auto;
-  background: var(--white);
-}
-
-/* COLUMNA DE HORAS */
-.time-column-custom {
-  background: var(--background-light);
-  border-right: 2px solid var(--border-light);
-  position: sticky;
-  left: 0;
-  z-index: 10;
-}
-
-.time-header {
-  height: 80px;
-  border-bottom: 2px solid var(--border-light);
-  background: var(--background-light);
-}
-
-.time-slot-custom {
-  height: 60px;
-  border-bottom: 1px solid var(--border-light);
+/* BOTONES PARA TRATAMIENTO ACTIVO */
+.tratamiento-activo-buttons {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 8px 12px;
-  position: relative;
+  align-items: center;
+  gap: 15px;
 }
 
-.hour-label {
-  font-size: 12px;
-  font-weight: 500;
+.tratamiento-activo-info {
   color: var(--text-secondary);
-  background: var(--white);
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 14px;
+  background: var(--background-light);
+  padding: 8px 16px;
+  border-radius: 20px;
   border: 1px solid var(--border-light);
 }
 
-/* COLUMNAS DE DÍAS */
-.day-column-custom {
-  border-right: 1px solid var(--border-light);
-  background: var(--white);
-}
-
-.day-column-custom.weekend-day {
-  background: var(--background-light);
-}
-
-.day-column-custom:last-child {
-  border-right: none;
-}
-
-.day-header-custom {
-  height: 80px;
-  border-bottom: 2px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  background: var(--white);
-  transition: background 0.2s ease;
-}
-
-.day-header-custom.today-header {
-  background: var(--primary-color);
-  color: var(--white);
-}
-
-.day-header-custom.weekend-day {
-  background: var(--background-light);
-}
-
-.day-name {
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: inherit;
-}
-
-.day-number {
-  font-size: 28px;
-  font-weight: 700;
-  margin-top: 4px;
-  color: inherit;
-}
-
-.today-number {
-  background: var(--white);
+.tratamiento-activo-info strong {
   color: var(--primary-color);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+}
+
+.edit-treatment-btn {
+  background: var(--secondary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* CELDAS DE TIEMPO */
-.time-cell-custom {
-  height: 60px;
-  border-bottom: 1px solid var(--border-light);
-  position: relative;
-  background: inherit;
-}
-
-.time-cell-custom:hover {
-  background: rgba(76, 175, 80, 0.05);
-}
-
-.hour-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--border-light);
-}
-
-/* EVENTOS DE MEDICAMENTOS */
-.medication-event {
-  position: absolute;
-  left: 4px;
-  right: 4px;
-  background: var(--primary-light);
-  border-left: 4px solid var(--primary-dark);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 12px;
-  cursor: pointer;
-  overflow: hidden;
-  z-index: 2;
-  margin-top: 2px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  gap: 6px;
   transition: all 0.2s ease;
 }
 
-.medication-event:hover {
+.edit-treatment-btn:hover {
+  background: #E65100;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.medication-event.alta {
-  background: #FFEBEE;
-  border-left-color: var(--high-importance);
-}
-
-.medication-event.media {
-  background: #FFF3E0;
-  border-left-color: var(--medium-importance);
-}
-
-.medication-event.baja {
-  background: #E8F5E8;
-  border-left-color: var(--low-importance);
-}
-
-.medication-event.event-completed {
-  opacity: 0.7;
-  background: #F5F5F5;
-  border-left-color: var(--border-medium);
-}
-
-.medication-event.event-completed .event-med-name {
-  text-decoration: line-through;
-}
-
-.event-time {
-  font-weight: 600;
-  font-size: 11px;
-  margin-bottom: 2px;
-  color: var(--primary-dark);
-}
-
-.medication-event.alta .event-time {
-  color: var(--high-importance);
-}
-
-.medication-event.media .event-time {
-  color: var(--medium-importance);
-}
-
-.medication-event.baja .event-time {
-  color: var(--low-importance);
-}
-
-.event-med-name {
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 2px;
-}
-
-.event-dosage {
-  color: var(--text-secondary);
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.event-status {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: var(--primary-color);
+.delete-treatment-btn {
+  background: #DC2626;
   color: var(--white);
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 10px;
+  gap: 6px;
+  transition: all 0.2s ease;
 }
 
-/* MODAL STYLES */
+.delete-treatment-btn:hover {
+  background: #B91C1C;
+  transform: translateY(-1px);
+}
+
+/* TODAS LAS REGLAS DE 
+  .calendar-grid-custom, 
+  .medication-event 
+  y relacionadas HAN SIDO ELIMINADAS 
+*/
+
+/* --- ESTILOS PARA EL NUEVO CALENDARIO (OPCIONAL - CUSTOMIZACIÓN) --- */
+
+/* Ajustar el contenedor del calendario nuevo */
+.calendar-container {
+  flex: 1; /* Hace que ocupe el espacio restante */
+  overflow: auto; /* Añade scroll si es necesario */
+  padding: 0 20px 20px 20px; /* Un poco de espacio */
+  background: var(--background-light);
+}
+
+/* Aquí es donde puedes empezar a sobre-escribir los estilos 
+  de react-big-calendar. Por ejemplo:
+*/
+
+/* Cambiar el color del día "Hoy" */
+.rbc-today {
+  background-color: #f0fdf4; /* Un verde muy pálido */
+}
+
+/* Cambiar el color de la cabecera del calendario */
+.rbc-header {
+  background: var(--white);
+  border-bottom: 2px solid var(--primary-color);
+  padding: 12px 0;
+  font-weight: 600;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+}
+
+/* Los eventos (.rbc-event) ya los estamos estilizando 
+  con `eventPropGetter` en React, ¡lo cual es la mejor práctica!
+*/
+
+
+/* MODAL STYLES - MÁS ANCHO */
 .config-modal-overlay {
   position: fixed;
   top: 0;
@@ -371,10 +245,11 @@
 .config-modal {
   background: var(--white);
   border-radius: 12px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow: auto;
+  width: 95%;
+  max-width: 1400px;
+  max-height: 95vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
@@ -394,6 +269,7 @@
 
 .tratamiento-form {
   padding: 0;
+  min-width: 0;
 }
 
 /* FORM SECTIONS */
@@ -428,6 +304,10 @@
   flex: 1;
 }
 
+.form-group.full-width {
+  flex: 2;
+}
+
 .form-group label {
   display: block;
   margin-bottom: 8px;
@@ -452,37 +332,43 @@
   box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
 }
 
-/* HORARIOS PREVIEW */
-.horarios-preview {
-  margin-top: 20px;
-  padding: 20px;
-  background: var(--background-light);
-  border-radius: 8px;
-  border: 1px solid var(--border-light);
-}
-
-.horarios-preview label {
+/* HORARIOS INPUT */
+.horarios-input small {
   display: block;
-  margin-bottom: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 14px;
+  margin-top: 5px;
+  color: var(--text-secondary);
+  font-size: 12px;
 }
 
-.horarios-list {
-  display: flex;
-  flex-wrap: wrap;
+/* DÍAS DE LA SEMANA CHECKBOXES */
+.dias-semana-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 10px;
+  margin-top: 10px;
 }
 
-.horario-item {
-  background: var(--primary-color);
-  color: var(--white);
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.2);
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 8px 12px;
+  background: var(--background-light);
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.checkbox-label:hover {
+  background: var(--border-light);
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
 }
 
 /* MEDICAMENTOS SECTION */
@@ -512,26 +398,40 @@
   background: var(--primary-dark);
 }
 
+/* MEDICAMENTO ROW EXPANDIDO */
 .medicamento-row {
   display: flex;
   gap: 15px;
   align-items: flex-start;
-  margin-bottom: 20px;
-  padding: 20px;
+  margin-bottom: 25px;
+  padding: 25px;
   background: var(--background-light);
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border-light);
   position: relative;
+  transition: all 0.2s ease;
+}
+
+.medicamento-row:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+}
+
+.medicamento-row.expanded-row {
+  flex-direction: column;
+  gap: 20px;
 }
 
 .medicamento-fields {
-  display: flex;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
   flex: 1;
+  width: 100%;
 }
 
 .medicamento-fields .form-group {
-  flex: 1;
+  margin-bottom: 0;
 }
 
 .remove-medicamento-btn {
@@ -548,18 +448,14 @@
   justify-content: center;
   flex-shrink: 0;
   transition: background 0.2s ease;
+  position: absolute;
+  top: 15px;
+  right: 15px;
 }
 
 .remove-medicamento-btn:hover {
   background: #c82333;
-}
-
-/* BUSCANDO TEXT */
-.buscando-texto {
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-style: italic;
-  margin-top: 4px;
+  transform: scale(1.1);
 }
 
 /* MODAL BUTTONS */
@@ -571,6 +467,8 @@
   background: var(--background-light);
   border-top: 1px solid var(--border-light);
   border-radius: 0 0 12px 12px;
+  position: sticky;
+  bottom: 0;
 }
 
 .cancel-button {
@@ -602,16 +500,39 @@
 
 .save-button:hover {
   background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
 }
 
 .cancel-button:disabled,
 .save-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .save-button:disabled {
   background: var(--border-medium);
+  box-shadow: none;
+}
+
+/* SCROLLBAR PERSONALIZADO */
+.config-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.config-modal::-webkit-scrollbar-track {
+  background: var(--background-light);
+  border-radius: 0 12px 12px 0;
+}
+
+.config-modal::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+.config-modal::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
 }
 
 /* LOADING STATES */
@@ -623,6 +544,17 @@
 }
 
 /* RESPONSIVE */
+@media (max-width: 1400px) {
+  .config-modal {
+    width: 98%;
+    margin: 10px;
+  }
+  
+  .medicamento-fields {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .agenda-header-custom {
     flex-direction: column;
@@ -634,10 +566,18 @@
     width: 100%;
     justify-content: space-between;
   }
+
+  .tratamiento-activo-buttons {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
   
+  /* Ya no necesitamos esto
   .calendar-grid-custom {
     grid-template-columns: 60px repeat(7, 1fr);
   }
+  */
   
   .form-row {
     flex-direction: column;
@@ -645,12 +585,52 @@
   }
   
   .medicamento-fields {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: 15px;
   }
   
   .config-modal {
     width: 95%;
     margin: 20px;
+  }
+  
+  .dias-semana-checkboxes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .medicamentos-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .modal-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .config-modal {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  .config-modal-header {
+    border-radius: 0;
+  }
+  
+  .form-section {
+    padding: 20px 15px;
+  }
+  
+  .medicamento-row {
+    padding: 15px;
+  }
+  
+  .dias-semana-checkboxes {
+    grid-template-columns: 1fr;
   }
 }
