@@ -265,7 +265,9 @@ const Inicio = () => {
         },
         body: JSON.stringify(tratamientoData)
       });
-      const data = await res.json();
+
+      const data = await response.json();
+
       if (data.success) {
         alert('Tratamiento creado exitosamente!');
         cerrarModal();
