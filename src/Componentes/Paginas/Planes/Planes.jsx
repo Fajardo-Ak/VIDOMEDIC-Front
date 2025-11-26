@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { CheckCircle } from "lucide-react";
 import "./Planes.css";
 
 const Planes = () => {
-  const planes = [
-    { nombre: "Básico", precio: "$00", caracteristicas: ["todo lo anterior", "1 cuenta Premium", "Cancela en cualquier momento", "Pago por suscripción o pago único"] },
-    { nombre: "Premium", precio: "$549", caracteristicas: ["todo lo anterior", "1 cuenta Premium", "Cancela en cualquier momento", "Pago por suscripción o pago único"] },
-  ];
-
   const [temaOscuro, setTemaOscuro] = useState(() => {
     return localStorage.getItem("darkTheme") === "true";
   });
@@ -21,59 +17,97 @@ const Planes = () => {
     return () => window.removeEventListener("storage", onStorageChange);
   }, []);
 
+  const planes = [
+    {
+      nombre: "Básico",
+      precio: "Gratis",
+      periodo: "",
+      caracteristicas: [
+        "Registro ilimitado de recetas",
+        "Registro de 1 contacto de confianza",
+        "Seguimiento fácil de tus recetas médicas",
+        "Notificaciones y alertas básicas",
+        "Con anuncios"
+      ],
+      tieneDescuento: false
+    },
+    {
+      nombre: "Premium",
+      precio: "$72.00",
+      periodo: "/mes",
+      caracteristicas: [
+        "Todo lo del plan básico",
+        "Hasta 2 contactos adicionales",
+        "Registro de recetas con fotos",
+        "Notificaciones y alertas avanzadas",
+        "Sin anuncios"
+      ],
+      tieneDescuento: false
+    },
+    {
+      nombre: "Plan Anual",
+      precio: "$692.00",
+      periodo: "/año",
+      caracteristicas: [
+        "Todo lo del plan Premium",
+        "20% de descuento por pago anual",
+        "Ahorro de $172 comparado con mensual",
+        "Facturación anual única"
+      ],
+      tieneDescuento: true,
+      precioOriginal: "$864.00/año"
+    }
+  ];
+
   return (
-  <div className={`planes-container ${temaOscuro ? "planes-dark" : "planes-light"}`}>
-  <div className="planes-header">
-    <h2 className={`planes-title ${temaOscuro ? "planes-title-dark" : "planes-title-light"}`}>
-      Conoce nuestros planes
-    </h2>
-    <p className={`planes-subtitle ${temaOscuro ? "planes-subtitle-dark" : "planes-subtitle-light"}`}>
-      Elige el plan que se adapte mejor a ti.
-    </p>
-  </div>
-
-  <div className="plans-grid">
-    <div className="plan-card">
-      <h3>Básico</h3>
-      <span className="price">Gratis</span>
-      <ul>
-        <li>Registro ilimitado de recetas.</li>
-        <li>Registro de 1 contacto de confianza.</li>
-        <li>Seguimiento fácil de tus recetas médicas.</li>
-        <li>Notificaciones y alertas básicas.</li>
-        <li>Con anuncios.</li>
-      </ul>
-      <button className="btn-elegir">Elegir</button>
-    </div>
-
-    <div className="plan-card">
-      <h3>Premium</h3>
-      <span className="price">$72.00/mes</span>
-      <ul>
-        <li>Todo lo del plan básico.</li>
-        <li>Hasta 2 contactos adicionales.</li>
-        <li>Registro de recetas con fotos.</li>
-        <li>Notificaciones y alertas avanzadas.</li>
-        <li>Sin anuncios.</li>
-      </ul>
-      <button className="btn-elegir">Elegir</button>
-    </div>
-
-    <div className="plan-card">
-      <div className="plan-header">
-        <h3>Plan Anual</h3>
-        <span className="price">$692.00/año</span>
-        <span className="descuento">$864.00/año</span>
+    <div className={`planes-container ${temaOscuro ? "planes-dark" : "planes-light"}`}>
+      <div className="planes-header">
+        <h2 className={`planes-title ${temaOscuro ? "planes-title-dark" : "planes-title-light"}`}>
+          Conoce nuestros planes
+        </h2>
+        <p className={`planes-subtitle ${temaOscuro ? "planes-subtitle-dark" : "planes-subtitle-light"}`}>
+          Elige el plan que se adapte mejor a ti.
+        </p>
       </div>
-      <ul>
-        <li>Todo lo del plan Premium.</li>
-        <li>20% de descuento por pago anual.</li>
-      </ul>
-      <button className="btn-elegir">Elegir</button>
-    </div>
-  </div>
-</div>
 
+      <div className="plans-grid">
+        {planes.map((plan, index) => (
+          <div key={index} className="plan-card">
+            {plan.tieneDescuento && (
+              <div className="discount-badge">
+                ¡20% OFF!
+              </div>
+            )}
+            
+            <div className="plan-header">
+              <h3>{plan.nombre}</h3>
+              <div className="price-section">
+                {plan.tieneDescuento && (
+                  <span className="original-price">{plan.precioOriginal}</span>
+                )}
+                <div className="price">
+                  {plan.precio}
+                  <span className="period">{plan.periodo}</span>
+                </div>
+              </div>
+            </div>
+
+            <ul className="plan-features">
+              {plan.caracteristicas.map((caracteristica, idx) => (
+                <li key={idx}>
+                  <CheckCircle size={18} />
+                  {caracteristica}
+                </li>
+              ))}
+            </ul>
+
+            <button className="btn-elegir">
+              Elegir Plan
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

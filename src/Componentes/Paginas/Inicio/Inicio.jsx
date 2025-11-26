@@ -1,61 +1,103 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiCheck } from 'react-icons/fi';
+import { FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiCheck, FiEdit, FiTrash2 } from 'react-icons/fi';
 import './Inicio.css';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay, endOfWeek } from 'date-fns';
+import es from 'date-fns/locale/es';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+// --- NUEVO: Async creatable select ---
+import AsyncCreatableSelect from 'react-select/async-creatable';
+// ------------------------------------------------
+
+// --- CONFIGURACIÓN DEL LOCALIZER ---
+const locales = {
+  'es': es,
+};
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek: (date) => startOfWeek(date, { locale: es }),
+  getDay,
+  locales,
+});
+
+// --- ESTADO INICIAL PARA EL FORMULARIO (incluye nuevos campos) ---
+const estadoInicialFormulario = {
+  nombre_tratamiento: '',
+  fecha_inicio: new Date().toISOString().split('T')[0],
+  fecha_fin: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  notas: '',
+  medicamentos: [
+    {
+      // nuevos campos para soporte de creación/selección
+      medicamento_id: null,            // id si existe en BD
+      medicamento_nombre: '',         // si es creado por el usuario
+      via_administracion: 'Oral',
+      presentacion: '',
+      importancia: 'media',
+      es_nuevo: true,                 // true => campos vía/presentación/importancia habilitados
+
+      // anteriores:
+      tipo_frecuencia: 'horarios_fijos',
+      valor_frecuencia: 8,
+      horarios_fijos: ['08:00', '14:00', '20:00'],
+      dias_semana: [],
+      cantidad_por_toma: '',
+    }
+  ]
+};
+// ---------------------------------------------------------------
 
 const Inicio = () => {
   const [semanaActual, setSemanaActual] = useState(new Date());
   const [dosisSemana, setDosisSemana] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [modalTratamiento, setModalTratamiento] = useState(false);
+  const [tratamientoActivo, setTratamientoActivo] = useState(null);
 
-  // Horario completo (24 horas)
-  const horasDelDia = Array.from({ length: 24 }, (_, i) => i);
+  // estado edición / formulario
+  const [editId, setEditId] = useState(null); // null = crear, id = editar
+  const [tratamientoData, setTratamientoData] = useState(estadoInicialFormulario);
 
-  // Función para obtener fecha actual en formato datetime-local
-  const obtenerFechaActual = () => {
-    const ahora = new Date();
-    const año = ahora.getFullYear();
-    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
-    const dia = String(ahora.getDate()).padStart(2, '0');
-    const horas = String(ahora.getHours()).padStart(2, '0');
-    const minutos = String(ahora.getMinutes()).padStart(2, '0');
-    
-    return `${año}-${mes}-${dia}T${horas}:${minutos}`;
-  };
+  const [guardando, setGuardando] = useState(false);
 
-  // Función para obtener fecha fin por defecto (7 días después)
-  const obtenerFechaFinDefault = () => {
-    const hoy = new Date();
-    hoy.setDate(hoy.getDate() + 7);
-    const año = hoy.getFullYear();
-    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-    const dia = String(hoy.getDate()).padStart(2, '0');
-    
-    return `${año}-${mes}-${dia}`;
-  };
+  // NOTA: ya no usamos un catálogo cargado al inicio; Async select carga a demanda
 
-  // Obtener dosis de la semana
-  const obtenerDosisSemana = async (fechaInicio = null) => {
+  // --- OBTENER DOSIS SEMANA ---
+  const obtenerDosisSemana = async (fechaInicio, fechaFin) => {
     setCargando(true);
     try {
-      const fecha = fechaInicio || semanaActual;
-      const inicioSemana = new Date(fecha);
-      inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay());
-      
       const params = new URLSearchParams({
-        fecha_inicio: inicioSemana.toISOString().split('T')[0]
+        fecha_inicio: fechaInicio.toISOString().split('T')[0],
+        fecha_fin: fechaFin.toISOString().split('T')[0],
       });
 
-      const response = await fetch(`http://localhost:8000/api/agenda/semana?${params}`, {
+      const response = await fetch(`http://localhost:8000/api/dosis/agenda-semanal?${params}`, {
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
-        setDosisSemana(data.data.dosis);
+        const eventosParseados = data.data.dosis.map(dosis => ({
+          ...dosis,
+          start: new Date(dosis.start),
+          end: new Date(dosis.end),
+        }));
+        setDosisSemana(eventosParseados);
+
+        if (tratamientoActivo === null) {
+          const tratamientoResponse = await fetch('http://localhost:8000/api/tratamientos/verificar-activo', {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+          });
+          const tratamientoDataResp = await tratamientoResponse.json();
+          if (tratamientoDataResp.success) {
+            setTratamientoActivo(tratamientoDataResp.tratamiento);
+          }
+        }
       } else {
         console.error('Error:', data.error);
       }
@@ -66,182 +108,154 @@ const Inicio = () => {
     }
   };
 
-  // Navegación entre semanas
+  // useEffects
+  useEffect(() => {
+    const inicioSemana = startOfWeek(semanaActual, { locale: es });
+    const finSemana = endOfWeek(semanaActual, { locale: es });
+    obtenerDosisSemana(inicioSemana, finSemana);
+  }, [semanaActual]);
+
+  // NOTA: antes cargábamos catálogo aquí; ahora lo carga AsyncCreatableSelect a demanda
+
+  // navegación
   const semanaAnterior = () => {
     const nuevaSemana = new Date(semanaActual);
     nuevaSemana.setDate(nuevaSemana.getDate() - 7);
     setSemanaActual(nuevaSemana);
-    obtenerDosisSemana(nuevaSemana);
   };
 
   const semanaSiguiente = () => {
     const nuevaSemana = new Date(semanaActual);
     nuevaSemana.setDate(nuevaSemana.getDate() + 7);
     setSemanaActual(nuevaSemana);
-    obtenerDosisSemana(nuevaSemana);
   };
 
   const irAHoy = () => {
-    const hoy = new Date();
-    setSemanaActual(hoy);
-    obtenerDosisSemana(hoy);
+    setSemanaActual(new Date());
   };
 
-  // Marcar dosis como tomada/pendiente
-  const marcarDosis = async (dosisId, tomada) => {
+  // handlers calendario
+  const handleNavigate = (newDate) => {
+    setSemanaActual(newDate);
+  };
+
+  const handleSelectEvent = (dosis) => {
+    marcarDosis(dosis.id, dosis.estado !== 'tomada');
+  };
+
+  const marcarDosis = async (dosisId, estado) => {
     try {
       const response = await fetch(`http://localhost:8000/api/dosis/${dosisId}/marcar`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
-        body: JSON.stringify({ tomada })
+        body: JSON.stringify({
+          estado: estado ? 'tomada' : 'omitida',
+          notas_toma: estado ? 'Tomada correctamente' : 'Omitida'
+        })
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
-        setDosisSemana(prevDosis => 
-          prevDosis.map(dosis => 
-            dosis.id === dosisId ? { ...dosis, tomada } : dosis
+        setDosisSemana(prevDosis =>
+          prevDosis.map(dosis =>
+            dosis.id === dosisId ? {
+              ...dosis,
+              estado: estado ? 'tomada' : 'omitida',
+              tomada: estado
+            } : dosis
           )
         );
       } else {
-        alert(data.error);
+        alert(data.error || 'Error al marcar la dosis');
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-  // Obtener dosis por día y hora
-  const getDosisPorDiaYHora = (dia, hora) => {
-    return dosisSemana.filter(dosis => {
-      const fechaDosis = new Date(dosis.fecha_hora);
-      return fechaDosis.getDay() === dia && fechaDosis.getHours() === hora;
-    });
+  // --- MODAL: nuevo / modificar ---
+  const abrirModalNuevo = () => {
+    setTratamientoData(estadoInicialFormulario);
+    setEditId(null);
+    setModalTratamiento(true);
   };
 
-  // Generar días de la semana
-  const getDiasSemana = () => {
-    const dias = [];
-    const inicioSemana = new Date(semanaActual);
-    inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay());
-    
-    for (let i = 0; i < 7; i++) {
-      const fecha = new Date(inicioSemana);
-      fecha.setDate(inicioSemana.getDate() + i);
-      dias.push(fecha);
+  const abrirModalModificar = () => {
+    if (!tratamientoActivo) return;
+
+    const datosFormulario = {
+      nombre_tratamiento: tratamientoActivo.nombre_tratamiento,
+      fecha_inicio: tratamientoActivo.fecha_inicio ? tratamientoActivo.fecha_inicio.split('T')[0] : new Date().toISOString().split('T')[0],
+      fecha_fin: tratamientoActivo.fecha_fin ? tratamientoActivo.fecha_fin.split('T')[0] : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      notas: tratamientoActivo.notas || '',
+      medicamentos: (tratamientoActivo.detalle_tratamientos || []).map(det => ({
+        // mapeo a nueva estructura: si el detalle tiene relación medicamento, incluir datos
+        medicamento_id: det.medicamento_id ?? null,
+        medicamento_nombre: det.medicamento ? (det.medicamento.nombre || '') : '',
+        via_administracion: det.medicamento ? (det.medicamento.via_administracion || 'Oral') : 'Oral',
+        presentacion: det.medicamento ? (det.medicamento.presentacion || '') : '',
+        importancia: det.medicamento ? (det.medicamento.importancia || 'media') : 'media',
+        es_nuevo: false, // es un medicamento existente, por tanto deshabilitar campos de edición de metadatos
+
+        tipo_frecuencia: det.tipo_frecuencia,
+        valor_frecuencia: det.valor_frecuencia,
+        horarios_fijos: det.horarios_fijos ? (() => {
+          try { return JSON.parse(det.horarios_fijos); } catch (e) { return Array.isArray(det.horarios_fijos) ? det.horarios_fijos : []; }
+        })() : [],
+        dias_semana: det.dias_semana ? (() => {
+          try { return JSON.parse(det.dias_semana); } catch (e) { return Array.isArray(det.dias_semana) ? det.dias_semana : []; }
+        })() : [],
+        cantidad_por_toma: det.cantidad_por_toma,
+      }))
+    };
+
+    if (!datosFormulario.medicamentos || datosFormulario.medicamentos.length === 0) {
+      datosFormulario.medicamentos = estadoInicialFormulario.medicamentos;
     }
-    return dias;
+
+    setTratamientoData(datosFormulario);
+    setEditId(tratamientoActivo.id);
+    setModalTratamiento(true);
   };
 
-  // Estados para el modal de tratamiento
-  const [tratamientoData, setTratamientoData] = useState({
-    fecha_inicio: obtenerFechaActual(),
-    fecha_fin: obtenerFechaFinDefault(),
-    importancia: 'Media',
-    frecuencia: {
-      tipo: 'horas',
-      valor: 8,
-      inicio: '08:00'
-    },
-    notas: '',
-    medicamentos: [
-      {
-        nombre: '',
-        cantidad_por_toma: '',
-        instrucciones: ''
-      }
-    ]
-  });
-
-  const [guardando, setGuardando] = useState(false);
-  const [medicamentosSugeridos, setMedicamentosSugeridos] = useState([]);
-  const [buscandoMedicamentos, setBuscandoMedicamentos] = useState(false);
-
-  // Función para calcular horarios en tiempo real
-  const calcularHorarios = () => {
-    if (!tratamientoData.fecha_inicio || !tratamientoData.frecuencia.inicio) {
-      return [];
-    }
-
-    const horarios = [];
-    const { tipo, valor, inicio } = tratamientoData.frecuencia;
-
-    if (tipo === 'horas') {
-      const fechaBase = new Date(tratamientoData.fecha_inicio);
-      const [hora, minuto] = inicio.split(':').map(Number);
-      
-      fechaBase.setHours(hora, minuto, 0, 0);
-
-      for (let i = 0; i < 4; i++) {
-        const nuevaFecha = new Date(fechaBase);
-        nuevaFecha.setHours(nuevaFecha.getHours() + (valor * i));
-        
-        horarios.push(
-          nuevaFecha.toLocaleTimeString('es-ES', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-          })
-        );
-      }
-    }
-
-    return horarios;
+  const cerrarModal = () => {
+    setModalTratamiento(false);
+    setEditId(null);
   };
 
-  // Función para buscar medicamentos (autocomplete)
-  const buscarMedicamentos = async (busqueda) => {
-    if (busqueda.length < 2) {
-      setMedicamentosSugeridos([]);
-      return;
-    }
-
-    setBuscandoMedicamentos(true);
-    try {
-      const response = await fetch(`http://localhost:8000/api/medicamentos/buscar?q=${encodeURIComponent(busqueda)}`, {
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        setMedicamentosSugeridos(data.data);
-      }
-    } catch (error) {
-      console.error('Error buscando medicamentos:', error);
-    } finally {
-      setBuscandoMedicamentos(false);
-    }
-  };
-
-  // Función para guardar tratamiento completo
+  // guardar router
   const guardarTratamiento = async () => {
+    // validaciones básicas
+    if (!tratamientoData.nombre_tratamiento || !tratamientoData.nombre_tratamiento.trim()) {
+      alert('Por favor ingresa un nombre para el tratamiento');
+      return;
+    }
     if (!tratamientoData.fecha_inicio || !tratamientoData.fecha_fin) {
-      alert('Por favor completa las fechas de inicio y fin');
+      alert('Por favor ingresa fechas de inicio y fin válidas');
       return;
     }
-
-    if (tratamientoData.medicamentos.length === 0) {
-      alert('Debes agregar al menos un medicamento');
-      return;
-    }
-
-    const medicamentosInvalidos = tratamientoData.medicamentos.filter(med => 
-      !med.nombre.trim() || !med.cantidad_por_toma.trim()
-    );
-
-    if (medicamentosInvalidos.length > 0) {
-      alert('Todos los medicamentos deben tener nombre y cantidad por toma');
+    if (!tratamientoData.medicamentos || tratamientoData.medicamentos.length === 0) {
+      alert('Por favor agrega al menos un medicamento');
       return;
     }
 
     setGuardando(true);
 
+    if (editId) {
+      await actualizarTratamiento();
+    } else {
+      await crearTratamiento();
+    }
+
+    setGuardando(false);
+  };
+
+  // crear
+  const crearTratamiento = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/tratamientos', {
         method: 'POST',
@@ -256,83 +270,257 @@ const Inicio = () => {
 
       if (data.success) {
         alert('Tratamiento creado exitosamente!');
-        setModalTratamiento(false);
-        await obtenerDosisSemana();
-        
-        // Limpiar formulario
-        setTratamientoData({
-          fecha_inicio: obtenerFechaActual(),
-          fecha_fin: obtenerFechaFinDefault(),
-          importancia: 'Media',
-          frecuencia: {
-            tipo: 'horas',
-            valor: 8,
-            inicio: '08:00'
-          },
-          notas: '',
-          medicamentos: [
-            {
-              nombre: '',
-              cantidad_por_toma: '',
-              instrucciones: ''
-            }
-          ]
-        });
+        cerrarModal();
+
+        const inicioSemana = startOfWeek(semanaActual, { locale: es });
+        const finSemana = endOfWeek(semanaActual, { locale: es });
+        await obtenerDosisSemana(inicioSemana, finSemana);
+
+        setTratamientoActivo(data.data);
+        setTratamientoData(estadoInicialFormulario);
       } else {
         alert('Error al crear tratamiento: ' + (data.error || 'Error desconocido'));
       }
     } catch (error) {
       console.error('Error:', error);
       alert('Error de conexión al guardar el tratamiento');
-    } finally {
-      setGuardando(false);
     }
   };
 
-  // Formateadores
-  const formatearDia = (fecha) => {
-    return fecha.toLocaleDateString('es-ES', { weekday: 'short' });
+  // actualizar
+  const actualizarTratamiento = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/tratamientos/${editId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify(tratamientoData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('Tratamiento actualizado exitosamente!');
+        cerrarModal();
+
+        const inicioSemana = startOfWeek(semanaActual, { locale: es });
+        const finSemana = endOfWeek(semanaActual, { locale: es });
+        await obtenerDosisSemana(inicioSemana, finSemana);
+
+        setTratamientoActivo(data.data);
+      } else {
+        alert('Error al actualizar tratamiento: ' + (data.error || 'Error desconocido'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al actualizar el tratamiento');
+    }
   };
 
-  const formatearFecha = (fecha) => {
-    return fecha.getDate();
+  // eliminar
+  const eliminarTratamiento = async () => {
+    if (!tratamientoActivo) return;
+
+    if (!window.confirm('¿Estás seguro de que quieres eliminar este tratamiento? Se eliminarán todas las dosis programadas.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/tratamientos/${tratamientoActivo.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('Tratamiento eliminado correctamente');
+        setTratamientoActivo(null);
+
+        const inicioSemana = startOfWeek(semanaActual, { locale: es });
+        const finSemana = endOfWeek(semanaActual, { locale: es });
+        await obtenerDosisSemana(inicioSemana, finSemana);
+      } else {
+        alert('Error al eliminar tratamiento: ' + (data.error || 'Error desconocido'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al eliminar el tratamiento');
+    }
   };
 
-  const formatearHora = (hora) => {
-    return `${hora}:00`;
+  // --- NUEVO: loadOptions para AsyncCreatableSelect ---
+  const loadOptions = async (inputValue) => {
+    if (!inputValue || inputValue.length < 2) {
+      return [];
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/medicamentos/buscar?q=${encodeURIComponent(inputValue)}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        return data.data.map(med => ({
+          value: med, // objeto completo
+          label: `${med.nombre}${med.presentacion ? ` (${med.presentacion})` : ''}`
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error('Error buscando medicamentos:', error);
+      return [];
+    }
   };
 
-  const esHoy = (fecha) => {
-    const hoy = new Date();
-    return fecha.toDateString() === hoy.toDateString();
+  // cuando el usuario selecciona o crea una opción
+  const handleMedicamentoChange = (opcionSeleccionada, index) => {
+    const nuevosMedicamentos = [...tratamientoData.medicamentos];
+    const medActual = nuevosMedicamentos[index] || {};
+
+    if (!opcionSeleccionada) {
+      // limpia selección
+      nuevosMedicamentos[index] = {
+        ...medActual,
+        medicamento_id: null,
+        medicamento_nombre: '',
+        via_administracion: 'Oral',
+        presentacion: '',
+        importancia: 'media',
+        es_nuevo: true,
+      };
+    } else if (opcionSeleccionada.__isNew__) {
+      // crear nuevo medicamento localmente
+      nuevosMedicamentos[index] = {
+        ...medActual,
+        medicamento_id: null,
+        medicamento_nombre: opcionSeleccionada.label,
+        via_administracion: 'Oral',
+        presentacion: '',
+        importancia: 'media',
+        es_nuevo: true,
+      };
+    } else {
+      // seleccionó un medicamento existente (value = objeto completo)
+      const medExistente = opcionSeleccionada.value;
+      nuevosMedicamentos[index] = {
+        ...medActual,
+        medicamento_id: medExistente.id ?? medExistente.id,
+        medicamento_nombre: medExistente.nombre ?? (medExistente.nombre_completo || ''),
+        via_administracion: medExistente.via_administracion ?? 'Oral',
+        presentacion: medExistente.presentacion ?? '',
+        importancia: medExistente.importancia ?? 'media',
+        es_nuevo: false,
+      };
+    }
+
+    setTratamientoData({
+      ...tratamientoData,
+      medicamentos: nuevosMedicamentos
+    });
   };
 
-  const esFinDeSemana = (fecha) => {
-    const dia = fecha.getDay();
-    return dia === 0 || dia === 6;
+  // actualizarMedicamento ahora soporta nuevos campos
+  const actualizarMedicamento = (index, campo, valor) => {
+    const nuevosMedicamentos = [...tratamientoData.medicamentos];
+    nuevosMedicamentos[index] = {
+      ...nuevosMedicamentos[index],
+      [campo]: valor
+    };
+    setTratamientoData({
+      ...tratamientoData,
+      medicamentos: nuevosMedicamentos
+    });
   };
 
-  // Cargar datos al iniciar
-  useEffect(() => {
-    obtenerDosisSemana();
-  }, []);
+  // agregarMedicamento usa la plantilla inicial
+  const agregarMedicamento = () => {
+    setTratamientoData({
+      ...tratamientoData,
+      medicamentos: [
+        ...tratamientoData.medicamentos,
+        estadoInicialFormulario.medicamentos[0]
+      ]
+    });
+  };
+
+  const eliminarMedicamento = (index) => {
+    const nuevosMedicamentos = tratamientoData.medicamentos.filter((_, i) => i !== index);
+    setTratamientoData({
+      ...tratamientoData,
+      medicamentos: nuevosMedicamentos
+    });
+  };
+
+  // utilitarios del calendario
+  const getDiasSemana = () => {
+    const dias = [];
+    const inicioSemana = startOfWeek(semanaActual, { locale: es });
+
+    for (let i = 0; i < 7; i++) {
+      const fecha = new Date(inicioSemana);
+      fecha.setDate(inicioSemana.getDate() + i);
+      dias.push(fecha);
+    }
+    return dias;
+  };
+
+  const eventPropGetter = (event) => {
+    const esTomada = event.estado === 'tomada';
+    const esOmitida = event.estado === 'omitida';
+    const esPasada = new Date(event.start) < new Date() && event.estado === 'pendiente';
+
+    let backgroundColor = event.color || '#F59E0B';
+
+    if (esTomada) {
+      backgroundColor = '#9CA3AF';
+    } else if (esOmitida) {
+      backgroundColor = '#EF4444';
+    } else if (esPasada) {
+      backgroundColor = '#6B7280';
+    }
+
+    return {
+      style: {
+        backgroundColor,
+        borderColor: backgroundColor,
+        opacity: esTomada ? 0.7 : 1,
+      },
+    };
+  };
 
   const diasSemana = getDiasSemana();
 
+  const formats = {
+    timeGutterFormat: (date, culture, local) =>
+      local.format(date, 'h a', culture),
+    eventTimeRangeFormat: ({ start }, culture, local) =>
+      local.format(start, 'h:mm a', culture)
+  };
+
   return (
     <div className="vidomedic-agenda">
-      {/* Header personalizado */}
+      {/* Header */}
       <div className="agenda-header-custom">
         <div className="header-left">
           <div className="agenda-title-custom">
             <FiCalendar /> Mi Agenda de Medicamentos
           </div>
-          <div className="semana-rango">
-            {diasSemana[0].toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} - 
-            {diasSemana[6].toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
-          </div>
+          {diasSemana.length > 0 && (
+            <div className="semana-rango">
+              {diasSemana[0].toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} -{' '}
+              {diasSemana[6].toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </div>
+          )}
         </div>
-        
+
         <div className="header-controls">
           <div className="nav-buttons">
             <button onClick={semanaAnterior} className="nav-btn">
@@ -346,103 +534,91 @@ const Inicio = () => {
             </button>
           </div>
 
-          <button 
-            className="create-treatment-btn"
-            onClick={() => setModalTratamiento(true)}
-          >
-            <FiPlus /> Nuevo Tratamiento
-          </button>
+          {tratamientoActivo ? (
+            <div className="tratamiento-activo-buttons">
+              <span className="tratamiento-activo-info">
+                Tratamiento activo: <strong>{tratamientoActivo.nombre_tratamiento}</strong>
+              </span>
+              <button className="edit-treatment-btn" onClick={abrirModalModificar}>
+                <FiEdit /> Modificar
+              </button>
+              <button className="delete-treatment-btn" onClick={eliminarTratamiento}>
+                <FiTrash2 /> Eliminar
+              </button>
+            </div>
+          ) : (
+            <button
+              className="create-treatment-btn"
+              onClick={abrirModalNuevo}
+            >
+              <FiPlus /> Nuevo Tratamiento
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Grid del calendario*/}
-      <div className="calendar-grid-custom">
-        {/* Columna de horas */}
-        <div className="time-column-custom">
-          <div className="time-header"></div>
-          {horasDelDia.map(hora => (
-            <div key={hora} className="time-slot-custom">
-              <span className="hour-label">{formatearHora(hora)}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Columnas de días */}
-        {diasSemana.map((fecha, diaIndex) => (
-          <div key={diaIndex} className={`day-column-custom ${esFinDeSemana(fecha) ? 'weekend-day' : ''}`}>
-            {/* Header del día */}
-            <div className={`day-header-custom ${esHoy(fecha) ? 'today-header' : ''}`}>
-              <div className="day-name">{formatearDia(fecha)}</div>
-              <div className={`day-number ${esHoy(fecha) ? 'today-number' : ''}`}>
-                {formatearFecha(fecha)}
-              </div>
-            </div>
-
-            {/* Celdas de tiempo */}
-            {horasDelDia.map(hora => (
-              <div key={hora} className="time-cell-custom">
-                {/* Línea horizontal para separar horas */}
-                <div className="hour-line"></div>
-                
-                {/* Eventos/dosis para esta celda */}
-                {getDosisPorDiaYHora(diaIndex, hora).map(dosis => (
-                  <div 
-                    key={dosis.id}
-                    className={`medication-event ${
-                      dosis.tratamiento_medicamento?.tratamiento?.importancia?.toLowerCase() || 'media'
-                    } ${dosis.tomada ? 'event-completed' : ''}`}
-                    onClick={() => marcarDosis(dosis.id, !dosis.tomada)}
-                  >
-                    <div className="event-time">
-                      {new Date(dosis.fecha_hora).toLocaleTimeString('es-ES', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                    </div>
-                    <div className="event-med-name">
-                      {dosis.tratamiento_medicamento?.medicamento?.nombre}
-                    </div>
-                    <div className="event-dosage">
-                      {dosis.tratamiento_medicamento?.cantidad_por_toma}
-                    </div>
-                    {dosis.tomada && (
-                      <div className="event-status">
-                        <FiCheck />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        ))}
+      {/* Calendario */}
+      <div className="calendar-container" style={{ height: '75vh' }}>
+        <Calendar
+          localizer={localizer}
+          events={dosisSemana}
+          startAccessor="start"
+          endAccessor="end"
+          culture="es"
+          views={['week', 'day']}
+          defaultView="week"
+          date={semanaActual}
+          onNavigate={handleNavigate}
+          onSelectEvent={handleSelectEvent}
+          toolbar={false}
+          eventPropGetter={eventPropGetter}
+          min={new Date(0, 0, 0, 0, 0, 0)}
+          max={new Date(0, 0, 0, 23, 59, 0)}
+          formats={formats}
+        />
       </div>
 
-      {/* Modal de Nuevo Tratamiento */}
+      {/* Modal */}
       {modalTratamiento && (
-        <div 
+        <div
           className="config-modal-overlay"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
-              setModalTratamiento(false);
+              cerrarModal();
             }
           }}
         >
-          <div className="config-modal tratamiento-modal">
+          <div className="config-modal tratamiento-modal expanded-modal">
             <div className="config-modal-header">
-              <h3>Nuevo Tratamiento</h3>
+              <h3>{editId ? "Modificar Tratamiento" : "Nuevo Tratamiento"}</h3>
             </div>
-            
+
             <div className="tratamiento-form">
-              {/* SECCIÓN 1: INFORMACIÓN GLOBAL */}
+              {/* Información general */}
               <div className="form-section">
                 <h4>Información del Tratamiento</h4>
-                
+
+                <div className="form-row">
+                  <div className="form-group full-width">
+                    <label>Nombre del Tratamiento *</label>
+                    <input
+                      type="text"
+                      className="modal-input"
+                      placeholder="Ej: Tratamiento para gripe, Control de presión..."
+                      value={tratamientoData.nombre_tratamiento}
+                      onChange={(e) => setTratamientoData({
+                        ...tratamientoData,
+                        nombre_tratamiento: e.target.value
+                      })}
+                    />
+                  </div>
+                </div>
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Fecha de Inicio *</label>
-                    <input 
-                      type="datetime-local"
+                    <input
+                      type="date"
                       className="modal-input"
                       value={tratamientoData.fecha_inicio}
                       onChange={(e) => setTratamientoData({
@@ -451,10 +627,10 @@ const Inicio = () => {
                       })}
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Fecha de Fin *</label>
-                    <input 
+                    <input
                       type="date"
                       className="modal-input"
                       value={tratamientoData.fecha_fin}
@@ -465,225 +641,243 @@ const Inicio = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="form-row">
-                  <div className="form-group">
-                    <label>Importancia</label>
-                    <select 
+                  <div className="form-group full-width">
+                    <label>Notas (opcional)</label>
+                    <textarea
                       className="modal-input"
-                      value={tratamientoData.importancia}
+                      placeholder="Instrucciones adicionales, observaciones..."
+                      value={tratamientoData.notas}
                       onChange={(e) => setTratamientoData({
                         ...tratamientoData,
-                        importancia: e.target.value
+                        notas: e.target.value
                       })}
-                    >
-                      <option value="Baja">Baja</option>
-                      <option value="Media">Media</option>
-                      <option value="Alta">Alta</option>
-                    </select>
+                      rows="3"
+                    />
                   </div>
                 </div>
               </div>
-              
-              {/* SECCIÓN 2: FRECUENCIA */}
-              <div className="form-section">
-                <h4>Frecuencia y Horarios</h4>
-                
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Tipo de Frecuencia</label>
-                    <select 
-                      className="modal-input"
-                      value={tratamientoData.frecuencia.tipo}
-                      onChange={(e) => setTratamientoData({
-                        ...tratamientoData,
-                        frecuencia: {
-                          ...tratamientoData.frecuencia,
-                          tipo: e.target.value
-                        }
-                      })}
-                    >
-                      <option value="horas">Cada X horas</option>
-                      <option value="dias_semana">Días específicos</option>
-                    </select>
-                  </div>
-                </div>
 
-                {/* FRECUENCIA POR HORAS */}
-                {tratamientoData.frecuencia.tipo === 'horas' && (
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Cada cuántas horas</label>
-                      <input 
-                        type="number"
-                        min="1"
-                        max="24"
-                        className="modal-input"
-                        value={tratamientoData.frecuencia.valor}
-                        onChange={(e) => setTratamientoData({
-                          ...tratamientoData,
-                          frecuencia: {
-                            ...tratamientoData.frecuencia,
-                            valor: parseInt(e.target.value)
-                          }
-                        })}
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Hora de inicio</label>
-                      <input 
-                        type="time"
-                        className="modal-input"
-                        value={tratamientoData.frecuencia.inicio}
-                        onChange={(e) => setTratamientoData({
-                          ...tratamientoData,
-                          frecuencia: {
-                            ...tratamientoData.frecuencia,
-                            inicio: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* VISUALIZADOR DE HORARIOS EN TIEMPO REAL */}
-                <div className="horarios-preview">
-                  <label>Próximas tomas calculadas:</label>
-                  <div className="horarios-list">
-                    {calcularHorarios().map((horario, index) => (
-                      <span key={index} className="horario-item">
-                        {horario}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              {/* SECCIÓN 3: MEDICAMENTOS */}
+              {/* Medicamentos */}
               <div className="form-section">
                 <div className="medicamentos-header">
                   <h4>Medicamentos</h4>
-                  <button 
+                  <button
                     type="button"
                     className="add-medicamento-btn"
-                    onClick={() => setTratamientoData({
-                      ...tratamientoData,
-                      medicamentos: [
-                        ...tratamientoData.medicamentos,
-                        { nombre: '', cantidad_por_toma: '', instrucciones: '' }
-                      ]
-                    })}
+                    onClick={agregarMedicamento}
                   >
                     <FiPlus /> Agregar Medicamento
                   </button>
                 </div>
 
-                {/* LISTA DE MEDICAMENTOS */}
-                {tratamientoData.medicamentos.map((medicamento, index) => {
-                  const actualizarMedicamento = (campo, valor) => {
-                    const nuevosMedicamentos = [...tratamientoData.medicamentos];
-                    nuevosMedicamentos[index][campo] = valor;
-                    setTratamientoData({
-                      ...tratamientoData,
-                      medicamentos: nuevosMedicamentos
-                    });
-
-                    if (campo === 'nombre' && valor.length >= 2) {
-                      buscarMedicamentos(valor);
-                    }
-                  };
-
-                  return (
-                    <div key={index} className="medicamento-row">
-                      <div className="medicamento-fields">
-                        
-                        {/* NOMBRE DEL MEDICAMENTO */}
-                        <div className="form-group">
-                          <label>Medicamento *</label>
-                          <input 
-                            type="text"
-                            className="modal-input"
-                            placeholder="Buscar o escribir nuevo medicamento..."
-                            value={medicamento.nombre}
-                            onChange={(e) => actualizarMedicamento('nombre', e.target.value)}
-                            list="medicamentos-sugeridos"
-                          />
-                          <datalist id="medicamentos-sugeridos">
-                            {medicamentosSugeridos.map(med => (
-                              <option key={med.id} value={med.nombre}>
-                                {med.presentacion ? `${med.nombre} (${med.presentacion})` : med.nombre}
-                              </option>
-                            ))}
-                          </datalist>
-                          {buscandoMedicamentos && (
-                            <div className="buscando-texto">Buscando medicamentos...</div>
-                          )}
-                        </div>
-
-                        {/* CANTIDAD POR TOMA */}
-                        <div className="form-group">
-                          <label>Cantidad por toma *</label>
-                          <input 
-                            type="text"
-                            className="modal-input"
-                            placeholder="Ej: 1 tableta, 15ml, 2 gotas"
-                            value={medicamento.cantidad_por_toma}
-                            onChange={(e) => actualizarMedicamento('cantidad_por_toma', e.target.value)}
-                          />
-                        </div>
-
-                        {/* INSTRUCCIONES ESPECIALES */}
-                        <div className="form-group">
-                          <label>Instrucciones (opcional)</label>
-                          <input 
-                            type="text"
-                            className="modal-input"
-                            placeholder="Ej: Tomar con comida, No manejar..."
-                            value={medicamento.instrucciones}
-                            onChange={(e) => actualizarMedicamento('instrucciones', e.target.value)}
-                          />
-                        </div>
-
+                {tratamientoData.medicamentos.map((medicamento, index) => (
+                  <div key={index} className="medicamento-row expanded-row">
+                    <div className="medicamento-fields">
+                      {/* Async creatable select */}
+                      <div className="form-group">
+                        <label>Medicamento *</label>
+                        <AsyncCreatableSelect
+                          key={`med-select-${index}`}
+                          isClearable
+                          // Si es existente, construimos value con objeto
+                          value={
+                            medicamento.es_nuevo || !medicamento.medicamento_id
+                              ? (medicamento.medicamento_nombre ? { label: medicamento.medicamento_nombre, value: { nombre: medicamento.medicamento_nombre, id: null, presentacion: medicamento.presentacion, via_administracion: medicamento.via_administracion, importancia: medicamento.importancia } } : null)
+                              : { value: { id: medicamento.medicamento_id, nombre: medicamento.medicamento_nombre, presentacion: medicamento.presentacion, via_administracion: medicamento.via_administracion, importancia: medicamento.importancia }, label: `${medicamento.medicamento_nombre}${medicamento.presentacion ? ` (${medicamento.presentacion})` : ''}` }
+                          }
+                          placeholder="Escribe para buscar o crear..."
+                          loadOptions={loadOptions}
+                          onChange={(opcion) => handleMedicamentoChange(opcion, index)}
+                          formatCreateLabel={(inputValue) => `Crear "${inputValue}"`}
+                        />
                       </div>
 
-                      {/* BOTÓN ELIMINAR */}
-                      {tratamientoData.medicamentos.length > 1 && (
-                        <button 
-                          type="button"
-                          className="remove-medicamento-btn"
-                          onClick={() => {
-                            const nuevosMedicamentos = tratamientoData.medicamentos.filter((_, i) => i !== index);
-                            setTratamientoData({
-                              ...tratamientoData,
-                              medicamentos: nuevosMedicamentos
-                            });
-                          }}
+                      {/* Nuevos campos: vía, presentación, importancia */}
+                      <div className="form-group">
+                        <label>Vía de Administración *</label>
+                        <select
+                          className="modal-input"
+                          value={medicamento.via_administracion}
+                          onChange={(e) => actualizarMedicamento(index, 'via_administracion', e.target.value)}
+                          disabled={!medicamento.es_nuevo}
                         >
-                          ×
-                        </button>
+                          <option value="Oral">Oral</option>
+                          <option value="Inyectable">Inyectable</option>
+                          <option value="Tópica">Tópica</option>
+                          <option value="Oftálmica">Oftálmica</option>
+                          <option value="Ótica">Ótica</option>
+                          <option value="Nasal">Nasal</option>
+                          <option value="Rectal">Rectal</option>
+                          <option value="Vaginal">Vaginal</option>
+                          <option value="Inhalada">Inhalada</option>
+                          <option value="Otro">Otro</option>
+                        </select>
+                      </div>
+
+                      <div className="form-group">
+                        <label>Presentación (ej: 500mg, 10ml)</label>
+                        <input
+                          type="text"
+                          className="modal-input"
+                          placeholder="Ej: 500mg"
+                          value={medicamento.presentacion}
+                          onChange={(e) => actualizarMedicamento(index, 'presentacion', e.target.value)}
+                          disabled={!medicamento.es_nuevo}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Importancia *</label>
+                        <select
+                          className="modal-input"
+                          value={medicamento.importancia}
+                          onChange={(e) => actualizarMedicamento(index, 'importancia', e.target.value)}
+                          disabled={!medicamento.es_nuevo}
+                        >
+                          <option value="baja">Baja</option>
+                          <option value="media">Media</option>
+                          <option value="alta">Alta</option>
+                          <option value="critica">Crítica</option>
+                        </select>
+                      </div>
+
+                      {/* Frecuencia y demás campos */}
+                      <div className="form-group">
+                        <label>Tipo de Frecuencia</label>
+                        <select
+                          className="modal-input"
+                          value={medicamento.tipo_frecuencia}
+                          onChange={(e) => actualizarMedicamento(index, 'tipo_frecuencia', e.target.value)}
+                        >
+                          <option value="horarios_fijos">Horarios Fijos</option>
+                          <option value="horas">Cada X Horas</option>
+                          <option value="dias">Cada X Días</option>
+                          <option value="semanal">Días de la Semana</option>
+                        </select>
+                      </div>
+
+                      {medicamento.tipo_frecuencia === 'horas' && (
+                        <>
+                          <div className="form-group">
+                            <label>Cada cuántas horas</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="24"
+                              className="modal-input"
+                              value={medicamento.valor_frecuencia || 8}
+                              onChange={(e) => actualizarMedicamento(index, 'valor_frecuencia', parseInt(e.target.value))}
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label>Hora de primera toma</label>
+                            <input
+                              type="time"
+                              className="modal-input"
+                              value={medicamento.horarios_fijos ? (medicamento.horarios_fijos[0] || '08:00') : '08:00'}
+                              onChange={(e) => actualizarMedicamento(index, 'horarios_fijos', [e.target.value])}
+                            />
+                          </div>
+                        </>
                       )}
+
+                      {medicamento.tipo_frecuencia === 'dias' && (
+                        <div className="form-group">
+                          <label>Cada cuántos días</label>
+                          <input
+                            type="number"
+                            min="1"
+                            className="modal-input"
+                            value={medicamento.valor_frecuencia || 1}
+                            onChange={(e) => actualizarMedicamento(index, 'valor_frecuencia', parseInt(e.target.value))}
+                          />
+                        </div>
+                      )}
+
+                      {(medicamento.tipo_frecuencia === 'horarios_fijos' || medicamento.tipo_frecuencia === 'semanal') && (
+                        <div className="form-group full-width">
+                          <label>Horarios</label>
+                          <div className="horarios-input">
+                            <input
+                              type="text"
+                              className="modal-input"
+                              placeholder="Ej: 08:00,14:00,20:00"
+                              value={medicamento.horarios_fijos?.join(',') || ''}
+                              onChange={(e) => actualizarMedicamento(index, 'horarios_fijos', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
+                            />
+                            <small>Separar horarios con comas (formato: HH:MM)</small>
+                          </div>
+                        </div>
+                      )}
+
+                      {medicamento.tipo_frecuencia === 'semanal' && (
+                        <div className="form-group full-width">
+                          <label>Días de la semana</label>
+                          <div className="dias-semana-checkboxes">
+                            {['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'].map(dia => (
+                              <label key={dia} className="checkbox-label">
+                                <input
+                                  type="checkbox"
+                                  checked={medicamento.dias_semana?.includes(dia) || false}
+                                  onChange={(e) => {
+                                    const nuevosDias = e.target.checked
+                                      ? [...(medicamento.dias_semana || []), dia]
+                                      : (medicamento.dias_semana || []).filter(d => d !== dia);
+                                    actualizarMedicamento(index, 'dias_semana', nuevosDias);
+                                  }}
+                                />
+                                {dia.charAt(0).toUpperCase() + dia.slice(1)}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="form-group">
+                        <label>Cantidad por toma *</label>
+                        <input
+                          type="text"
+                          className="modal-input"
+                          placeholder="Ej: 1 tableta, 15ml, 2 gotas"
+                          value={medicamento.cantidad_por_toma}
+                          onChange={(e) => actualizarMedicamento(index, 'cantidad_por_toma', e.target.value)}
+                        />
+                      </div>
+
                     </div>
-                  );
-                })}
+
+                    {/* eliminar */}
+                    {tratamientoData.medicamentos.length > 1 && (
+                      <button
+                        type="button"
+                        className="remove-medicamento-btn"
+                        onClick={() => eliminarMedicamento(index)}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
-              
-              {/* BOTONES */}
+
+              {/* botones modal */}
               <div className="modal-buttons">
-                <button 
+                <button
                   className="cancel-button"
-                  onClick={() => setModalTratamiento(false)}
+                  onClick={cerrarModal}
                   disabled={guardando}
                 >
                   Cancelar
                 </button>
-                <button 
-                  className="save-button" 
+                <button
+                  className="save-button"
                   onClick={guardarTratamiento}
                   disabled={guardando}
                 >
-                  {guardando ? "Guardando..." : "Guardar Tratamiento"}
+                  {guardando ? "Guardando..." : (editId ? "Actualizar" : "Guardar Tratamiento")}
                 </button>
               </div>
             </div>

@@ -30,8 +30,9 @@ html, body {
 /* ======== LAYOUT PRINCIPAL ======== */
 .dashboard-container {
   min-height: 100vh;
-  transition: all var(--transition-speed) ease;
+  transition: margin-left var(--transition-speed) ease;
   position: relative;
+  background-color: #f8fafc;
 }
 
 /* Cuando sidebar está ABIERTO en desktop */
@@ -46,21 +47,19 @@ html, body {
   width: 100%;
 }
 
-/* ======== CONTENIDO PRINCIPAL ======== */
+/* ======== CONTENIDO PRINCIPAL CORREGIDO ======== */
 .main-content {
-  min-height: 100vh;
-  padding: calc(var(--navbar-height) + 20px) 20px 20px 20px;
+  min-height: calc(100vh - var(--navbar-height));
+  padding: 0; /* ELIMINADO padding extra */
   background-color: #f8fafc;
   width: 100%;
-  transition: margin-left var(--transition-speed) ease;
+  position: relative;
 }
 
 /* ======== NAVBAR CORREGIDO ======== */
 .custom-navbar {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
   height: var(--navbar-height);
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
@@ -78,12 +77,14 @@ html, body {
 .dashboard-container.sidebar-open .custom-navbar {
   margin-left: var(--sidebar-width);
   width: calc(100% - var(--sidebar-width));
+  left: 0;
 }
 
 /* Cuando sidebar está CERRADO en desktop */
 .dashboard-container.sidebar-closed .custom-navbar {
   margin-left: 0;
   width: 100%;
+  left: 0;
 }
 
 /* ======== SIDEBAR ======== */
@@ -278,11 +279,12 @@ html, body {
   .custom-navbar {
     margin-left: 0 !important;
     width: 100% !important;
+    left: 0 !important;
   }
   
   .main-content {
     margin-left: 0 !important;
-    padding: calc(var(--navbar-height) + 15px) 15px 15px 15px;
+    padding: 0; /* ELIMINADO padding en móvil */
     width: 100%;
   }
   
@@ -332,12 +334,6 @@ html, body {
   }
 }
 
-@media (max-width: 480px) {
-  .main-content {
-    padding: calc(var(--navbar-height) + 10px) 10px 10px 10px;
-  }
-}
-
 /* ======== ESTILOS PARA PÁGINAS DE LOGIN/REGISTRO ======== */
 body:has(.login-wrapper),
 body:has(.registro-container) {
@@ -372,7 +368,8 @@ body:has(.registro-container) {
 /* ======== CONTENIDO DE RUTAS ======== */
 .routes-content {
   width: 100%;
-  min-height: calc(100vh - var(--navbar-height) - 40px);
+  min-height: calc(100vh - var(--navbar-height));
+  padding: 0; /* ELIMINADO padding extra */
 }
 
 /* ======== MODAL DE SESIÓN ======== */
@@ -421,4 +418,65 @@ body:has(.registro-container) {
 
 .session-modal button:hover {
   background: #097d91;
+}
+
+/* ======== MODAL DE TRATAMIENTO CORREGIDO ======== */
+.config-modal-overlay {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1400;
+  padding: var(--spacing-md);
+  backdrop-filter: blur(8px);
+  transition: margin-left var(--transition-speed) ease, width var(--transition-speed) ease;
+}
+
+/* Cuando sidebar está ABIERTO en desktop */
+.dashboard-container.sidebar-open .config-modal-overlay {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  left: 0;
+}
+
+/* Cuando sidebar está CERRADO en desktop */
+.dashboard-container.sidebar-closed .config-modal-overlay {
+  margin-left: 0;
+  width: 100%;
+  left: 0;
+}
+
+.config-modal.tratamiento-modal {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  width: 95%;
+  max-width: 1100px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: var(--shadow-heavy);
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--border-light);
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Para móviles, el modal ocupa toda la pantalla */
+@media (max-width: 768px) {
+  .config-modal-overlay {
+    margin-left: 0 !important;
+    width: 100% !important;
+    left: 0 !important;
+    padding: var(--spacing-sm);
+    align-items: flex-start;
+  }
+  
+  .config-modal.tratamiento-modal {
+    width: 100%;
+    max-height: 90vh;
+    margin-top: var(--spacing-md);
+  }
 }
