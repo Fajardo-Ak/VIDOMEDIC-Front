@@ -131,6 +131,7 @@
   display: flex;
   gap: 1px;
   background: var(--background-light);
+  border-radius: 50px;
   border: 2px solid var(--border-light);
   border-radius: var(--border-radius-a);
   padding: 2px;
