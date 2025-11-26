@@ -27,7 +27,7 @@ const CustomNavbar = () => {
   // === Obtener foto (con fallback) ===
   const obtenerFotoPerfil = () => {
     if (usuario?.foto_perfil) {
-      return `http://localhost:8000/${usuario.foto_perfil}`;
+      return usuario.foto_perfil;
     } else {
       return "http://localhost:8000/images/usuario-default.png";
     }

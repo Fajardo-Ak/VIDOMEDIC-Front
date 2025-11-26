@@ -48,7 +48,7 @@ const Login = () => {
 // Función para iniciar login con OAuth
 const loginWithProvider = (provider) => {
     // Redirigir directamente al endpoint del backend
-    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
+    window.location.href = `http://localhost:8000/auth/${provider}/redirect`;
 };
 
 
