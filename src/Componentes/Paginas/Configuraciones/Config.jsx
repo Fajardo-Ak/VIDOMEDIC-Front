@@ -15,10 +15,10 @@ export default function Configuracion() {
 
   return (
     <div className="config-container">
-      {/* Navegación por pestañas */}
+      {/* Contenedor de pestañas grande y visible */}
       <div className="tabs-navigation">
         <div className="tabs-container">
-          {tabs.map((tab) => (
+          {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
