@@ -15,7 +15,7 @@ import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
 //import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
-import Agend from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
+import Historial from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
 import Planes from './Componentes/Paginas/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
 import Usuarios from './Componentes/Paginas/Usuarios.jsx';
@@ -84,7 +84,7 @@ const DashboardLayout = () => {
         <Routes>
           <Route path="/inicio" element={<Inicio />} />
           {/*<Route path="/medicamento" element={<Medi />} />*/}
-          <Route path="/historial" element={<Agend />} />
+          <Route path="/historial" element={<Historial />} />
           <Route path="/ventas" element={<Ventas />} />
           <Route path="/planes" element={<Planes />} />
           <Route path="/contactos" element={<Usuarios />} />
