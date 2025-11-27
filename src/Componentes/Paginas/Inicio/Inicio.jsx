@@ -172,8 +172,8 @@ const Inicio = () => {
       } else {
         alert(data.error || 'Error al marcar la dosis');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error('Error' ,error);
     }
   };
 

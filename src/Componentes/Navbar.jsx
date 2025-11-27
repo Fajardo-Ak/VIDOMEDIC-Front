@@ -39,7 +39,7 @@ const CustomNavbar = () => {
           <div className="navbar-user-info">
             <div className="user-greeting">
               <i className="bi bi-person-fill me-2"></i>
-              <span>Hola, {obtenerPrimerNombre(usuario.nombre)}</span>
+              <span>Hola, {(usuario.nombre)}</span>
             </div>
             <img
               src={obtenerFotoPerfil()}

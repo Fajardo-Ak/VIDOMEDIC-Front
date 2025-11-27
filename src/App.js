@@ -16,7 +16,7 @@ import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
 //import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
 import Historial from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
-import Planes from './Componentes/Paginas/Planes.jsx';
+import Planes from './Componentes/Paginas/Planes/Planes.jsx';
 import Ventas from './Componentes/Paginas/Ventas.jsx';
 import Usuarios from './Componentes/Paginas/Usuarios.jsx';
 import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
