@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiUser } from "react-icons/fi";
+import { FiUser, FiEdit2, FiImage, FiMail, FiLock } from "react-icons/fi";
 
 const Cuenta = () => {
   // Estados para datos del usuario
@@ -237,67 +237,114 @@ const Cuenta = () => {
 
   return (
     <div>
-      {/* Sección de cuenta con los estilos originales */}
-      <div className="config-section">
+      {/* === SECCIÓN PRINCIPAL DE CUENTA === */}
+      <div className="config-section cuenta-layout">
         <div className="section-title">
           <FiUser /> Información de Cuenta
         </div>
-        
-        {/* Foto de perfil */}
-        <div className="foto-perfil" onClick={abrirModalFoto}>
-          <img 
-            src={obtenerFotoPerfil()} 
-            alt="Foto de perfil" 
-            className="foto-usuario"
-          />
-          <p>Haz clic para cambiar foto</p>
+
+        <div className="cuenta-contenido">
+          <div className="cuenta-foto" onClick={abrirModalFoto}>
+            <img 
+              src={obtenerFotoPerfil()} 
+              alt="Foto de perfil" 
+              className="foto-usuario"
+            />
+            <button className="cambiar-foto">
+              <FiImage/> Cambiar foto
+            </button>
+          </div>
+
+          <div className="cuenta-datos">
+  <div className="dato-lista">
+    {/* Card combinada para Nombre y Email */}
+    <div className="dato-card-combinada">
+      <div className="datos-combinados">
+        {/* Nombre */}
+        <div className="dato-linea">
+          <div className="dato-icono">
+            <FiUser />
+          </div>
+          <div className="dato-contenido">
+            <div className="dato-label">Nombre</div>
+            <div className="dato-valor">{usuario.nombre || "—"}</div>
+          </div>
         </div>
-        
-        {/* Información */}
-        <p onClick={abrirModalEdicion}>
-          Nombre: <strong>{usuario.nombre || "—"}</strong>
-        </p>
-        <p onClick={abrirModalEdicion}>
-          Email: <strong>{usuario.correo || "—"}</strong>
-        </p>
-        <p onClick={abrirModalPassword}>
-          Contraseña: <strong>••••••••</strong>
-        </p>
+
+        {/* Email */}
+        <div className="dato-linea">
+          <div className="dato-icono">
+            <FiMail />
+          </div>
+          <div className="dato-contenido">
+            <div className="dato-label">Email</div>
+            <div className="dato-valor">{usuario.correo || "—"}</div>
+          </div>
+        </div>
+      </div>
+      
+      <button 
+        className="btn-editar-combinado"
+        onClick={abrirModalEdicion}
+      >
+        <FiEdit2 /> Editar
+      </button>
+    </div>
+
+    {/* Contraseña (card individual) */}
+    <div className="dato-item">
+      <div className="dato-info">
+        <div className="dato-icono">
+          <FiLock />
+        </div>
+        <div className="dato-contenido">
+          <div className="dato-label">Contraseña</div>
+          <div className="dato-valor">••••••••</div>
+        </div>
+      </div>
+      <button 
+        className="btn-accion editar"
+        onClick={abrirModalPassword}
+      >
+        <FiEdit2 /> Cambiar
+      </button>
+    </div>
+  </div>
+</div>
+        </div>
       </div>
 
-      {/* Modal de edición */}
+      {/* === MODAL: EDITAR PERFIL === */}
       {modalEditando && (
         <div 
           className="config-modal-overlay"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setModalEditando(false);
-            }
-          }}
+          onClick={(e) => e.target === e.currentTarget && setModalEditando(false)}
         >
           <div className="config-modal">
             <div className="config-modal-header">
               <h3>Editar cuenta</h3>
             </div>
-            
+
+            {/* Inputs */}
             <input
               className="modal-input"
               type="text"
-              value={datosEditados.nombre}
               placeholder="Nombre"
+              value={datosEditados.nombre}
               onChange={(e) => setDatosEditados({...datosEditados, nombre: e.target.value})}
               disabled={guardando}
             />
-            
+
             <input
               className="modal-input"
               type="email"
-              value={datosEditados.correo}
               placeholder="Correo electrónico"
+              value={datosEditados.correo}
               onChange={(e) => setDatosEditados({...datosEditados, correo: e.target.value})}
               disabled={guardando}
             />
-            
+
+            {/* Botones */}
             <div className="modal-buttons">
               <button 
                 className="cancel-button"
@@ -306,9 +353,8 @@ const Cuenta = () => {
               >
                 Cancelar
               </button>
-              
               <button 
-                className="save-button" 
+                className="save-button"
                 onClick={guardarCambiosPerfil}
                 disabled={guardando}
               >
@@ -319,48 +365,45 @@ const Cuenta = () => {
         </div>
       )}
 
-      {/* Modal de cambiar contraseña */}
+      {/* === MODAL: CAMBIAR CONTRASEÑA === */}
       {modalPassword && (
         <div 
           className="config-modal-overlay"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setModalPassword(false);
-            }
-          }}
+          onClick={(e) => e.target === e.currentTarget && setModalPassword(false)}
         >
           <div className="config-modal">
             <div className="config-modal-header">
               <h3>Cambiar contraseña</h3>
             </div>
-            
+
             <input
               className="modal-input"
               type="password"
-              value={datosPassword.password_actual}
               placeholder="Contraseña actual"
+              value={datosPassword.password_actual}
               onChange={(e) => setDatosPassword({...datosPassword, password_actual: e.target.value})}
               disabled={cambiandoPassword}
             />
-            
+
             <input
               className="modal-input"
               type="password"
-              value={datosPassword.nueva_password}
               placeholder="Nueva contraseña"
+              value={datosPassword.nueva_password}
               onChange={(e) => setDatosPassword({...datosPassword, nueva_password: e.target.value})}
               disabled={cambiandoPassword}
             />
-            
+
             <input
               className="modal-input"
               type="password"
-              value={datosPassword.confirmar_password}
               placeholder="Confirmar nueva contraseña"
+              value={datosPassword.confirmar_password}
               onChange={(e) => setDatosPassword({...datosPassword, confirmar_password: e.target.value})}
               disabled={cambiandoPassword}
             />
-            
+
+            {/* Botones */}
             <div className="modal-buttons">
               <button 
                 className="cancel-button"
@@ -369,9 +412,8 @@ const Cuenta = () => {
               >
                 Cancelar
               </button>
-              
               <button 
-                className="save-button" 
+                className="save-button"
                 onClick={cambiarPassword}
                 disabled={cambiandoPassword}
               >
@@ -382,77 +424,81 @@ const Cuenta = () => {
         </div>
       )}
 
-      {/* Modal de foto */}
+      {/* === MODAL: CAMBIAR FOTO === */}
       {modalFoto && (
         <div 
           className="config-modal-overlay"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setModalFoto(false);
-            }
-          }}
+          onClick={(e) => e.target === e.currentTarget && setModalFoto(false)}
         >
           <div className="config-modal">
             <div className="config-modal-header">
               <h3>Cambiar foto de perfil</h3>
             </div>
-            
-            <div 
-              className="area-subida"
-              onDragOver={(e) => {
-                e.preventDefault();
-                e.currentTarget.style.backgroundColor = '#f0f8ff';
-              }}
-              onDragLeave={(e) => {
-                e.preventDefault();
-                e.currentTarget.style.backgroundColor = '#f9f9f9';
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                e.currentTarget.style.backgroundColor = '#f9f9f9';
-                const archivo = e.dataTransfer.files[0];
-                if (archivo) {
-                  manejarArchivoSeleccionado(archivo);
-                }
-              }}
-              onClick={() => document.getElementById('input-foto').click()}
-            >
-              <div style={{fontSize: '48px', marginBottom: '10px'}}>🖼️</div>
-              <p><strong>Arrastra tu foto aquí</strong></p>
-              <p>o haz clic para seleccionar</p>
-              <p style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>
-                Formatos: JPG, PNG, GIF (max 2MB)
-              </p>
-            </div>
 
-            {/* Preview de la imagen seleccionada */}
-            {previewFoto && (
+            {/* INTERCAMBIO: Muestra preview O área de subida, no ambos */}
+            {previewFoto ? (
               <div className="preview-imagen">
-                <p><strong>Vista previa:</strong></p>
-                <img 
-                  src={previewFoto} 
-                  alt="Preview" 
-                />
+                <p><strong>Vista previa de tu nueva foto:</strong></p>
+                <img src={previewFoto} alt="Preview" />
                 <p className="info-archivo">
                   {archivoSeleccionado?.name} ({(archivoSeleccionado?.size / 1024).toFixed(0)} KB)
                 </p>
+                <button 
+                  className="cancel-button"
+                  onClick={() => {
+                    setPreviewFoto(null);
+                    setArchivoSeleccionado(null);
+                  }}
+                  style={{ 
+                    marginTop: '15px',
+                    background: 'var(--color-gray-dark)',
+                    fontSize: 'var(--font-size-sm)',
+                    padding: '8px 16px'
+                  }}
+                >
+                  Elegir otra foto
+                </button>
+              </div>
+            ) : (
+              <div 
+                className="area-subida"
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.style.backgroundColor = '#f0f8ff';
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.style.backgroundColor = '#f9f9f9';
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.style.backgroundColor = '#f9f9f9';
+                  const archivo = e.dataTransfer.files[0];
+                  if (archivo) manejarArchivoSeleccionado(archivo);
+                }}
+                onClick={() => document.getElementById('input-foto').click()}
+              >
+                <div style={{ fontSize: '48px', marginBottom: '10px' }}>🖼️</div>
+                <p><strong>Arrastra tu foto aquí</strong></p>
+                <p>o haz clic para seleccionar</p>
+                <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                  Formatos: JPG, PNG, GIF (max 2MB)
+                </p>
               </div>
             )}
-            
-            {/* Input oculto para seleccionar archivo */}
+
             <input
               id="input-foto"
               type="file"
               accept="image/jpeg,image/png,image/gif"
-              style={{display: 'none'}}
+              style={{ display: 'none' }}
               onChange={(e) => {
                 const archivo = e.target.files[0];
-                if (archivo) {
-                  manejarArchivoSeleccionado(archivo);
-                }
+                if (archivo) manejarArchivoSeleccionado(archivo);
               }}
             />
-            
+
+            {/* Botones */}
             <div className="modal-buttons">
               <button 
                 className="cancel-button"
@@ -460,10 +506,9 @@ const Cuenta = () => {
               >
                 Cancelar
               </button>
-              
               <button 
                 className="save-button"
-                onClick={subirFoto} 
+                onClick={subirFoto}
                 disabled={!archivoSeleccionado || subiendoFoto}
               >
                 {subiendoFoto ? "Subiendo..." : "Subir foto"}

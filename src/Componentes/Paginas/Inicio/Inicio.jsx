@@ -172,8 +172,8 @@ const Inicio = () => {
       } else {
         alert(data.error || 'Error al marcar la dosis');
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -523,15 +523,9 @@ const Inicio = () => {
 
         <div className="header-controls">
           <div className="nav-buttons">
-            <button onClick={semanaAnterior} className="nav-btn">
-              <FiChevronLeft />
-            </button>
-            <button onClick={irAHoy} className="today-btn">
-              Hoy
-            </button>
-            <button onClick={semanaSiguiente} className="nav-btn">
-              <FiChevronRight />
-            </button>
+            <button onClick={semanaAnterior} className="nav-btn"><FiChevronLeft /></button>
+            <button onClick={irAHoy} className="today-btn">Hoy</button>
+            <button onClick={semanaSiguiente} className="nav-btn"><FiChevronRight /></button>
           </div>
 
           {tratamientoActivo ? (
