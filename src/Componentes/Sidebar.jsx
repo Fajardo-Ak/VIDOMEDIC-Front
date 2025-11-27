@@ -14,6 +14,7 @@ const Sidebar = ({ onToggle }) => {
     { path: '/historial', icon: 'bi-journal-text', label: 'Historial Agendas' },
     { path: '/planes', icon: 'bi-credit-card', label: 'Planes' },
     { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' },
+    { path: '/dashboard', icon: 'bi-gear-fill', label: 'Dashboard' },
   ];
 
   useEffect(() => {

@@ -14,12 +14,10 @@ import Home from './Componentes/Paginas/Home/Home.jsx';
 import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
-//import Medi from './Componentes/Paginas/Medicamentos/Medicamentos.jsx';
 import Historial from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
 import Planes from './Componentes/Paginas/Planes/Planes.jsx';
-import Ventas from './Componentes/Paginas/Ventas.jsx';
-import Usuarios from './Componentes/Paginas/Usuarios.jsx';
 import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
+import SupersetDashboard from './Componentes/SupersetDashboard.jsx';
 
 // 🧭 Scroll automático
 const ScrollToTop = () => {
@@ -64,10 +62,9 @@ const DashboardLayout = () => {
           <Route path="/inicio" element={<Inicio />} />
           {/*<Route path="/medicamento" element={<Medi />} />*/}
           <Route path="/historial" element={<Historial />} />
-          <Route path="/ventas" element={<Ventas />} />
           <Route path="/planes" element={<Planes />} />
-          <Route path="/contactos" element={<Usuarios />} />
           <Route path="/config" element={<Configuracion />} />
+          <Route path="/dashboard" element={<SupersetDashboard/>} />
         </Routes>
       </div>
     </div>
