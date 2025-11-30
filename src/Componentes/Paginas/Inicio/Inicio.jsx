@@ -5,10 +5,78 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, endOfWeek } from 'date-fns';
 import es from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { urlBase64ToUint8Array } from '../../../utils/webPush';
 
 // --- NUEVO: Async creatable select ---
 import AsyncCreatableSelect from 'react-select/async-creatable';
 // ------------------------------------------------
+
+//---Funcion para las notificaciones
+const activarNotificaciones = async () => {
+    // 1. Pedir permiso al usuario
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+        alert('Debes permitir las notificaciones para recibir alertas.');
+        return;
+    }
+
+    try {
+        // 2. Registrar el Service Worker
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        await navigator.serviceWorker.ready;
+
+        // 3. Suscribirse (CON CORRECCIÓN DE ERROR DE LLAVES)
+        const VAPID_PUBLIC_KEY = "BK-LTQl4tv2SrkisUwUeJnuS4VOdobairKZ3_IlTR15A-qGVljDQzDDm2uCGPml_Z9i7lqRMLCIQ7xRym_cAloc";
+        const convertedKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+        
+        let subscription;
+
+        try {
+            // Intento normal de suscripción
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertedKey
+            });
+        } catch (error) {
+            // DETECCIÓN DEL ERROR: Si falla por cambio de llaves
+            if (error.message && error.message.includes('applicationServerKey')) {
+                console.warn('Llave antigua detectada. Limpiando y reintentando...');
+                
+                // A) Buscar suscripción vieja
+                const oldSubscription = await registration.pushManager.getSubscription();
+                if (oldSubscription) {
+                    // B) Borrarla
+                    await oldSubscription.unsubscribe();
+                }
+                
+                // C) Intentar suscribirse de nuevo con la llave nueva
+                subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedKey
+                });
+            } else {
+                // Si es otro error, lo lanzamos para que lo atrape el catch de abajo
+                throw error;
+            }
+        }
+
+        // 4. Enviar suscripción al Backend
+        await fetch('http://localhost:8000/api/notifications/subscribe', {
+            method: 'POST',
+            body: JSON.stringify(subscription),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+
+        alert('¡Notificaciones activadas con éxito!');
+
+    } catch (error) {
+        console.error('Error en el proceso:', error);
+        alert('Hubo un error al activar las notificaciones. Revisa la consola.');
+    }
+};
 
 // --- CONFIGURACIÓN DEL LOCALIZER ---
 const locales = {
@@ -521,7 +589,23 @@ const Inicio = () => {
           )}
         </div>
 
-        <div className="header-controls">
+        <div className="header-controls"> {/* Aqui se agrego un nuevo boton para las notificaciones */}
+          <button 
+              onClick={activarNotificaciones} 
+              style={{ 
+                padding: '8px 15px', 
+                background: '#F59E0B', 
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                marginRight: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontWeight: 'bold'
+              }}
+            >🔔 Activar Alertas</button>
           <div className="nav-buttons">
             <button onClick={semanaAnterior} className="nav-btn"><FiChevronLeft /></button>
             <button onClick={irAHoy} className="today-btn">Hoy</button>

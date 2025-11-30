@@ -78,9 +78,9 @@ const SupersetDashboard = () => {
         className="superset-container"
         ref={containerRef}
         style={{
-          width: "100vw",
+          width: "100%",
           height: "100vh",
-          position: "fixed",
+          position: "relative",
           top: 0,
           left: 0,
           zIndex: 9999,

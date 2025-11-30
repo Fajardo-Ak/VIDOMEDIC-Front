@@ -23,13 +23,13 @@ const Planes = () => {
       precio: "Gratis",
       periodo: "",
       caracteristicas: [
-        "Registro ilimitado de recetas",
+        "Registro de 5 medicamentos",
         "Registro de 1 contacto de confianza",
         "Seguimiento fácil de tus recetas médicas",
         "Notificaciones y alertas básicas",
         "Con anuncios"
       ],
-      tieneDescuento: false
+      actual: true
     },
     {
       nombre: "Premium",
@@ -37,25 +37,24 @@ const Planes = () => {
       periodo: "/mes",
       caracteristicas: [
         "Todo lo del plan básico",
+        "Mas 2 medicamentos adicionales",
         "Hasta 2 contactos adicionales",
         "Registro de recetas con fotos",
         "Notificaciones y alertas avanzadas",
         "Sin anuncios"
       ],
-      tieneDescuento: false
+      actual: false
     },
     {
-      nombre: "Plan Anual",
-      precio: "$692.00",
-      periodo: "/año",
+      nombre: "Plan Experto",
+      precio: "$299.00",
+      periodo: "/mes",
       caracteristicas: [
         "Todo lo del plan Premium",
-        "20% de descuento por pago anual",
-        "Ahorro de $172 comparado con mensual",
-        "Facturación anual única"
+        "Medicamentos ilimitados",
+        "Hasta 5 contactos"
       ],
-      tieneDescuento: true,
-      precioOriginal: "$864.00/año"
+      actual: false
     }
   ];
 
@@ -73,18 +72,9 @@ const Planes = () => {
       <div className="plans-grid">
         {planes.map((plan, index) => (
           <div key={index} className="plan-card">
-            {plan.tieneDescuento && (
-              <div className="discount-badge">
-                ¡20% OFF!
-              </div>
-            )}
-            
             <div className="plan-header">
               <h3>{plan.nombre}</h3>
               <div className="price-section">
-                {plan.tieneDescuento && (
-                  <span className="original-price">{plan.precioOriginal}</span>
-                )}
                 <div className="price">
                   {plan.precio}
                   <span className="period">{plan.periodo}</span>
@@ -101,9 +91,15 @@ const Planes = () => {
               ))}
             </ul>
 
-            <button className="btn-elegir">
-              Elegir Plan
-            </button>
+            {plan.actual ? (
+              <button className="btn-actual" disabled>
+                Plan actual
+              </button>
+            ) : (
+              <button className="btn-elegir">
+                Elegir Plan
+              </button>
+            )}
           </div>
         ))}
       </div>
