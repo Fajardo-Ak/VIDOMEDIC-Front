@@ -85,7 +85,7 @@ function App() {
         <Route
           path="/*"
           element={
-            <RutaPrivada>
+            //<RutaPrivada>
               <DashboardLayout />
             </RutaPrivada>
           }
