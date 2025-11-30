@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
+import api from '../api/axiosConfig'; // <--- IMPORTANTE
 import './Sidebar.css';
 
 const Sidebar = ({ onToggle }) => {
@@ -34,15 +35,8 @@ const Sidebar = ({ onToggle }) => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await fetch('http://localhost:8000/api/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      // CAMBIO: Usamos la instancia api y quitamos la URL fija y headers manuales
+      await api.post('/logout');
     } catch (error) {
       console.error(error);
     } finally {

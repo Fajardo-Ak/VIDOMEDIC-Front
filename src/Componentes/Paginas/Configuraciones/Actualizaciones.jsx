@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiBell } from "react-icons/fi";
+import api from "../../../api/axiosConfig"; // <--- IMPORTAR API
 
 const Actualizaciones = () => {
   const [mostrarActualizaciones, setMostrarActualizaciones] = useState(true);
@@ -14,8 +15,9 @@ const Actualizaciones = () => {
   const obtenerActualizaciones = async () => {
     setCargandoActualizaciones(true);
     try {
-      const response = await fetch('http://localhost:8000/api/actualizaciones');
-      const data = await response.json();
+      // CAMBIO: api.get
+      const response = await api.get('/actualizaciones');
+      const data = response.data;
       
       if (data.success) {
         setInfoActualizaciones(data.data);

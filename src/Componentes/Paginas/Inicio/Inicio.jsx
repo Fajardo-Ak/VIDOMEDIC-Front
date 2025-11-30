@@ -6,6 +6,7 @@ import { format, parse, startOfWeek, getDay, endOfWeek } from 'date-fns';
 import es from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { urlBase64ToUint8Array } from '../../../utils/webPush';
+import api from '../../../api/axiosConfig'; // <--- IMPORTANTE: Usamos la instancia central
 
 // --- NUEVO: Async creatable select ---
 import AsyncCreatableSelect from 'react-select/async-creatable';
@@ -60,15 +61,8 @@ const activarNotificaciones = async () => {
             }
         }
 
-        // 4. Enviar suscripción al Backend
-        await fetch('http://localhost:8000/api/notifications/subscribe', {
-            method: 'POST',
-            body: JSON.stringify(subscription),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        });
+        // 4. Enviar suscripción al Backend (USANDO AXIOS)
+        await api.post('/notifications/subscribe', subscription);
 
         alert('¡Notificaciones activadas con éxito!');
 
@@ -130,7 +124,6 @@ const Inicio = () => {
 
   const [guardando, setGuardando] = useState(false);
 
-  // NOTA: ya no usamos un catálogo cargado al inicio; Async select carga a demanda
 
   // --- OBTENER DOSIS SEMANA ---
   const obtenerDosisSemana = async (fechaInicio, fechaFin) => {
@@ -141,13 +134,9 @@ const Inicio = () => {
         fecha_fin: fechaFin.toISOString().split('T')[0],
       });
 
-      const response = await fetch(`http://localhost:8000/api/dosis/agenda-semanal?${params}`, {
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-
-      const data = await response.json();
+      // CAMBIO: api.get en lugar de fetch
+      const response = await api.get(`/dosis/agenda-semanal?${params}`);
+      const data = response.data;
 
       if (data.success) {
         const eventosParseados = data.data.dosis.map(dosis => ({
@@ -158,10 +147,9 @@ const Inicio = () => {
         setDosisSemana(eventosParseados);
 
         if (tratamientoActivo === null) {
-          const tratamientoResponse = await fetch('http://localhost:8000/api/tratamientos/verificar-activo', {
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-          });
-          const tratamientoDataResp = await tratamientoResponse.json();
+          // CAMBIO: api.get
+          const tratamientoResponse = await api.get('/tratamientos/verificar-activo');
+          const tratamientoDataResp = tratamientoResponse.data;
           if (tratamientoDataResp.success) {
             setTratamientoActivo(tratamientoDataResp.tratamiento);
           }
@@ -182,8 +170,6 @@ const Inicio = () => {
     const finSemana = endOfWeek(semanaActual, { locale: es });
     obtenerDosisSemana(inicioSemana, finSemana);
   }, [semanaActual]);
-
-  // NOTA: antes cargábamos catálogo aquí; ahora lo carga AsyncCreatableSelect a demanda
 
   // navegación
   const semanaAnterior = () => {
@@ -213,19 +199,13 @@ const Inicio = () => {
 
   const marcarDosis = async (dosisId, estado) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/dosis/${dosisId}/marcar`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: JSON.stringify({
-          estado: estado ? 'tomada' : 'omitida',
-          notas_toma: estado ? 'Tomada correctamente' : 'Omitida'
-        })
+      // CAMBIO: api.put
+      const response = await api.put(`/dosis/${dosisId}/marcar`, {
+        estado: estado ? 'tomada' : 'omitida',
+        notas_toma: estado ? 'Tomada correctamente' : 'Omitida'
       });
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         setDosisSemana(prevDosis =>
@@ -325,16 +305,9 @@ const Inicio = () => {
   // crear
   const crearTratamiento = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/tratamientos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: JSON.stringify(tratamientoData)
-      });
-
-      const data = await response.json();
+      // CAMBIO: api.post
+      const response = await api.post('/tratamientos', tratamientoData);
+      const data = response.data;
 
       if (data.success) {
         alert('Tratamiento creado exitosamente!');
@@ -358,16 +331,9 @@ const Inicio = () => {
   // actualizar
   const actualizarTratamiento = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/tratamientos/${editId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: JSON.stringify(tratamientoData)
-      });
-
-      const data = await response.json();
+      // CAMBIO: api.put
+      const response = await api.put(`/tratamientos/${editId}`, tratamientoData);
+      const data = response.data;
 
       if (data.success) {
         alert('Tratamiento actualizado exitosamente!');
@@ -396,14 +362,9 @@ const Inicio = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/tratamientos/${tratamientoActivo.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-
-      const data = await response.json();
+      // CAMBIO: api.delete
+      const response = await api.delete(`/tratamientos/${tratamientoActivo.id}`);
+      const data = response.data;
 
       if (data.success) {
         alert('Tratamiento eliminado correctamente');
@@ -428,12 +389,9 @@ const Inicio = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/medicamentos/buscar?q=${encodeURIComponent(inputValue)}`, {
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      const data = await response.json();
+      // CAMBIO: api.get
+      const response = await api.get(`/medicamentos/buscar?q=${encodeURIComponent(inputValue)}`);
+      const data = response.data;
 
       if (data.success) {
         return data.data.map(med => ({
