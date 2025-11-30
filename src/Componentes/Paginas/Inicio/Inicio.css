@@ -1,133 +1,992 @@
-/* Inicio.css - Versión simplificada */
-.inicio-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+/* ===== VARIABLES VIDOMEDIC ===== */
+:root {
+  --primary-color: #00a6a6;  
+  --primary-light: #4ECDC4;    
+  --primary-dark: #016b7a;    
+  --secondary-color: #e0000f; 
+  --accent-color: #8b5cf6;     
+  --background-light: #f8fdfe; 
+  --text-primary: #013f4a;     
+  --text-secondary: #718096;   
+  --border-light: #e2e8f0;    
+  --border-medium: #cbd5e1;  
+  --white: #ffffff;
+  --high-importance: #dc2626;
+  --medium-importance: #d76629;
+  --low-importance: #059687;
+  --card-bg: #ffffff;
+  --card-hover: #f1f5f9;
+  --success-color: #10b981;
+  
+  /* Bordes redondeados */
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-a: 20px;
+  
+  /* Espaciado COMPACTO */
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --spacing-xl: 16px;
+  --spacing-xxl: 20px;
+  
+  /* Sombras */
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.15);
+  
+  /* Transiciones */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.4s ease;
 }
 
-.inicio-header {
-  text-align: center;
-  margin-bottom: 40px;
-  padding: 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 15px;
+/* ===== RESET Y BASE ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.inicio-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-}
-
-.inicio-header p {
-  font-size: 1.2rem;
-  opacity: 0.9;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.feature-card {
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.feature-card:hover {
-  transform: translateY(-5px);
-}
-
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
-}
-
-.feature-card h3 {
-  color: #2c3e50;
-  margin-bottom: 10px;
-}
-
-.feature-card p {
-  color: #7f8c8d;
-  line-height: 1.5;
-}
-
-.welcome-message {
-  background: #f8f9fa;
-  padding: 30px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.welcome-message h2 {
-  color: #2c3e50;
-  margin-bottom: 15px;
-}
-
-.welcome-message p {
-  color: #7f8c8d;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 25px;
-}
-
-.quick-actions {
+.vidomedic-agenda {
+  min-height: calc(100vh - 70px);
   display: flex;
-  gap: 15px;
+  flex-direction: column;
+  background: var(--background-light);
+  padding: 0; /* CORREGIDO: eliminado padding que causaba espacio */
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== HEADER DE AGENDA COMPACTO ===== */
+.agenda-header-custom {
+  padding: var(--spacing-md);
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  margin: var(--spacing-md); /* CORREGIDO: margin en lugar de padding del contenedor */
+  box-shadow: var(--shadow-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  border: 2px solid var(--border-light);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.agenda-title-custom {
+  font-size: 18px;
+  color: var(--primary-dark);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  letter-spacing: -0.5px;
+}
+
+.agenda-title-custom svg {
+  color: var(--primary-color);
+  transition: var(--transition-normal);
+}
+
+.agenda-title-custom:hover svg {
+  transform: scale(1.1);
+  color: var(--primary-dark);
+}
+
+.semana-rango {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-a);
+  border: 2px solid var(--primary-color);
+  background: var(--white);
+  white-space: nowrap;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* ===== BOTONES DE NAVEGACIÓN COMPACTOS ===== */
+.nav-buttons {
+  display: flex;
+  gap: 1px;
+  background: var(--background-light);
+  border-radius: 50px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--border-radius-a);
+  padding: 2px;
+  box-shadow: var(--shadow-light);
+}
+
+.nav-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 12px;
+  background: var(--white);
+  border: 2px solid transparent;
+  color: var(--text-primary);
+  font-weight: 700;
+  border-radius: var(--border-radius-a);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  min-height: 32px;
+  min-width: 40px;
+}
+
+.nav-btn:hover {
+  background: var(--primary-color);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+.today-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 12px;
+  background: var(--secondary-color);
+  color: var(--white);
+  border: 2px solid transparent;
+  font-weight: 700;
+  border-radius: var(--border-radius-a);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  min-height: 32px;
+  margin: 0 var(--spacing-xs);
+  box-shadow: var(--shadow-light);
+  white-space: nowrap;
+}
+
+.nav-btn:hover,
+.today-btn:hover {
+  background: #c0000d;
+  transform: translateY(-2px);
+}
+
+/* ===== BOTONES DE TRATAMIENTO COMPACTOS ===== */
+.create-treatment-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 12px;
+  background: var(--primary-color);
+  color: var(--white);
+  border: 2px solid transparent;
+  font-weight: 700;
+  border-radius: var(--border-radius-a);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  box-shadow: var(--shadow-light);
+  white-space: nowrap;
+}
+
+.create-treatment-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* ===== CORRECCIÓN ESPECÍFICA PARA TRATAMIENTO ACTIVO - MÁS COMPACTO ===== */
+.tratamiento-activo-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   flex-wrap: wrap;
 }
 
-.action-btn {
-  padding: 12px 25px;
+.tratamiento-activo-info {
+  font-size: 11px;
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tratamiento-activo-info strong {
+  color: var(--primary-dark);
+  font-size: 11px;
+}
+
+.edit-treatment-btn, .delete-treatment-btn {
+  padding: 4px 8px;
+  font-size: 11px;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: var(--border-radius-a);
+  font-weight: 700;
+  transition: var(--transition-normal);
   cursor: pointer;
-  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 28px;
+  white-space: nowrap;
 }
 
-.action-btn.primary {
-  background: #3498db;
-  color: white;
+.edit-treatment-btn {
+  background: var(--primary-color);
+  color: var(--white);
 }
 
-.action-btn.primary:hover {
-  background: #2980b9;
+.edit-treatment-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
-.action-btn.secondary {
-  background: #95a5a6;
-  color: white;
+.delete-treatment-btn {
+  background: var(--secondary-color);
+  color: var(--white);
 }
 
-.action-btn.secondary:hover {
-  background: #7f8c8d;
+.delete-treatment-btn:hover {
+  background: #c0000d;
+  transform: translateY(-2px);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .inicio-header h1 {
-    font-size: 2rem;
+/* ===== CALENDARIO ===== */
+.calendar-container {
+  flex: 1;
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  border: 2px solid var(--border-light);
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+  margin: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md); /* CORREGIDO: margin */
+}
+
+/* Override react-big-calendar styles */
+.rbc-calendar {
+  font-family: inherit;
+}
+
+.rbc-toolbar {
+  padding: var(--spacing-sm);
+  background: var(--primary-color);
+  color: var(--white);
+  border-bottom: 2px solid var(--border-light);
+}
+
+.rbc-toolbar button {
+  color: var(--white);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-a);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  transition: var(--transition-normal);
+  font-size: 12px;
+}
+
+.rbc-toolbar button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.rbc-toolbar button.rbc-active {
+  background: var(--white);
+  color: var(--primary-color);
+}
+
+.rbc-header {
+  padding: var(--spacing-sm);
+  background: var(--background-light);
+  border-bottom: 2px solid var(--border-light);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.rbc-date-cell {
+  text-align: center;
+  padding: var(--spacing-xs);
+  font-size: 12px;
+}
+
+.rbc-event {
+  background: var(--primary-color);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: 2px 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.rbc-event.alta {
+  background: var(--high-importance);
+}
+
+.rbc-event.media {
+  background: var(--medium-importance);
+}
+
+.rbc-event.baja {
+  background: var(--low-importance);
+}
+
+/* ===== MODAL DE TRATAMIENTO COMPACTO - CORREGIDO ===== */
+.config-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 15000;
+  padding: var(--spacing-md);
+  backdrop-filter: blur(8px);
+}
+
+.config-modal.tratamiento-modal {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  width: 95%;
+  max-width: 1100px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: var(--shadow-heavy);
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--border-light);
+  margin: 0 auto;
+  position: relative;
+}
+
+.config-modal-header {
+  padding: var(--spacing-md);
+  background: var(--primary-dark);
+  color: var(--white);
+  border-bottom: 2px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.config-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+/* ===== FORMULARIO DE 2 COLUMNAS - COMPACTO ===== */
+.tratamiento-form {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  flex: 1;
+  overflow: hidden;
+}
+
+.form-section {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  max-height: none;
+  gap: var(--spacing-sm);
+}
+
+.form-section:first-of-type {
+  border-right: 2px solid var(--border-light);
+  background: var(--white);
+}
+
+.form-section:nth-of-type(2) {
+  background: var(--background-light);
+  overflow-y: auto;
+}
+
+.form-section h4 {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--primary-light);
+}
+
+/* ===== FORMULARIOS COMPACTOS CON MEJOR ALINEACIÓN ===== */
+.form-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 0;
+}
+
+.form-group.full-width {
+  min-width: 100%;
+}
+
+/* ===== LABELS COMPACTOS ===== */
+.form-group label {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 12px;
+  margin-bottom: 2px;
+  line-height: 1.2;
+  display: block;
+  width: 100%;
+  white-space: normal;
+  overflow: visible;
+}
+
+/* ===== INPUTS Y SELECTS COMPACTOS ===== */
+.modal-input, .modal-select {
+  width: 100%;
+  padding: 4px 8px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--border-radius-md);
+  font-size: 12px;
+  background: var(--white);
+  transition: var(--transition-normal);
+  color: var(--text-primary);
+  font-family: inherit;
+  min-height: 32px;
+  line-height: 1.3;
+}
+
+.modal-input:focus, .modal-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 166, 166, 0.1);
+}
+
+.modal-input[type="date"],
+.modal-input[type="time"] {
+  cursor: pointer;
+}
+
+/* ===== CORRECCIÓN ESPECÍFICA PARA TEXTAREA DE NOTAS ===== */
+textarea.modal-input {
+  resize: vertical;
+  min-height: 50px;
+  max-height: 70px;
+  line-height: 1.4;
+  padding: 6px 8px;
+  height: auto;
+  border-radius: var(--border-radius-md);
+  border: 2px solid var(--border-light);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+textarea.modal-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 166, 166, 0.1);
+}
+
+/* ===== ASYNC SELECT COMPACTO ===== */
+.react-select__control {
+  border: 2px solid var(--border-light) !important;
+  border-radius: var(--border-radius-md) !important;
+  min-height: 32px !important;
+  box-shadow: none !important;
+  transition: var(--transition-normal) !important;
+  font-size: 12px !important;
+}
+
+.react-select__control:hover {
+  border-color: var(--primary-light) !important;
+}
+
+.react-select__control--is-focused {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(0, 166, 166, 0.1) !important;
+}
+
+.react-select__menu {
+  border-radius: var(--border-radius-md) !important;
+  border: 2px solid var(--border-light) !important;
+  box-shadow: var(--shadow-medium) !important;
+  font-size: 12px !important;
+}
+
+/* ===== SECCIÓN MEDICAMENTOS COMPACTA ===== */
+.medicamentos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+  flex-wrap: nowrap;
+  gap: var(--spacing-xs);
+  padding: 0;
+}
+
+.add-medicamento-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 6px;
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius-a);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  transition: var(--transition-normal);
+  min-height: 24px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.add-medicamento-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.medicamento-row {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  padding: 4px;
+  background: var(--white);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-light);
+  margin-bottom: 4px;
+  transition: var(--transition-normal);
+  position: relative;
+}
+
+.medicamento-row:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-light);
+}
+
+.medicamento-fields {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+  align-items: start;
+}
+
+.remove-medicamento-btn {
+  background: var(--secondary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius-a);
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition-normal);
+  font-size: 12px;
+  font-weight: 800;
+  margin-top: 0;
+}
+
+.remove-medicamento-btn:hover {
+  background: #c0000d;
+  transform: scale(1.1);
+}
+
+/* ===== CHECKBOXES DE DÍAS COMPACTOS ===== */
+.dias-semana-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 2px;
+  margin-top: 1px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-normal);
+}
+
+.checkbox-label:hover {
+  background: var(--background-light);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  accent-color: var(--primary-color);
+}
+
+/* ===== BOTONES DEL MODAL - COMPACTOS ===== */
+.modal-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+  padding: var(--spacing-md);
+  border-top: 2px solid var(--border-light);
+  background: var(--background-light);
+  grid-column: 1 / -1;
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+.cancel-button, .save-button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--border-radius-a);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  min-width: 100px;
+  color: var(--white);
+  min-height: 34px;
+}
+
+.cancel-button {
+  background: var(--secondary-color);
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #c0000d;
+  transform: translateY(-2px);
+}
+
+.save-button {
+  background: var(--primary-color);
+}
+
+.save-button:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.cancel-button:disabled, .save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== RESPONSIVE DESIGN - MEJORADO ===== */
+@media (max-width: 1200px) {
+  .tratamiento-form {
+    grid-template-columns: 1fr;
+    max-height: none;
   }
   
-  .features-grid {
+  .form-section:first-of-type {
+    border-right: none;
+    border-bottom: 2px solid var(--border-light);
+    max-height: none;
+  }
+  
+  .form-section:nth-of-type(2) {
+    overflow-y: visible;
+    max-height: none;
+  }
+  
+  .form-section {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .vidomedic-agenda {
+    padding: 0; /* CORREGIDO: eliminado padding en móvil */
+    min-height: calc(100vh - 70px);
+  }
+  
+  .agenda-header-custom {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+    flex-direction: column;
+    align-items: stretch;
+    margin: var(--spacing-sm); /* CORREGIDO: margin reducido en móvil */
+  }
+  
+  .calendar-container {
+    margin: 0 var(--spacing-sm) var(--spacing-sm) var(--spacing-sm); /* CORREGIDO: margin reducido */
+  }
+  
+  .header-left {
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--spacing-xs);
+  }
+  
+  .header-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--spacing-xs);
+  }
+  
+  .nav-buttons {
+    order: 1;
+    width: 100%;
+    margin-top: var(--spacing-xs);
+    justify-content: center;
+  }
+  
+  .tratamiento-activo-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-xs);
+    width: 100%;
+    margin-top: var(--spacing-xs);
+  }
+  
+  .tratamiento-activo-info {
+    max-width: 100%;
+    text-align: center;
+    font-size: 12px;
+    white-space: normal;
+  }
+  
+  .edit-treatment-btn, .delete-treatment-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+    min-height: 32px;
+  }
+  
+  .config-modal-overlay {
+    padding: var(--spacing-sm);
+    align-items: flex-start;
+    z-index: 15000;
+  }
+  
+  .config-modal.tratamiento-modal {
+    width: 100%;
+    max-height: 90vh;
+    margin-top: var(--spacing-md);
+    overflow-y: auto;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .config-modal-header {
+    padding: var(--spacing-sm);
+  }
+  
+  .config-modal-header h3 {
+    font-size: 16px;
+  }
+  
+  .form-section {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+    overflow: visible;
+    max-height: none;
+  }
+  
+  .tratamiento-form {
+    overflow: visible;
+    max-height: none;
+  }
+  
+  .form-row {
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .form-group {
+    min-width: 100%;
+    gap: 2px;
+  }
+  
+  .form-group label {
+    margin-bottom: 2px;
+    font-size: 12px;
+  }
+  
+  .modal-input, .modal-select {
+    padding: 4px 6px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+  
+  /* CORRECCIÓN ESPECÍFICA PARA TEXTAREA EN MÓVIL */
+  textarea.modal-input {
+    min-height: 60px;
+    max-height: 80px;
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  
+  .medicamento-fields {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  .medicamento-row {
+    padding: var(--spacing-xs);
+    gap: var(--spacing-xs);
+    flex-direction: column;
+  }
+  
+  .medicamentos-header {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+  
+  .add-medicamento-btn {
+    width: auto;
+    justify-content: center;
+    font-size: 11px;
+  }
+  
+  /* CORRECCIÓN ESPECÍFICA PARA BOTONES EN MÓVIL */
+  .modal-buttons {
+    flex-direction: row;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    position: sticky;
+    bottom: 0;
+    background: var(--background-light);
+    border-top: 2px solid var(--border-light);
+  }
+  
+  .cancel-button, .save-button {
+    width: 48%;
+    min-width: auto;
+    height: 36px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .agenda-title-custom {
+    font-size: 16px;
+  }
+  
+  .semana-rango {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .config-modal-header h3 {
+    font-size: 14px;
+  }
+  
+  .form-section {
+    padding: var(--spacing-xs);
+  }
+  
+  .modal-input, .modal-select {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+  
+  .dias-semana-checkboxes {
     grid-template-columns: 1fr;
   }
   
-  .quick-actions {
-    flex-direction: column;
-    align-items: center;
+  .config-modal.tratamiento-modal {
+    max-height: 95vh;
+    margin-top: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
   }
   
-  .action-btn {
-    width: 200px;
+  .medicamentos-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-xs);
   }
+  
+  .add-medicamento-btn {
+    width: 100%;
+    margin-top: var(--spacing-xs);
+    font-size: 12px;
+    min-height: 28px;
+  }
+  
+  /* CORRECCIÓN PARA BOTONES EN PANTALLAS MUY PEQUEÑAS */
+  .modal-buttons {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .cancel-button, .save-button {
+    width: 100%;
+    height: 38px;
+    font-size: 13px;
+  }
+  
+  .create-treatment-btn, .today-btn, .nav-btn {
+    font-size: 11px;
+    min-height: 30px;
+  }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.config-modal-overlay {
+  animation: fadeIn 0.3s ease;
+}
+
+.config-modal {
+  animation: slideInUp 0.3s ease;
+}
+
+/* ===== CLASES ESPECÍFICAS PARA COMPACTACIÓN EXTRA ===== */
+.form-group-compact {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.form-group-compact label {
+  margin-bottom: 1px;
+  font-size: 11px;
 }

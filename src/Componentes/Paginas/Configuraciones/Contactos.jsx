@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiUsers, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import { FiUsers, FiEdit2, FiTrash2, FiPlus, FiPhone, FiMail, FiUser } from "react-icons/fi";
 
 const Contactos = () => {
   // Estados para contactos
@@ -134,8 +134,9 @@ const Contactos = () => {
   return (
     <div>
       <div className="config-section">
+        {/* Título de la sección */}
         <div className="section-title">
-          <FiUsers /> Contactos 
+          <FiUsers /> Contactos
           {contactos.length > 0 && (
             <span className="contador-contactos">({contactos.length}/3)</span>
           )}
@@ -143,9 +144,12 @@ const Contactos = () => {
 
         {/* Botón agregar contacto */}
         {contactos.length < 3 && (
-          <div className="agregar-contacto-btn" onClick={() => abrirModalContacto()}>
-            <FiPlus /> Agregar contacto
-          </div>
+          <button
+            className="btn-agregar-contacto"
+            onClick={() => abrirModalContacto()}
+          >
+            <FiPlus className="icono-btn" /> Agregar contacto
+          </button>
         )}
 
         {/* Lista de contactos */}
@@ -155,26 +159,40 @@ const Contactos = () => {
           <div className="estado-vacio">No tienes contactos guardados</div>
         ) : (
           <div className="lista-contactos">
-            {contactos.map(contacto => (
+            {contactos.map((contacto) => (
               <div key={contacto.id} className="contacto-item">
                 <div className="contacto-info">
-                  <div className="contacto-nombre">{contacto.nombre_contacto}</div>
-                  <div className="contacto-datos">📞 {contacto.telefono}</div>
+                  <div className="contacto-linea">
+                    <FiUser className="icono-dato" />
+                    <span className="contacto-dato">{contacto.nombre_contacto}</span>
+                  </div>
+                  <div className="contacto-linea">
+                    <FiPhone className="icono-dato" />
+                    <span className="contacto-dato">{contacto.telefono}</span>
+                  </div>
                   {contacto.correo && (
-                    <div className="contacto-datos">✉️ {contacto.correo}</div>
+                    <div className="contacto-linea">
+                      <FiMail className="icono-dato" />
+                      <span className="contacto-dato">{contacto.correo}</span>
+                    </div>
                   )}
                 </div>
+
                 <div className="contacto-acciones">
-                  <FiEdit2 
-                    className="icono-editar"
+                  <button
+                    className="btn-accion editar"
                     onClick={() => abrirModalContacto(contacto)}
                     title="Editar contacto"
-                  />
-                  <FiTrash2 
-                    className="icono-eliminar"
+                  >
+                    <FiEdit2 /> Editar
+                  </button>
+                  <button
+                    className="btn-accion eliminar"
                     onClick={() => eliminarContacto(contacto.id)}
                     title="Eliminar contacto"
-                  />
+                  >
+                    <FiTrash2 /> Eliminar
+                  </button>
                 </div>
               </div>
             ))}
@@ -184,7 +202,7 @@ const Contactos = () => {
 
       {/* Modal de contacto */}
       {modalContacto && (
-        <div 
+        <div
           className="config-modal-overlay"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -194,51 +212,64 @@ const Contactos = () => {
         >
           <div className="config-modal">
             <div className="config-modal-header">
-              <h3>{editandoContacto ? 'Editar contacto' : 'Agregar contacto'}</h3>
+              <h3>{editandoContacto ? "Editar contacto" : "Agregar contacto"}</h3>
             </div>
-            
+
             <input
               className="modal-input"
               type="text"
               value={datosContacto.nombre_contacto}
               placeholder="Nombre del contacto"
-              onChange={(e) => setDatosContacto({...datosContacto, nombre_contacto: e.target.value})}
+              onChange={(e) =>
+                setDatosContacto({
+                  ...datosContacto,
+                  nombre_contacto: e.target.value,
+                })
+              }
               disabled={guardandoContacto}
             />
-            
+
             <input
               className="modal-input"
               type="text"
               value={datosContacto.telefono}
               placeholder="Teléfono"
-              onChange={(e) => setDatosContacto({...datosContacto, telefono: e.target.value})}
+              onChange={(e) =>
+                setDatosContacto({ ...datosContacto, telefono: e.target.value })
+              }
               disabled={guardandoContacto}
             />
-            
+
             <input
               className="modal-input"
               type="email"
               value={datosContacto.correo}
               placeholder="Correo electrónico (opcional)"
-              onChange={(e) => setDatosContacto({...datosContacto, correo: e.target.value})}
+              onChange={(e) =>
+                setDatosContacto({ ...datosContacto, correo: e.target.value })
+              }
               disabled={guardandoContacto}
             />
-            
+
             <div className="modal-buttons">
-              <button 
+              <button
                 className="cancel-button"
                 onClick={() => setModalContacto(false)}
                 disabled={guardandoContacto}
               >
                 Cancelar
               </button>
-              
-              <button 
-                className="save-button" 
+
+              <button
+                className="save-button"
                 onClick={guardarContacto}
                 disabled={guardandoContacto}
               >
-                {guardandoContacto ? "Guardando..." : (editandoContacto ? "Actualizar" : "Guardar")}
+                {guardandoContacto
+                  ? "Guardando..."
+                  : editandoContacto
+                  ? "Actualizar"
+                  : "Guardar"}
               </button>
             </div>
           </div>

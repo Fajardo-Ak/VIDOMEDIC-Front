@@ -43,51 +43,65 @@ const Registro = () => {
 
   return (
     <div className="registro-container">
-      <div className="top-wave"></div>
-      <div className="top-wave-transparent"></div>
-      
-      <form className="registro-form" onSubmit={handleSubmit}>
-        <img src="vidomedilogo.png" alt="Logo" className="logo" />
-        <h2>Crear Cuenta</h2>
+      {/* Contenedor dividido */}
+      <div className="registro-box">
 
-        <input 
-          type="text" 
-          name="nombre" 
-          placeholder="Nombre de usuario" 
-          value={form.nombre} 
-          onChange={handleChange} 
-          required 
-        />
+        {/* Lado Izquierdo: Formulario */}
+        <div className="registro-left">
+          <form className="registro-form" onSubmit={handleSubmit}>
+            <img src="logoazul.png" alt="Logo" className="logo" />
+            <h2>Crear Cuenta</h2>
 
-        <input 
-          type="email" 
-          name="correo" 
-          placeholder="Correo electrónico" 
-          value={form.correo} 
-          onChange={handleChange} 
-          required 
-        />
+            <input 
+              type="text" 
+              name="nombre" 
+              placeholder="Nombre de usuario" 
+              value={form.nombre} 
+              onChange={handleChange} 
+              required 
+            />
 
-        <div className="password-wrapper">
-          <input 
-            type={showPassword ? "text" : "password"} 
-            name="password"
-            placeholder="Contraseña" 
-            value={form.password}
-            onChange={handleChange} 
-            required 
-          />
-          <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
-            {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
-          </span>
+            <input 
+              type="email" 
+              name="correo" 
+              placeholder="Correo electrónico" 
+              value={form.correo} 
+              onChange={handleChange} 
+              required 
+            />
+
+            <div className="password-wrapper">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                name="password"
+                placeholder="Contraseña" 
+                value={form.password}
+                onChange={handleChange} 
+                required 
+              />
+              <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
+              </span>
+            </div>
+
+            <button type="submit">Registrarse</button>
+
+            <div className="registro-login-text">
+              ¿Ya tienes cuenta?{" "}
+              <span onClick={() => navigate('/login')}>Inicia sesión</span>
+            </div>
+          </form>
         </div>
 
-        <button type="submit">Registrarse</button>
-
-        <div className="registro-login-button" onClick={() => navigate('/login')}>
-          ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+        {/* Lado Derecho: Panel informativo */}
+        <div className="registro-right">
+          <div className="registro-info">
+            <h2>Bienvenido a <span>VIDOMEDI</span></h2>
+            <p>Tu salud digital más cerca de ti</p>
+          </div>
         </div>
-      </form>
+
+      </div>
     </div>
   );
 };

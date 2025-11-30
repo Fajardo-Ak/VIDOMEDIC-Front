@@ -1,121 +1,104 @@
-import React, { useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { FiMenu, FiX } from 'react-icons/fi';
 import './Sidebar.css';
 
-const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const location = useLocation();
+const Sidebar = ({ onToggle }) => {
+  const [open, setOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
-  // Función para toggle del sidebar
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  // Array de items del menú para mejor mantenimiento
   const menuItems = [
     { path: '/inicio', icon: 'bi-calendar-week', label: 'Inicio' },
-    { path: '/medicamento', icon: 'bi-capsule', label: 'Medicamentos' },
+    //{ path: '/medicamento', icon: 'bi-capsule', label: 'Medicamentos' },
     { path: '/historial', icon: 'bi-journal-text', label: 'Historial Agendas' },
     { path: '/planes', icon: 'bi-credit-card', label: 'Planes' },
-    { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' }
-    
+    { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' },
+    { path: '/dashboard', icon: 'bi-gear-fill', label: 'Dashboard' },
   ];
 
-  // Función para cerrar sesión
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      setOpen(!mobile);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (onToggle) onToggle(open);
+  }, [open, onToggle]);
+
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('token');
-      
-      // Llamar al endpoint de logout
-      const response = await fetch('http://localhost:8000/api/logout', {
+      await fetch('http://localhost:8000/api/logout', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Limpiar localStorage
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        
-        // Redirigir al login
-        navigate('/login');
-      } else {
-        console.error('Error al cerrar sesión:', data.message);
-        // Forzar logout aunque falle el endpoint
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        navigate('/login');
-      }
     } catch (error) {
-      console.error('Error de conexión:', error);
-      // Forzar logout en caso de error
+      console.error(error);
+    } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       navigate('/login');
     }
   };
 
-  // Verificar si una ruta está activa
-  const isActiveLink = (path) => {
-    return location.pathname === path;
-  };
-
   return (
     <>
-      <div className={`sidebar-container ${isSidebarOpen ? 'open' : 'closed'}`}>
-        
-        {/* Header del Sidebar */}
+      {isMobile && open && <div className="sidebar-overlay active" onClick={() => setOpen(false)} />}
+
+      {isMobile && !open && (
+        <button className="sidebar-hamburger" onClick={() => setOpen(true)}>
+          <FiMenu />
+        </button>
+      )}
+
+      {!isMobile && !open && (
+        <button className="sidebar-hamburger web" onClick={() => setOpen(true)}>
+          <FiMenu />
+        </button>
+      )}
+
+      <div className={`sidebar-container ${open ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
-          {isSidebarOpen && <h3 className="sidebar-title">VIDOMEDI</h3>}
-          <button 
-            className="sidebar-toggle-btn"
-            onClick={toggleSidebar}
-            aria-label={isSidebarOpen ? 'Ocultar menú' : 'Mostrar menú'}
-          >
-            <i className={`bi bi-chevron-${isSidebarOpen ? 'left' : 'right'}`}></i>
+          <img src="/logoblanco.png" alt="logo" className="logo-full" />
+          <button className="sidebar-close-btn" onClick={() => setOpen(false)}>
+            <FiX />
           </button>
         </div>
-        
-        {/* Menú de Navegación */}
+
         <nav className="sidebar-nav">
           <ul className="sidebar-menu">
-            {menuItems.map((item) => (
+            {menuItems.map(item => (
               <li key={item.path} className="sidebar-menu-item">
-                <NavLink 
+                <NavLink
                   to={item.path}
-                  className={({ isActive }) => 
-                    `sidebar-link ${isActive ? 'active' : ''}`
-                  }
+                  className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                  onClick={() => isMobile && setOpen(false)}
                 >
                   <i className={`bi ${item.icon}`}></i>
-                  <span className="sidebar-link-text">{item.label}</span>
+                  <span>{item.label}</span>
                 </NavLink>
               </li>
             ))}
           </ul>
-          {/* Botón Cerrar Sesión - Posición fija en la parte inferior */}
+
           <div className="sidebar-logout-section">
-            <button 
-              className="sidebar-logout-btn"
-              onClick={handleLogout}
-            >
+            <button className="sidebar-logout-btn" onClick={handleLogout}>
               <i className="bi bi-box-arrow-right"></i>
-              <span className="sidebar-link-text">Cerrar Sesión</span>
+              <span>Cerrar Sesión</span>
             </button>
           </div>
         </nav>
-      </div>
-
-      {/* Espacio para el contenido principal */}
-      <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-        {/* Tu contenido principal irá aquí */}
       </div>
     </>
   );
