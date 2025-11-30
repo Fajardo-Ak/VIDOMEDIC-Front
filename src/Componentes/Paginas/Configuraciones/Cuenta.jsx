@@ -170,8 +170,15 @@ const Cuenta = () => {
       const formData = new FormData();
       formData.append('foto', archivoSeleccionado);
 
-      // CAMBIO: api.post con FormData (axios detecta el content-type automáticamente)
-      const response = await api.post('/usuario/foto', formData);
+      // Sobrescribimos el header 'Content-Type' a undefined.
+      // Esto obliga al navegador a detectar que es un archivo y 
+      // poner automáticamente el "boundary" correcto.
+      const response = await api.post('/usuario/foto', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data' 
+        }
+      });
+      
       const data = response.data;
 
       if (data.success) {
@@ -186,7 +193,9 @@ const Cuenta = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión al subir la foto');
+      // Mostramos el mensaje exacto que nos da el servidor si existe
+      const mensaje = error.response?.data?.message || 'Error al subir la foto';
+      alert(mensaje);
     } finally {
       setSubiendoFoto(false);
     }
