@@ -9,7 +9,7 @@ import api from '../../../api/axiosConfig';
 
 // --- IMPORTAMOS EL NUEVO COMPONENTE DE NOTIFICACIONES ---
 // Ajusta la ruta si tu Notificador está en otra carpeta
-import Notificador from '../../../components/Notificador'; 
+//import Notificador from '../../../Components/Notificador'; 
 
 import AsyncCreatableSelect from 'react-select/async-creatable';
 
