@@ -1,76 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiCheck, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiEdit, FiTrash2 } from 'react-icons/fi';
 import './Inicio.css';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, endOfWeek } from 'date-fns';
 import es from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { urlBase64ToUint8Array } from '../../../utils/webPush';
-import api from '../../../api/axiosConfig'; // <--- IMPORTANTE: Usamos la instancia central
+import api from '../../../api/axiosConfig'; 
 
-// --- NUEVO: Async creatable select ---
+// --- IMPORTAMOS EL NUEVO COMPONENTE DE NOTIFICACIONES ---
+// Ajusta la ruta si tu Notificador está en otra carpeta
+import Notificador from '../../../components/Notificador'; 
+
 import AsyncCreatableSelect from 'react-select/async-creatable';
-// ------------------------------------------------
-
-//---Funcion para las notificaciones
-const activarNotificaciones = async () => {
-    // 1. Pedir permiso al usuario
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-        alert('Debes permitir las notificaciones para recibir alertas.');
-        return;
-    }
-
-    try {
-        // 2. Registrar el Service Worker
-        const registration = await navigator.serviceWorker.register('/sw.js');
-        await navigator.serviceWorker.ready;
-
-        // 3. Suscribirse (CON CORRECCIÓN DE ERROR DE LLAVES)
-        const VAPID_PUBLIC_KEY = "BK-LTQl4tv2SrkisUwUeJnuS4VOdobairKZ3_IlTR15A-qGVljDQzDDm2uCGPml_Z9i7lqRMLCIQ7xRym_cAloc";
-        const convertedKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
-        
-        let subscription;
-
-        try {
-            // Intento normal de suscripción
-            subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: convertedKey
-            });
-        } catch (error) {
-            // DETECCIÓN DEL ERROR: Si falla por cambio de llaves
-            if (error.message && error.message.includes('applicationServerKey')) {
-                console.warn('Llave antigua detectada. Limpiando y reintentando...');
-                
-                // A) Buscar suscripción vieja
-                const oldSubscription = await registration.pushManager.getSubscription();
-                if (oldSubscription) {
-                    // B) Borrarla
-                    await oldSubscription.unsubscribe();
-                }
-                
-                // C) Intentar suscribirse de nuevo con la llave nueva
-                subscription = await registration.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: convertedKey
-                });
-            } else {
-                // Si es otro error, lo lanzamos para que lo atrape el catch de abajo
-                throw error;
-            }
-        }
-
-        // 4. Enviar suscripción al Backend (USANDO AXIOS)
-        await api.post('/notifications/subscribe', subscription);
-
-        alert('¡Notificaciones activadas con éxito!');
-
-    } catch (error) {
-        console.error('Error en el proceso:', error);
-        alert('Hubo un error al activar las notificaciones. Revisa la consola.');
-    }
-};
 
 // --- CONFIGURACIÓN DEL LOCALIZER ---
 const locales = {
@@ -84,7 +25,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// --- ESTADO INICIAL PARA EL FORMULARIO (incluye nuevos campos) ---
+// --- ESTADO INICIAL PARA EL FORMULARIO ---
 const estadoInicialFormulario = {
   nombre_tratamiento: '',
   fecha_inicio: new Date().toISOString().split('T')[0],
@@ -92,15 +33,13 @@ const estadoInicialFormulario = {
   notas: '',
   medicamentos: [
     {
-      // nuevos campos para soporte de creación/selección
-      medicamento_id: null,            // id si existe en BD
-      medicamento_nombre: '',         // si es creado por el usuario
+      medicamento_id: null,            
+      medicamento_nombre: '',         
       via_administracion: 'Oral',
       presentacion: '',
       importancia: 'media',
-      es_nuevo: true,                 // true => campos vía/presentación/importancia habilitados
+      es_nuevo: true,                 
 
-      // anteriores:
       tipo_frecuencia: 'horarios_fijos',
       valor_frecuencia: 8,
       horarios_fijos: ['08:00', '14:00', '20:00'],
@@ -109,7 +48,6 @@ const estadoInicialFormulario = {
     }
   ]
 };
-// ---------------------------------------------------------------
 
 const Inicio = () => {
   const [semanaActual, setSemanaActual] = useState(new Date());
@@ -118,12 +56,9 @@ const Inicio = () => {
   const [modalTratamiento, setModalTratamiento] = useState(false);
   const [tratamientoActivo, setTratamientoActivo] = useState(null);
 
-  // estado edición / formulario
-  const [editId, setEditId] = useState(null); // null = crear, id = editar
+  const [editId, setEditId] = useState(null); 
   const [tratamientoData, setTratamientoData] = useState(estadoInicialFormulario);
-
   const [guardando, setGuardando] = useState(false);
-
 
   // --- OBTENER DOSIS SEMANA ---
   const obtenerDosisSemana = async (fechaInicio, fechaFin) => {
@@ -134,7 +69,6 @@ const Inicio = () => {
         fecha_fin: fechaFin.toISOString().split('T')[0],
       });
 
-      // CAMBIO: api.get en lugar de fetch
       const response = await api.get(`/dosis/agenda-semanal?${params}`);
       const data = response.data;
 
@@ -147,7 +81,6 @@ const Inicio = () => {
         setDosisSemana(eventosParseados);
 
         if (tratamientoActivo === null) {
-          // CAMBIO: api.get
           const tratamientoResponse = await api.get('/tratamientos/verificar-activo');
           const tratamientoDataResp = tratamientoResponse.data;
           if (tratamientoDataResp.success) {
@@ -164,14 +97,12 @@ const Inicio = () => {
     }
   };
 
-  // useEffects
   useEffect(() => {
     const inicioSemana = startOfWeek(semanaActual, { locale: es });
     const finSemana = endOfWeek(semanaActual, { locale: es });
     obtenerDosisSemana(inicioSemana, finSemana);
   }, [semanaActual]);
 
-  // navegación
   const semanaAnterior = () => {
     const nuevaSemana = new Date(semanaActual);
     nuevaSemana.setDate(nuevaSemana.getDate() - 7);
@@ -188,7 +119,6 @@ const Inicio = () => {
     setSemanaActual(new Date());
   };
 
-  // handlers calendario
   const handleNavigate = (newDate) => {
     setSemanaActual(newDate);
   };
@@ -199,7 +129,6 @@ const Inicio = () => {
 
   const marcarDosis = async (dosisId, estado) => {
     try {
-      // CAMBIO: api.put
       const response = await api.put(`/dosis/${dosisId}/marcar`, {
         estado: estado ? 'tomada' : 'omitida',
         notas_toma: estado ? 'Tomada correctamente' : 'Omitida'
@@ -241,13 +170,12 @@ const Inicio = () => {
       fecha_fin: tratamientoActivo.fecha_fin ? tratamientoActivo.fecha_fin.split('T')[0] : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       notas: tratamientoActivo.notas || '',
       medicamentos: (tratamientoActivo.detalle_tratamientos || []).map(det => ({
-        // mapeo a nueva estructura: si el detalle tiene relación medicamento, incluir datos
         medicamento_id: det.medicamento_id ?? null,
         medicamento_nombre: det.medicamento ? (det.medicamento.nombre || '') : '',
         via_administracion: det.medicamento ? (det.medicamento.via_administracion || 'Oral') : 'Oral',
         presentacion: det.medicamento ? (det.medicamento.presentacion || '') : '',
         importancia: det.medicamento ? (det.medicamento.importancia || 'media') : 'media',
-        es_nuevo: false, // es un medicamento existente, por tanto deshabilitar campos de edición de metadatos
+        es_nuevo: false, 
 
         tipo_frecuencia: det.tipo_frecuencia,
         valor_frecuencia: det.valor_frecuencia,
@@ -275,9 +203,7 @@ const Inicio = () => {
     setEditId(null);
   };
 
-  // guardar router
   const guardarTratamiento = async () => {
-    // validaciones básicas
     if (!tratamientoData.nombre_tratamiento || !tratamientoData.nombre_tratamiento.trim()) {
       alert('Por favor ingresa un nombre para el tratamiento');
       return;
@@ -302,10 +228,8 @@ const Inicio = () => {
     setGuardando(false);
   };
 
-  // crear
   const crearTratamiento = async () => {
     try {
-      // CAMBIO: api.post
       const response = await api.post('/tratamientos', tratamientoData);
       const data = response.data;
 
@@ -328,10 +252,8 @@ const Inicio = () => {
     }
   };
 
-  // actualizar
   const actualizarTratamiento = async () => {
     try {
-      // CAMBIO: api.put
       const response = await api.put(`/tratamientos/${editId}`, tratamientoData);
       const data = response.data;
 
@@ -353,7 +275,6 @@ const Inicio = () => {
     }
   };
 
-  // eliminar
   const eliminarTratamiento = async () => {
     if (!tratamientoActivo) return;
 
@@ -362,7 +283,6 @@ const Inicio = () => {
     }
 
     try {
-      // CAMBIO: api.delete
       const response = await api.delete(`/tratamientos/${tratamientoActivo.id}`);
       const data = response.data;
 
@@ -382,20 +302,17 @@ const Inicio = () => {
     }
   };
 
-  // --- NUEVO: loadOptions para AsyncCreatableSelect ---
   const loadOptions = async (inputValue) => {
     if (!inputValue || inputValue.length < 2) {
       return [];
     }
-
     try {
-      // CAMBIO: api.get
       const response = await api.get(`/medicamentos/buscar?q=${encodeURIComponent(inputValue)}`);
       const data = response.data;
 
       if (data.success) {
         return data.data.map(med => ({
-          value: med, // objeto completo
+          value: med, 
           label: `${med.nombre}${med.presentacion ? ` (${med.presentacion})` : ''}`
         }));
       }
@@ -406,13 +323,11 @@ const Inicio = () => {
     }
   };
 
-  // cuando el usuario selecciona o crea una opción
   const handleMedicamentoChange = (opcionSeleccionada, index) => {
     const nuevosMedicamentos = [...tratamientoData.medicamentos];
     const medActual = nuevosMedicamentos[index] || {};
 
     if (!opcionSeleccionada) {
-      // limpia selección
       nuevosMedicamentos[index] = {
         ...medActual,
         medicamento_id: null,
@@ -423,7 +338,6 @@ const Inicio = () => {
         es_nuevo: true,
       };
     } else if (opcionSeleccionada.__isNew__) {
-      // crear nuevo medicamento localmente
       nuevosMedicamentos[index] = {
         ...medActual,
         medicamento_id: null,
@@ -434,7 +348,6 @@ const Inicio = () => {
         es_nuevo: true,
       };
     } else {
-      // seleccionó un medicamento existente (value = objeto completo)
       const medExistente = opcionSeleccionada.value;
       nuevosMedicamentos[index] = {
         ...medActual,
@@ -453,7 +366,6 @@ const Inicio = () => {
     });
   };
 
-  // actualizarMedicamento ahora soporta nuevos campos
   const actualizarMedicamento = (index, campo, valor) => {
     const nuevosMedicamentos = [...tratamientoData.medicamentos];
     nuevosMedicamentos[index] = {
@@ -466,7 +378,6 @@ const Inicio = () => {
     });
   };
 
-  // agregarMedicamento usa la plantilla inicial
   const agregarMedicamento = () => {
     setTratamientoData({
       ...tratamientoData,
@@ -485,7 +396,6 @@ const Inicio = () => {
     });
   };
 
-  // utilitarios del calendario
   const getDiasSemana = () => {
     const dias = [];
     const inicioSemana = startOfWeek(semanaActual, { locale: es });
@@ -502,7 +412,6 @@ const Inicio = () => {
     const esTomada = event.estado === 'tomada';
     const esOmitida = event.estado === 'omitida';
     const esPasada = new Date(event.start) < new Date() && event.estado === 'pendiente';
-
     let backgroundColor = event.color || '#F59E0B';
 
     if (esTomada) {
@@ -523,12 +432,9 @@ const Inicio = () => {
   };
 
   const diasSemana = getDiasSemana();
-
   const formats = {
-    timeGutterFormat: (date, culture, local) =>
-      local.format(date, 'h a', culture),
-    eventTimeRangeFormat: ({ start }, culture, local) =>
-      local.format(start, 'h:mm a', culture)
+    timeGutterFormat: (date, culture, local) => local.format(date, 'h a', culture),
+    eventTimeRangeFormat: ({ start }, culture, local) => local.format(start, 'h:mm a', culture)
   };
 
   return (
@@ -547,23 +453,9 @@ const Inicio = () => {
           )}
         </div>
 
-        <div className="header-controls"> {/* Aqui se agrego un nuevo boton para las notificaciones */}
-          <button 
-              onClick={activarNotificaciones} 
-              style={{ 
-                padding: '8px 15px', 
-                background: '#F59E0B', 
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                marginRight: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                fontWeight: 'bold'
-              }}
-            >🔔 Activar Alertas</button>
+        <div className="header-controls">
+          {/* BOTÓN VIEJO ELIMINADO AQUÍ */}
+          
           <div className="nav-buttons">
             <button onClick={semanaAnterior} className="nav-btn"><FiChevronLeft /></button>
             <button onClick={irAHoy} className="today-btn">Hoy</button>
@@ -630,10 +522,8 @@ const Inicio = () => {
             </div>
 
             <div className="tratamiento-form">
-              {/* Información general */}
               <div className="form-section">
                 <h4>Información del Tratamiento</h4>
-
                 <div className="form-row">
                   <div className="form-group full-width">
                     <label>Nombre del Tratamiento *</label>
@@ -711,13 +601,11 @@ const Inicio = () => {
                 {tratamientoData.medicamentos.map((medicamento, index) => (
                   <div key={index} className="medicamento-row expanded-row">
                     <div className="medicamento-fields">
-                      {/* Async creatable select */}
                       <div className="form-group">
                         <label>Medicamento *</label>
                         <AsyncCreatableSelect
                           key={`med-select-${index}`}
                           isClearable
-                          // Si es existente, construimos value con objeto
                           value={
                             medicamento.es_nuevo || !medicamento.medicamento_id
                               ? (medicamento.medicamento_nombre ? { label: medicamento.medicamento_nombre, value: { nombre: medicamento.medicamento_nombre, id: null, presentacion: medicamento.presentacion, via_administracion: medicamento.via_administracion, importancia: medicamento.importancia } } : null)
@@ -730,7 +618,6 @@ const Inicio = () => {
                         />
                       </div>
 
-                      {/* Nuevos campos: vía, presentación, importancia */}
                       <div className="form-group">
                         <label>Vía de Administración *</label>
                         <select
@@ -779,7 +666,6 @@ const Inicio = () => {
                         </select>
                       </div>
 
-                      {/* Frecuencia y demás campos */}
                       <div className="form-group">
                         <label>Tipo de Frecuencia</label>
                         <select
@@ -882,10 +768,8 @@ const Inicio = () => {
                           onChange={(e) => actualizarMedicamento(index, 'cantidad_por_toma', e.target.value)}
                         />
                       </div>
-
                     </div>
 
-                    {/* eliminar */}
                     {tratamientoData.medicamentos.length > 1 && (
                       <button
                         type="button"
@@ -899,7 +783,6 @@ const Inicio = () => {
                 ))}
               </div>
 
-              {/* botones modal */}
               <div className="modal-buttons">
                 <button
                   className="cancel-button"
