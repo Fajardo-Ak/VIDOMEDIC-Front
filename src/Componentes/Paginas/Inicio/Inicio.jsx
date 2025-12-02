@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiEdit, FiTrash2, FiBell } from 'react-icons/fi';
 import './Inicio.css';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, endOfWeek } from 'date-fns';
