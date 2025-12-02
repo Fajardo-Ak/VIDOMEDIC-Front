@@ -10,7 +10,7 @@ import { urlBase64ToUint8Array } from '../../../utils/webPush';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 
 //LAVE PUBLICA PARA VAPID
-const VAPID_PUBLIC_KEY = "BBp5sxQTwf2X7MjnLy3MONkT6Q1Da9Wg0rysED26QkO28CnXSQkPtp5SNxKRfqjGbQ9Vct4OipnunZNMeAtT7-k";
+const VAPID_PUBLIC_KEY = "BP3KUwksPvAaY-6WqvDg1-El1WpJkn6pC8TTY1jInOLuhWhCRTFH4kmZzFVSO2XhzGcGfnl3GQ5KHAZpm_a2znM";
 // --- CONFIGURACIÓN DEL LOCALIZER ---
 const locales = {
   'es': es,
