@@ -6,7 +6,7 @@ import RutaPrivada from "./Componentes/Paginas/Seguridad/RutaPrivada";
 import useAutoLogout from './Componentes/Paginas/Seguridad/useAutoLogout.jsx';
 import Navbar from './Componentes/Navbar';
 import Sidebar from './Componentes/Sidebar';
-import Notificador from './Componentes/Notificador';
+//import Notificador from './Componentes/Notificador';
 import Login from './Componentes/Paginas/Login/Login.jsx';
 import Registro from './Componentes/Paginas/Registro/Registro.jsx';
 import NotFound from './Componentes/Paginas/NotFound.jsx';
@@ -40,7 +40,7 @@ const DashboardLayout = () => {
 
   return (
      <div className={`dashboard-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Notificador />
+      {/*<Notificador />*/}
       <Sidebar onToggle={setSidebarOpen} />{/* ✅ setSidebarOpen EXISTE */}
 
       <div className="main-content"> {/* ✅ sidebarOpen EXISTE */}

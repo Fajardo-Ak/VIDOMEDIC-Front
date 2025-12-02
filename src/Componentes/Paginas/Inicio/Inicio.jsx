@@ -6,13 +6,11 @@ import { format, parse, startOfWeek, getDay, endOfWeek } from 'date-fns';
 import es from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import api from '../../../api/axiosConfig'; 
-
-// --- IMPORTAMOS EL NUEVO COMPONENTE DE NOTIFICACIONES ---
-// Ajusta la ruta si tu Notificador está en otra carpeta
-//import Notificador from '../../../Components/Notificador'; 
-
+import { urlBase64ToUint8Array } from '../../../utils/webPush';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 
+//LAVE PUBLICA PARA VAPID
+const VAPID_PUBLIC_KEY = "BK-LTQl4tv2SrkisUwUeJnuS4VOdobairKZ3_IlTR15A-qGVljDQzDDm2uCGPml_Z9i7lqRMLCIQ7xRym_cAloc";
 // --- CONFIGURACIÓN DEL LOCALIZER ---
 const locales = {
   'es': es,
@@ -59,6 +57,54 @@ const Inicio = () => {
   const [editId, setEditId] = useState(null); 
   const [tratamientoData, setTratamientoData] = useState(estadoInicialFormulario);
   const [guardando, setGuardando] = useState(false);
+
+  // --- 3. FUNCIÓN PARA ACTIVAR NOTIFICACIONES VAPID ---
+  const activarNotificaciones = async () => {
+    // A) Pedir permiso al usuario
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+        alert('Debes permitir las notificaciones para recibir alertas.');
+        return;
+    }
+
+    try {
+        // B) Registrar el Service Worker (sw.js)
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        await navigator.serviceWorker.ready;
+
+        // C) Suscribirse a Google/Mozilla
+        const convertedKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+        let subscription;
+
+        try {
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertedKey
+            });
+        } catch (error) {
+            // Manejo de error por cambio de llaves (Tu lógica original mejorada)
+            console.warn('Posible cambio de llave VAPID, reintentando...', error);
+            const oldSubscription = await registration.pushManager.getSubscription();
+            if (oldSubscription) {
+                await oldSubscription.unsubscribe();
+            }
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertedKey
+            });
+        }
+
+        // D) Enviar la suscripción a TU Backend Laravel
+        // Usamos api.post para que envíe el Token de Auth automáticamente
+        await api.post('/notifications/subscribe', subscription);
+
+        alert('¡Notificaciones activadas! Ahora recibirás alertas incluso con la app cerrada.');
+
+    } catch (error) {
+        console.error('Error al activar notificaciones:', error);
+        alert('Error técnico al activar. Revisa la consola (F12).');
+    }
+  };
 
   // --- OBTENER DOSIS SEMANA ---
   const obtenerDosisSemana = async (fechaInicio, fechaFin) => {
@@ -454,7 +500,13 @@ const Inicio = () => {
         </div>
 
         <div className="header-controls">
-          {/* BOTÓN VIEJO ELIMINADO AQUÍ */}
+          {/* BOTÓN DE ACTIVAR NOTIFICACIONES VAPID */}
+          <button 
+              onClick={activarNotificaciones} 
+              style={{ padding: '8px 15px', background: '#F59E0B', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginRight: '10px', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'bold' }}
+            >
+             <FiBell /> Activar Alertas
+          </button>
           
           <div className="nav-buttons">
             <button onClick={semanaAnterior} className="nav-btn"><FiChevronLeft /></button>
