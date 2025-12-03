@@ -81,7 +81,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
 
         {/* Rutas privadas */}
         <Route

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { embedDashboard } from "@superset-ui/embedded-sdk";
 
-const DASHBOARD_ID = "4ba7dc6b-d243-47ee-9d5b-1c44a8ed0e9d";
+const DASHBOARD_ID = "13002af4-b96a-4f0b-8b1e-ba7b3b53da9b";
 
 const env = (keyVite, keyCRA, fallback) => {
   if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env[keyVite]) {
