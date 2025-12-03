@@ -12,9 +12,10 @@ const Sidebar = ({ onToggle }) => {
     { path: '/inicio', icon: 'bi-calendar-week', label: 'Inicio' },
     //{ path: '/medicamento', icon: 'bi-capsule', label: 'Medicamentos' },
     { path: '/historial', icon: 'bi-journal-text', label: 'Historial Agendas' },
-    { path: '/planes', icon: 'bi-credit-card', label: 'Planes' },
+    //{ path: '/planes', icon: 'bi-credit-card', label: 'Planes' },
+    { path: '/contactos', icon: 'bi-people-fill', label: 'Contactos' },
     { path: '/config', icon: 'bi-gear-fill', label: 'Configuraciones' },
-    { path: '/dashboard', icon: 'bi-gear-fill', label: 'Dashboard' },
+    { path: '/dashboard', icon: 'bi-bar-chart-fill', label: 'Dashboard' },
   ];
 
   useEffect(() => {
