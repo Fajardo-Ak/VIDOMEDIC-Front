@@ -28,7 +28,7 @@ const SupersetDashboard = () => {
       mountPoint: containerRef.current,
 
       fetchGuestToken: async () => {
-        const res = await fetch(`${BACKEND_URL}/api/superset/guest-token`);
+        const res = await fetch(`${BACKEND_URL}/superset/guest-token`);
         if (!res.ok) {
           throw new Error("No se pudo obtener guest token");
         }
