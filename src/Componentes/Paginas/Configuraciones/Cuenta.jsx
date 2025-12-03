@@ -230,8 +230,15 @@ const Cuenta = () => {
     <div>
       {/* === SECCIÓN PRINCIPAL DE CUENTA === */}
       <div className="config-section cuenta-layout">
-        <div className="section-title">
-          <FiUser /> Información de Cuenta
+        <div className="section-header">
+          <div>
+            <div className="section-title">
+              <h2><FiUser /> Información de Cuenta</h2>
+            </div>
+            <p className="section-subtitle">
+              Gestiona tu información personal y configuración de cuenta
+            </p>
+          </div>
         </div>
 
         <div className="cuenta-contenido">
@@ -247,61 +254,61 @@ const Cuenta = () => {
           </div>
 
           <div className="cuenta-datos">
-  <div className="dato-lista">
-    {/* Card combinada para Nombre y Email */}
-    <div className="dato-card-combinada">
-      <div className="datos-combinados">
-        {/* Nombre */}
-        <div className="dato-linea">
-          <div className="dato-icono">
-            <FiUser />
-          </div>
-          <div className="dato-contenido">
-            <div className="dato-label">Nombre</div>
-            <div className="dato-valor">{usuario.nombre || "—"}</div>
-          </div>
-        </div>
+            <div className="dato-lista">
+              {/* Card combinada para Nombre y Email */}
+              <div className="dato-card-combinada">
+                <div className="datos-combinados">
+                  {/* Nombre */}
+                  <div className="dato-linea">
+                    <div className="dato-icono">
+                      <FiUser />
+                    </div>
+                    <div className="dato-contenido">
+                      <div className="dato-label">Nombre</div>
+                      <div className="dato-valor">{usuario.nombre || "—"}</div>
+                    </div>
+                  </div>
 
-        {/* Email */}
-        <div className="dato-linea">
-          <div className="dato-icono">
-            <FiMail />
-          </div>
-          <div className="dato-contenido">
-            <div className="dato-label">Email</div>
-            <div className="dato-valor">{usuario.correo || "—"}</div>
-          </div>
-        </div>
-      </div>
-      
-      <button 
-        className="btn-editar-combinado"
-        onClick={abrirModalEdicion}
-      >
-        <FiEdit2 /> Editar
-      </button>
-    </div>
+                  {/* Email */}
+                  <div className="dato-linea">
+                    <div className="dato-icono">
+                      <FiMail />
+                    </div>
+                    <div className="dato-contenido">
+                      <div className="dato-label">Email</div>
+                      <div className="dato-valor">{usuario.correo || "—"}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  className="btn-editar-combinado"
+                  onClick={abrirModalEdicion}
+                >
+                  <FiEdit2 /> Editar
+                </button>
+              </div>
 
-    {/* Contraseña (card individual) */}
-    <div className="dato-item">
-      <div className="dato-info">
-        <div className="dato-icono">
-          <FiLock />
-        </div>
-        <div className="dato-contenido">
-          <div className="dato-label">Contraseña</div>
-          <div className="dato-valor">••••••••</div>
-        </div>
-      </div>
-      <button 
-        className="btn-accion editar"
-        onClick={abrirModalPassword}
-      >
-        <FiEdit2 /> Cambiar
-      </button>
-    </div>
-  </div>
-</div>
+              {/* Contraseña (card individual) */}
+              <div className="dato-item">
+                <div className="dato-info">
+                  <div className="dato-icono">
+                    <FiLock />
+                  </div>
+                  <div className="dato-contenidoc">
+                    <div className="dato-label">Contraseña</div>
+                    <div className="dato-valor">••••••••</div>
+                  </div>
+                </div>
+                <button 
+                  className="btn-accion editar"
+                  onClick={abrirModalPassword}
+                >
+                  <FiEdit2 /> Cambiar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -313,43 +320,54 @@ const Cuenta = () => {
         >
           <div className="config-modal">
             <div className="config-modal-header">
-              <h3>Editar cuenta</h3>
+              <h3> Editar Información de Cuenta</h3>
             </div>
 
-            {/* Inputs */}
-            <input
-              className="modal-input"
-              type="text"
-              placeholder="Nombre"
-              value={datosEditados.nombre}
-              onChange={(e) => setDatosEditados({...datosEditados, nombre: e.target.value})}
-              disabled={guardando}
-            />
+            <div className="config-modal-content">
+              <div className="modal-input-group">
+                <label className="modal-label">
+                  Nombre Completo
+                </label>
+                <input
+                  className="modal-input"
+                  type="text"
+                  placeholder="Ingresa tu nombre completo"
+                  value={datosEditados.nombre}
+                  onChange={(e) => setDatosEditados({...datosEditados, nombre: e.target.value})}
+                  disabled={guardando}
+                />
+              </div>
 
-            <input
-              className="modal-input"
-              type="email"
-              placeholder="Correo electrónico"
-              value={datosEditados.correo}
-              onChange={(e) => setDatosEditados({...datosEditados, correo: e.target.value})}
-              disabled={guardando}
-            />
+              <div className="modal-input-group">
+                <label className="modal-label">
+                  Correo Electrónico
+                </label>
+                <input
+                  className="modal-input"
+                  type="email"
+                  placeholder="Ingresa tu correo electrónico"
+                  value={datosEditados.correo}
+                  onChange={(e) => setDatosEditados({...datosEditados, correo: e.target.value})}
+                  disabled={guardando}
+                />
+              </div>
+            </div>
 
             {/* Botones */}
             <div className="modal-buttons">
               <button 
-                className="cancel-button"
+                className="btn-cancelar"
                 onClick={() => setModalEditando(false)}
                 disabled={guardando}
               >
                 Cancelar
               </button>
               <button 
-                className="save-button"
+                className="btn-guardar"
                 onClick={guardarCambiosPerfil}
                 disabled={guardando}
               >
-                {guardando ? "Guardando..." : "Guardar cambios"}
+                {guardando ? "Guardando..." : "Guardar Cambios"}
               </button>
             </div>
           </div>
@@ -364,51 +382,62 @@ const Cuenta = () => {
         >
           <div className="config-modal">
             <div className="config-modal-header">
-              <h3>Cambiar contraseña</h3>
+              <h3><FiLock /> Cambiar Contraseña</h3>
             </div>
 
-            <input
-              className="modal-input"
-              type="password"
-              placeholder="Contraseña actual"
-              value={datosPassword.password_actual}
-              onChange={(e) => setDatosPassword({...datosPassword, password_actual: e.target.value})}
-              disabled={cambiandoPassword}
-            />
+            <div className="config-modal-content">
+              <div className="modal-input-group">
+                <label className="modal-label">Contraseña Actual</label>
+                <input
+                  className="modal-input"
+                  type="password"
+                  placeholder="Ingresa tu contraseña actual"
+                  value={datosPassword.password_actual}
+                  onChange={(e) => setDatosPassword({...datosPassword, password_actual: e.target.value})}
+                  disabled={cambiandoPassword}
+                />
+              </div>
 
-            <input
-              className="modal-input"
-              type="password"
-              placeholder="Nueva contraseña"
-              value={datosPassword.nueva_password}
-              onChange={(e) => setDatosPassword({...datosPassword, nueva_password: e.target.value})}
-              disabled={cambiandoPassword}
-            />
+              <div className="modal-input-group">
+                <label className="modal-label">Nueva Contraseña</label>
+                <input
+                  className="modal-input"
+                  type="password"
+                  placeholder="Ingresa tu nueva contraseña"
+                  value={datosPassword.nueva_password}
+                  onChange={(e) => setDatosPassword({...datosPassword, nueva_password: e.target.value})}
+                  disabled={cambiandoPassword}
+                />
+              </div>
 
-            <input
-              className="modal-input"
-              type="password"
-              placeholder="Confirmar nueva contraseña"
-              value={datosPassword.confirmar_password}
-              onChange={(e) => setDatosPassword({...datosPassword, confirmar_password: e.target.value})}
-              disabled={cambiandoPassword}
-            />
+              <div className="modal-input-group">
+                <label className="modal-label">Confirmar Nueva Contraseña</label>
+                <input
+                  className="modal-input"
+                  type="password"
+                  placeholder="Confirma tu nueva contraseña"
+                  value={datosPassword.confirmar_password}
+                  onChange={(e) => setDatosPassword({...datosPassword, confirmar_password: e.target.value})}
+                  disabled={cambiandoPassword}
+                />
+              </div>
+            </div>
 
             {/* Botones */}
             <div className="modal-buttons">
               <button 
-                className="cancel-button"
+                className="btn-cancelar"
                 onClick={() => setModalPassword(false)}
                 disabled={cambiandoPassword}
               >
                 Cancelar
               </button>
               <button 
-                className="save-button"
+                className="btn-guardar"
                 onClick={cambiarPassword}
                 disabled={cambiandoPassword}
               >
-                {cambiandoPassword ? "Cambiando..." : "Cambiar contraseña"}
+                {cambiandoPassword ? "Cambiando..." : "Cambiar Contraseña"}
               </button>
             </div>
           </div>
@@ -423,86 +452,83 @@ const Cuenta = () => {
         >
           <div className="config-modal">
             <div className="config-modal-header">
-              <h3>Cambiar foto de perfil</h3>
+              <h3><FiImage /> Cambiar Foto de Perfil</h3>
             </div>
 
-            {/* INTERCAMBIO: Muestra preview O área de subida, no ambos */}
-            {previewFoto ? (
-              <div className="preview-imagen">
-                <p><strong>Vista previa de tu nueva foto:</strong></p>
-                <img src={previewFoto} alt="Preview" />
-                <p className="info-archivo">
-                  {archivoSeleccionado?.name} ({(archivoSeleccionado?.size / 1024).toFixed(0)} KB)
-                </p>
-                <button 
-                  className="cancel-button"
-                  onClick={() => {
-                    setPreviewFoto(null);
-                    setArchivoSeleccionado(null);
+            <div className="config-modal-content">
+              {/* INTERCAMBIO: Muestra preview O área de subida, no ambos */}
+              {previewFoto ? (
+                <div className="preview-imagen">
+                  <p><strong>Vista previa de tu nueva foto:</strong></p>
+                  <img src={previewFoto} alt="Preview" />
+                  <p className="info-archivo">
+                    {archivoSeleccionado?.name} ({(archivoSeleccionado?.size / 1024).toFixed(0)} KB)
+                  </p>
+                  <button 
+                    className="btn-cancelar-foto"
+                    onClick={() => {
+                      setPreviewFoto(null);
+                      setArchivoSeleccionado(null);
+                    }}
+                    style={{ marginTop: '15px' }}
+                  >
+                    Elegir otra foto
+                  </button>
+                </div>
+              ) : (
+                <div 
+                  className="area-subida"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.style.backgroundColor = '#f0f8ff';
                   }}
-                  style={{ 
-                    marginTop: '15px',
-                    background: 'var(--color-gray-dark)',
-                    fontSize: 'var(--font-size-sm)',
-                    padding: '8px 16px'
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.style.backgroundColor = '#f9f9f9';
                   }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.style.backgroundColor = '#f9f9f9';
+                    const archivo = e.dataTransfer.files[0];
+                    if (archivo) manejarArchivoSeleccionado(archivo);
+                  }}
+                  onClick={() => document.getElementById('input-foto').click()}
                 >
-                  Elegir otra foto
-                </button>
-              </div>
-            ) : (
-              <div 
-                className="area-subida"
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.style.backgroundColor = '#f0f8ff';
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.style.backgroundColor = '#f9f9f9';
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.style.backgroundColor = '#f9f9f9';
-                  const archivo = e.dataTransfer.files[0];
+                  <div style={{ fontSize: '48px', marginBottom: '10px' }}>🖼️</div>
+                  <p><strong>Arrastra tu foto aquí</strong></p>
+                  <p>o haz clic para seleccionar</p>
+                  <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                    Formatos: JPG, PNG, GIF (max 2MB)
+                  </p>
+                </div>
+              )}
+
+              <input
+                id="input-foto"
+                type="file"
+                accept="image/jpeg,image/png,image/gif"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const archivo = e.target.files[0];
                   if (archivo) manejarArchivoSeleccionado(archivo);
                 }}
-                onClick={() => document.getElementById('input-foto').click()}
-              >
-                <div style={{ fontSize: '48px', marginBottom: '10px' }}>🖼️</div>
-                <p><strong>Arrastra tu foto aquí</strong></p>
-                <p>o haz clic para seleccionar</p>
-                <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
-                  Formatos: JPG, PNG, GIF (max 2MB)
-                </p>
-              </div>
-            )}
-
-            <input
-              id="input-foto"
-              type="file"
-              accept="image/jpeg,image/png,image/gif"
-              style={{ display: 'none' }}
-              onChange={(e) => {
-                const archivo = e.target.files[0];
-                if (archivo) manejarArchivoSeleccionado(archivo);
-              }}
-            />
+              />
+            </div>
 
             {/* Botones */}
             <div className="modal-buttons">
               <button 
-                className="cancel-button"
+                className="btn-cancelar"
                 onClick={() => setModalFoto(false)}
               >
                 Cancelar
               </button>
               <button 
-                className="save-button"
+                className="btn-guardar"
                 onClick={subirFoto}
                 disabled={!archivoSeleccionado || subiendoFoto}
               >
-                {subiendoFoto ? "Subiendo..." : "Subir foto"}
+                {subiendoFoto ? "Subiendo..." : "Subir Foto"}
               </button>
             </div>
           </div>

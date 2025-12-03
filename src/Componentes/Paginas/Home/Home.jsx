@@ -6,15 +6,15 @@ import {
   Users, 
   ClipboardList, 
   PhoneCall,
-  Calendar,
+  //Calendar,
   Pill,
   Menu,
   X,
-  Shield,
+  //Shield,
   Clock,
   CheckCircle,
-  Star,
-  Zap
+  //Star,
+  //Zap
 } from "lucide-react";
 
 const Home = () => {

@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import Cuenta from "./Cuenta";
-import Contactos from "./Contactos";
+//import Contactos from "./Contactos";
 import Actualizaciones from "./Actualizaciones";
 import "./Config.css";
+import Planes from "../Planes/Planes";
 
 export default function Configuracion() {
   const [activeTab, setActiveTab] = useState('cuenta');
 
   const tabs = [
     { id: 'cuenta', label: 'Cuenta', component: <Cuenta /> },
-    { id: 'contactos', label: 'Contactos', component: <Contactos /> },
+  //  { id: 'contactos', label: 'Contactos', component: <Contactos /> },
+    { id: 'Planes', label: 'Planes', component: <Planes /> },
     { id: 'actualizaciones', label: 'Actualizaciones', component: <Actualizaciones /> },
   ];
 

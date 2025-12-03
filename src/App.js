@@ -16,6 +16,7 @@ import OAuthCallback from './Componentes/Paginas/OAuthCallback.jsx';
 import Inicio from './Componentes/Paginas/Inicio/Inicio.jsx';
 import Historial from './Componentes/Paginas/Historial_Agenda/Historial.jsx';
 import Planes from './Componentes/Paginas/Planes/Planes.jsx';
+import Contactos from './Componentes/Paginas/Configuraciones/Contactos.jsx';
 import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
 import SupersetDashboard from './Componentes/SupersetDashboard.jsx';
 
@@ -63,6 +64,7 @@ const DashboardLayout = () => {
           {/*<Route path="/medicamento" element={<Medi />} />*/}
           <Route path="/historial" element={<Historial />} />
           <Route path="/planes" element={<Planes />} />
+          <Route path="/contactos" element={<Contactos />} />
           <Route path="/config" element={<Configuracion />} />
           <Route path="/dashboard" element={<SupersetDashboard/>} />
         </Routes>
