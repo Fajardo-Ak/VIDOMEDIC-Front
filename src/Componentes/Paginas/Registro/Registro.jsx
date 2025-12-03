@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import api from '../../../api/axiosConfig';
 import './Registro.css';
 
 const Registro = () => {
@@ -18,26 +19,20 @@ const Registro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/registro", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      // USAMOS api.post EN LUGAR DE FETCH DIRECTO
+      const response = await api.post("/registro", form);
+      
+      // Axios lanza error si el status no es 200, así que si llegamos aquí, fue éxito
+      console.log("Usuario registrado:", response.data);
+      alert("Registro exitoso");
+      navigate('/login');
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Usuario registrado:", data);
-        alert("Registro exitoso");
-        navigate('/login');
-      } else {
-        const error = await response.json();
-        alert("Error en el registro: " + (error.message || "Intenta de nuevo"));
-      }
     } catch (err) {
       console.error("Error:", err);
-      alert("Error de conexión con el servidor");
+      // Capturamos el mensaje de error que viene del backend o ponemos uno genérico
+      const mensaje = err.response?.data?.message || "Error de conexión o datos inválidos";
+      alert("Error en el registro: " + mensaje);
     }
   };
 

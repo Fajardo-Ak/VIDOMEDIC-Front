@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../../api/axiosConfig"; // <--- IMPORTANTE: Ajusta la ruta si es necesario
 
 const useAutoLogout = (timeoutMinutes = 120, warningMinutes = 1) => {
   const navigate = useNavigate();
@@ -14,13 +15,8 @@ const useAutoLogout = (timeoutMinutes = 120, warningMinutes = 1) => {
     try {
       const token = localStorage.getItem("token");
       if (token) {
-        await fetch("http://localhost:8000/api/logout", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
+        // CAMBIO: Usamos la instancia api y la ruta relativa
+        await api.post("/logout");
       }
     } catch (error) {
       console.error("Error en logout automático:", error);

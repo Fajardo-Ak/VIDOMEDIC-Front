@@ -79,8 +79,6 @@ const Planes = () => {
       }
     ];
 
-
-  
  const manejarSeleccionPlan = async (plan) => {
   try {
     const priceIds = {

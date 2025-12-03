@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiUsers, FiEdit2, FiTrash2, FiPlus, FiPhone, FiMail, FiUser, FiSave, FiX } from "react-icons/fi";
+import api from "../../../api/axiosConfig"; // <--- IMPORTAR API
 
 const Contactos = () => {
   // Estados para contactos
@@ -17,12 +18,9 @@ const Contactos = () => {
   // Obtener contactos
   const obtenerContactos = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/contactos', {
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      const data = await response.json();
+      // CAMBIO: api.get
+      const response = await api.get('/contactos');
+      const data = response.data;
       
       if (data.success) {
         setContactos(data.data);
@@ -68,22 +66,16 @@ const Contactos = () => {
     setGuardandoContacto(true);
 
     try {
-      const url = editandoContacto 
-        ? `http://localhost:8000/api/contactos/${editandoContacto}`
-        : 'http://localhost:8000/api/contactos';
-      
-      const method = editandoContacto ? 'PUT' : 'POST';
+      let response;
+      if (editandoContacto) {
+        // CAMBIO: api.put
+        response = await api.put(`/contactos/${editandoContacto}`, datosContacto);
+      } else {
+        // CAMBIO: api.post
+        response = await api.post('/contactos', datosContacto);
+      }
 
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: JSON.stringify(datosContacto)
-      });
-
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         await obtenerContactos();
@@ -105,14 +97,9 @@ const Contactos = () => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar este contacto?")) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/contactos/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-
-      const data = await response.json();
+      // CAMBIO: api.delete
+      const response = await api.delete(`/contactos/${id}`);
+      const data = response.data;
 
       if (data.success) {
         await obtenerContactos();

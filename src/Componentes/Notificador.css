@@ -1,0 +1,173 @@
+/* Fondo oscuro transparente (Overlay) */
+.notificador-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px); /* Efecto borroso moderno */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999; /* Por encima de todo */
+}
+
+/* La tarjeta de alerta */
+.notificador-modal {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-top: 6px solid #F59E0B; /* Color ámbar de tu marca */
+}
+
+/* Animación de entrada */
+.animate-pop-in {
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Cabecera */
+.notificador-header {
+    padding: 20px 20px 10px;
+    text-align: center;
+    position: relative;
+}
+
+.notificador-header h3 {
+    margin: 10px 0 0;
+    color: #1f2937;
+    font-size: 1.25rem;
+}
+
+.icon-wrapper {
+    background-color: #FEF3C7; /* Ámbar muy claro */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.bell-icon {
+    color: #D97706; /* Ámbar oscuro */
+    font-size: 28px;
+    animation: ring 2s infinite;
+}
+
+/* Botón X pequeña */
+.close-btn-mini {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #9CA3AF;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Cuerpo */
+.notificador-body {
+    padding: 10px 25px;
+    text-align: center;
+}
+
+.mensaje-principal {
+    font-size: 1.1rem;
+    color: #374151;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.hora-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #F3F4F6;
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: #6B7280;
+    font-size: 0.9rem;
+}
+
+/* Footer y Botones */
+.notificador-footer {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-confirmar {
+    background-color: #10B981; /* Verde éxito */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-confirmar:hover {
+    background-color: #059669;
+}
+
+.btn-posponer {
+    background-color: transparent;
+    color: #6B7280;
+    border: 1px solid #E5E7EB;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-posponer:hover {
+    background-color: #F9FAFB;
+    color: #374151;
+}
+
+/* Animación de la campana */
+@keyframes ring {
+    0% { transform: rotate(0); }
+    10% { transform: rotate(15deg); }
+    20% { transform: rotate(-10deg); }
+    30% { transform: rotate(5deg); }
+    40% { transform: rotate(-5deg); }
+    50% { transform: rotate(0); }
+    100% { transform: rotate(0); }
+}
+
+/* AGREGAR ESTO AL FINAL: Ajuste Móvil */
+@media (max-width: 600px) {
+    .notificador-modal {
+        width: 95%; /* Más ancho en celular */
+        max-width: none;
+        bottom: 20px; /* Que no pegue abajo del todo */
+    }
+
+    .notificador-header h3 {
+        font-size: 1.1rem; /* Texto un pelín más chico */
+    }
+
+    .btn-confirmar {
+        padding: 15px; /* Botones más fáciles de tocar con el dedo */
+    }
+}

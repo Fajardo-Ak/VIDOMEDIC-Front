@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.vidomedic.app",
+      "sha256_cert_fingerprints": [
+        "B7:FD:98:B2:5F:33:3D:99:EB:D4:BF:73:6F:04:F2:30:DA:5A:B9:A7:65:36:A0:D8:E2:72:67:62:FC:FD:1C:46"
+      ]
+    }
+  }
+]

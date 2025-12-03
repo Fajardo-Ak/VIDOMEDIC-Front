@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiTrash2, FiFileText, FiDownload, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import api from '../../../api/axiosConfig'; // <--- IMPORTANTE: Importar axios
 import './Historial.css';
 
 const Historial = () => {
@@ -14,12 +15,10 @@ const Historial = () => {
   const cargarTratamientos = async () => {
     setCargando(true);
     try {
-      const response = await fetch('http://localhost:8000/api/tratamientos', {
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      const data = await response.json();
+      // CAMBIO: api.get
+      const response = await api.get('/tratamientos');
+      const data = response.data;
+      
       if (data.success) {
         setTratamientos(data.data);
       }
@@ -34,14 +33,10 @@ const Historial = () => {
     if (!window.confirm("¿Estás seguro de eliminar este historial? Esta acción no se puede deshacer.")) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/tratamientos/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      
-      const data = await response.json();
+      // CAMBIO: api.delete
+      const response = await api.delete(`/tratamientos/${id}`);
+      const data = response.data;
+
       if (data.success) {
         alert("Tratamiento eliminado correctamente");
         cargarTratamientos();
@@ -53,20 +48,20 @@ const Historial = () => {
     }
   };
 
+  // --- LÓGICA DE DESCARGA PDF (ADAPTADA A AXIOS) ---
   const descargarPDF = async (tratamiento) => {
     setDescargandoId(tratamiento.id);
     try {
-      const response = await fetch(`http://localhost:8000/api/tratamientos/${tratamiento.id}/pdf`, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token'),
-          'Accept': 'application/pdf'
-        }
+      // CAMBIO: api.get con responseType 'blob'
+      const response = await api.get(`/tratamientos/${tratamiento.id}/pdf`, {
+        responseType: 'blob', // Importante para que Axios sepa que es un archivo
       });
 
-      if (!response.ok) throw new Error('Error al generar PDF');
-
-      const blob = await response.blob();
+      // Con Axios, response.data YA ES el contenido del archivo
+      // Creamos el Blob directamente desde response.data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      
+      // Crear una URL temporal para el navegador
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

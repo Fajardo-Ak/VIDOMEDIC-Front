@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiUser, FiEdit2, FiImage, FiMail, FiLock } from "react-icons/fi";
+import api from "../../../api/axiosConfig"; // <--- IMPORTAR API
 
 const Cuenta = () => {
   // Estados para datos del usuario
@@ -33,12 +34,9 @@ const Cuenta = () => {
   // Obtener perfil del usuario
   const obtenerPerfilUsuario = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/usuario/perfil', {
-        headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      const data = await response.json();
+      // CAMBIO: api.get
+      const response = await api.get('/usuario/perfil');
+      const data = response.data;
       
       if (data.success) {
         setUsuario(data.usuario);
@@ -104,16 +102,9 @@ const Cuenta = () => {
     setGuardando(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/usuario/perfil', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: JSON.stringify(datosEditados)
-      });
-
-      const data = await response.json();
+      // CAMBIO: api.put
+      const response = await api.put('/usuario/perfil', datosEditados);
+      const data = response.data;
 
       if (data.success) {
         setUsuario({
@@ -148,19 +139,13 @@ const Cuenta = () => {
     setCambiandoPassword(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/usuario/password', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: JSON.stringify({
-          password_actual: datosPassword.password_actual,
-          nueva_password: datosPassword.nueva_password
-        })
+      // CAMBIO: api.put
+      const response = await api.put('/usuario/password', {
+        password_actual: datosPassword.password_actual,
+        nueva_password: datosPassword.nueva_password
       });
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         setModalPassword(false);
@@ -185,15 +170,16 @@ const Cuenta = () => {
       const formData = new FormData();
       formData.append('foto', archivoSeleccionado);
 
-      const response = await fetch('http://localhost:8000/api/usuario/foto', {
-        method: 'POST',
+      // Sobrescribimos el header 'Content-Type' a undefined.
+      // Esto obliga al navegador a detectar que es un archivo y 
+      // poner automáticamente el "boundary" correcto.
+      const response = await api.post('/usuario/foto', formData, {
         headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: formData
+          'Content-Type': 'multipart/form-data' 
+        }
       });
-
-      const data = await response.json();
+      
+      const data = response.data;
 
       if (data.success) {
         setUsuario({
@@ -207,18 +193,22 @@ const Cuenta = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión al subir la foto');
+      // Mostramos el mensaje exacto que nos da el servidor si existe
+      const mensaje = error.response?.data?.message || 'Error al subir la foto';
+      alert(mensaje);
     } finally {
       setSubiendoFoto(false);
     }
   };
 
-  // Obtener foto de perfil
+  // Obtener foto de perfil (con corrección de URL)
   const obtenerFotoPerfil = () => {
     if (usuario.foto_perfil) {
       return usuario.foto_perfil;
     } else {
-      return 'http://localhost:8000/images/usuario-default.png';
+      // Usamos la URL base de axios para la imagen default
+      const baseUrl = api.defaults.baseURL.replace('/api', '');
+      return `${baseUrl}/images/usuario-default.png`;
     }
   };
 
@@ -235,6 +225,7 @@ const Cuenta = () => {
     );
   }
 
+  // (El return es exactamente el mismo, solo cambia la lógica de arriba)
   return (
     <div>
       {/* === SECCIÓN PRINCIPAL DE CUENTA === */}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from '../../../api/axiosConfig';
 import "./Login.css";
 
 const Login = () => {
@@ -8,18 +9,15 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
     try {
-      const response = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ correo: email, password }),
-      });
-
-      const data = await response.json();
+      // USAMOS api.post Y QUITAMOS LA URL FIJA
+      const response = await api.post("/login", { correo: email, password });
+      
+      // Axios devuelve los datos en .data directamente
+      const data = response.data;
 
       if (data.success) {
         localStorage.setItem("token", data.token);
@@ -29,15 +27,22 @@ const Login = () => {
         setError("Datos incorrectos");
       }
     } catch (err) {
-      setError("Error de conexión");
       console.error("Login error:", err);
+      // Si el backend responde con error (400/401), entra aquí
+      if (err.response && err.response.data && err.response.data.message) {
+          setError(err.response.data.message);
+      } else {
+          setError("Error de conexión");
+      }
     }
   };
 
 // Función para iniciar login con OAuth
 const loginWithProvider = (provider) => {
-    // Redirigir directamente al endpoint del backend
-    window.location.href = `http://localhost:8000/auth/${provider}/redirect`;
+    // Usamos la baseURL configurada en axios (la de la nube o local según corresponda)
+    const baseURL = api.defaults.baseURL; 
+    // Redirigir usando la base correcta
+    window.location.href = `${baseURL.replace('/api', '')}/auth/${provider}/redirect`;
 };
 
 
