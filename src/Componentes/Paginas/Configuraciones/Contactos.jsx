@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FiUsers, FiEdit2, FiTrash2, FiPlus, FiPhone, FiMail, FiUser, FiSave, FiX } from "react-icons/fi";
 import api from "../../../api/axiosConfig"; // <--- IMPORTAR API
+import Swal from "sweetalert2";
+import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
 
 const Contactos = () => {
   // Estados para contactos
@@ -59,8 +61,8 @@ const Contactos = () => {
   // Guardar contacto
   const guardarContacto = async () => {
     if (!datosContacto.nombre_contacto.trim() || !datosContacto.telefono.trim()) {
-      alert("Por favor, completa todos los campos requeridos");
-      return;
+      //alert("Por favor, completa todos los campos requeridos");
+      return alertaAdvertencia("Por favor, completa todos los campos requeridos.");
     }
 
     setGuardandoContacto(true);
@@ -80,7 +82,12 @@ const Contactos = () => {
       if (data.success) {
         await obtenerContactos();
         setModalContacto(false);
-        alert(editandoContacto ? "Contacto actualizado correctamente" : "Contacto creado correctamente");
+        Swal.fire({
+          title:"Campos incompletos",
+          text: "Por favor, completa todos los campos requeridos",
+          icon:"warning",
+          confirmButtonColor: "#00a6a6",
+        })
       } else {
         alert(data.error || "Error al guardar el contacto");
       }
@@ -103,9 +110,14 @@ const Contactos = () => {
 
       if (data.success) {
         await obtenerContactos();
-        alert("Contacto eliminado correctamente");
+        Swal.fire({
+          title:"Campos incompletos",
+          text: "Contacto eliminado correctamente",
+          icon:"warning",
+          confirmButtonColor: "#00a6a6",
+        })
       } else {
-        alert(data.error || "Error al eliminar el contacto");
+        Swal(data.error || "Error al eliminar el contacto");
       }
     } catch (error) {
       console.error('Error:', error);
