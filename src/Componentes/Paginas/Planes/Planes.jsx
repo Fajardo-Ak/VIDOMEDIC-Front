@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle, Crown, Star, Zap } from "lucide-react";
 import "./Planes.css";
-import axios from "axios";
+import api from "../../../api/axiosConfig";
 
 const Planes = () => {
   const [temaOscuro, setTemaOscuro] = useState(false);
@@ -91,7 +91,7 @@ const Planes = () => {
       return;
     }
 
-    const response = await axios.post("http://localhost:8000/api/create-checkout-session", {
+    const response = await api.post("/create-checkout-session", {
       price_id: priceIds[plan]
     });
 
@@ -99,7 +99,11 @@ const Planes = () => {
 
   } catch (error) {
     console.error("Error al crear sesión de pago:", error);
-    alert("Ocurrió un error al intentar pagar. Intenta de nuevo.");
+    if (error.response && error.response.status === 401) {
+        alert("Debes iniciar sesión para suscribirte.");
+    } else {
+        alert("Ocurrió un error al intentar pagar. Intenta de nuevo.");
+    }
   }
 };
 
