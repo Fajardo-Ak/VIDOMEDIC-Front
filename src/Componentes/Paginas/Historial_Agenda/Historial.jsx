@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FiTrash2, FiFileText, FiDownload, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import api from '../../../api/axiosConfig'; // <--- IMPORTANTE: Importar axios
 import './Historial.css';
+import { alertaExito, alertaError, alertaAdvertencia } from "../Configuraciones/alertas";
+
 
 const Historial = () => {
   const [tratamientos, setTratamientos] = useState([]);

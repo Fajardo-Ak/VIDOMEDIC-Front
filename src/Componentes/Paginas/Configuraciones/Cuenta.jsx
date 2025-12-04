@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FiUser, FiEdit2, FiImage, FiMail, FiLock } from "react-icons/fi";
-import api from "../../../api/axiosConfig"; // <--- IMPORTAR API
+import { FiUser, FiEdit2, FiImage, FiMail, FiLock, FiZap, FiStar, FiCrown } from "react-icons/fi";
+import api from "../../../api/axiosConfig";
 import { alertaExito, alertaError, alertaAdvertencia } from "../Configuraciones/alertas";
-
 
 const Cuenta = () => {
   // Estados para datos del usuario
@@ -10,7 +9,7 @@ const Cuenta = () => {
     nombre: "",
     correo: "",
     foto_perfil: null,
-    plan_actual: null,
+    plan_actual: 'Básico', // <-- Lee de localStorage
   });
   const [cargando, setCargando] = useState(true);
 
@@ -37,14 +36,13 @@ const Cuenta = () => {
   // Obtener perfil del usuario
   const obtenerPerfilUsuario = async () => {
     try {
-      // CAMBIO: api.get
       const response = await api.get('/usuario/perfil');
       const data = response.data;
       
-       if (data.success) {
+      if (data.success) {
         setUsuario({
           ...data.usuario,
-          plan_actual: data.usuario.plan_actual || "Básico" // <-- Añadir plan
+          plan_actual: data.usuario.plan_actual || "Básico"
         });
       } else {
         console.error('Error al obtener perfil:', data.error);
@@ -108,7 +106,6 @@ const Cuenta = () => {
     setGuardando(true);
 
     try {
-      // CAMBIO: api.put
       const response = await api.put('/usuario/perfil', datosEditados);
       const data = response.data;
 
@@ -145,7 +142,6 @@ const Cuenta = () => {
     setCambiandoPassword(true);
 
     try {
-      // CAMBIO: api.put
       const response = await api.put('/usuario/password', {
         password_actual: datosPassword.password_actual,
         nueva_password: datosPassword.nueva_password
@@ -167,19 +163,17 @@ const Cuenta = () => {
   };
 
   const subirFoto = async () => {
-      if (!archivoSeleccionado) {
-    alertaAdvertencia("Sin imagen", "Debes seleccionar una foto antes de subir");
-    return;
-  }
+    if (!archivoSeleccionado) {
+      alertaAdvertencia("Sin imagen", "Debes seleccionar una foto antes de subir");
+      return;
+    }
+    
     setSubiendoFoto(true);
 
     try {
       const formData = new FormData();
       formData.append('foto', archivoSeleccionado);
 
-      // Sobrescribimos el header 'Content-Type' a undefined.
-      // Esto obliga al navegador a detectar que es un archivo y 
-      // poner automáticamente el "boundary" correcto.
       const response = await api.post('/usuario/foto', formData, {
         headers: {
           'Content-Type': 'multipart/form-data' 
@@ -213,20 +207,20 @@ const Cuenta = () => {
     if (usuario.foto_perfil) {
       return usuario.foto_perfil;
     } else {
-      // Usamos la URL base de axios para la imagen default
       const baseUrl = api.defaults.baseURL.replace('/api', '');
       return `${baseUrl}/images/usuario-default.png`;
     }
   };
 
-    const obtenerIconoPlan = () => {
+  // Función para obtener icono según el plan
+  const obtenerIconoPlan = () => {
     switch(usuario.plan_actual?.toLowerCase()) {
       case 'premium':
         return <FiStar className="plan-icon" />;
       case 'experto':
         return <FiCrown className="plan-icon" />;
       default:
-        return <FiZap className="plan-icon" />; // Básico
+        return <FiZap className="plan-icon" />;
     }
   };
 
@@ -242,6 +236,11 @@ const Cuenta = () => {
     }
   };
 
+  // Función para redirigir a la página de planes
+  const irAPlanes = () => {
+    window.location.href = '/configuraciones/planes';
+  };
+
   // Cargar datos al iniciar
   useEffect(() => {
     obtenerPerfilUsuario();
@@ -255,7 +254,6 @@ const Cuenta = () => {
     );
   }
 
-  // (El return es exactamente el mismo, solo cambia la lógica de arriba)
   return (
     <div>
       {/* === SECCIÓN PRINCIPAL DE CUENTA === */}
@@ -282,11 +280,19 @@ const Cuenta = () => {
               <FiImage/> Cambiar foto
             </button>
 
-             <div className={`${obtenerClasePlan()}`}>
+            {/* BADGE SIMPLE DEL PLAN */}
+            <div 
+              className={`${obtenerClasePlan()} clickable`}
+              onClick={(e) => {
+                e.stopPropagation(); // Evita que se active el click de la foto
+                irAPlanes();
+              }}
+              title="Ver planes disponibles"
+            >
               <span className="plan-badge-content">
                 {obtenerIconoPlan()}
                 <span className="plan-text">
-                  Plan {usuario.plan_actual || "Básico"}
+                  {usuario.plan_actual || "Básico"}
                 </span>
               </span>
             </div>
