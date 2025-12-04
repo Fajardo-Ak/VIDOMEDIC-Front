@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FiUser, FiEdit2, FiImage, FiMail, FiLock } from "react-icons/fi";
 import api from "../../../api/axiosConfig"; // <--- IMPORTAR API
+import { alertaExito, alertaError, alertaAdvertencia } from "../Configuraciones/alertas";
+
 
 const Cuenta = () => {
   // Estados para datos del usuario
@@ -78,12 +80,12 @@ const Cuenta = () => {
   const manejarArchivoSeleccionado = (archivo) => {
     const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
     if (!tiposPermitidos.includes(archivo.type)) {
-      alert('Por favor, selecciona una imagen válida (JPG, PNG o GIF)');
+      alertaAdvertencia('Por favor, selecciona una imagen válida (JPG, PNG o GIF)');
       return;
     }
 
     if (archivo.size > 2 * 1024 * 1024) {
-      alert('La imagen es muy grande. Máximo 2MB permitido');
+      alertaAdvertencia('La imagen es muy grande. Máximo 2MB permitido');
       return;
     }
 
@@ -95,7 +97,7 @@ const Cuenta = () => {
   // Funciones para guardar cambios
   const guardarCambiosPerfil = async () => {
     if (!datosEditados.nombre.trim() || !datosEditados.correo.trim()) {
-      alert("Por favor, completa todos los campos");
+      alertaAdvertencia("Por favor, completa todos los campos");
       return;
     }
 
@@ -113,13 +115,13 @@ const Cuenta = () => {
           correo: datosEditados.correo
         });
         setModalEditando(false);
-        alert("Perfil actualizado correctamente");
+        alertaExito("Perfil actualizado correctamente");
       } else {
-        alert(data.error || "Error al actualizar perfil");
+        alertaError(data.error || "Error al actualizar perfil");
       }
     } catch (error) {
       console.error('Error:', error);
-      alert("Error de conexión");
+      alertaError("Error de conexión");
     } finally {
       setGuardando(false);
     }
@@ -127,12 +129,12 @@ const Cuenta = () => {
 
   const cambiarPassword = async () => {
     if (!datosPassword.password_actual || !datosPassword.nueva_password) {
-      alert("Por favor, completa todos los campos");
+      alertaAdvertencia("Por favor, completa todos los campos");
       return;
     }
 
     if (datosPassword.nueva_password !== datosPassword.confirmar_password) {
-      alert("Las contraseñas nuevas no coinciden");
+      alertaAdvertencia("Las contraseñas nuevas no coinciden");
       return;
     }
 
@@ -149,21 +151,22 @@ const Cuenta = () => {
 
       if (data.success) {
         setModalPassword(false);
-        alert("Contraseña cambiada correctamente");
+        alertaExito("Contraseña cambiada correctamente");
       } else {
-        alert(data.message || "Error al cambiar contraseña");
+        alertaError(data.message || "Error al cambiar contraseña");
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert("Error de conexión");
+      alertaError("Error de conexión");
     } finally {
       setCambiandoPassword(false);
     }
   };
 
   const subirFoto = async () => {
-    if (!archivoSeleccionado) return;
-
+      if (!archivoSeleccionado) {
+    alertaAdvertencia("Sin imagen", "Debes seleccionar una foto antes de subir");
+    return;
+  }
     setSubiendoFoto(true);
 
     try {
@@ -187,15 +190,15 @@ const Cuenta = () => {
           foto_perfil: data.foto_perfil
         });
         setModalFoto(false);
-        alert('Foto de perfil actualizada correctamente');
+        alertaExito('Foto de perfil actualizada correctamente');
       } else {
-        alert(data.message || 'Error al subir la foto');
+        alertaError(data.message || 'Error al subir la foto');
       }
     } catch (error) {
-      console.error('Error:', error);
+      //console.error('Error:', error);
       // Mostramos el mensaje exacto que nos da el servidor si existe
       const mensaje = error.response?.data?.message || 'Error al subir la foto';
-      alert(mensaje);
+      alertaError("Error", mensaje);
     } finally {
       setSubiendoFoto(false);
     }

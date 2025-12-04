@@ -4,6 +4,9 @@ import Cuenta from "./Cuenta";
 import Actualizaciones from "./Actualizaciones";
 import "./Config.css";
 import Planes from "../Planes/Planes";
+import Swal from "sweetalert2";
+import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
+
 
 export default function Configuracion() {
   const [activeTab, setActiveTab] = useState('cuenta');

@@ -8,6 +8,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import api from '../../../api/axiosConfig'; 
 import { urlBase64ToUint8Array } from '../../../utils/webPush';
 import AsyncCreatableSelect from 'react-select/async-creatable';
+import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
+
 
 //LAVE PUBLICA PARA VAPID
 const VAPID_PUBLIC_KEY = "BP3KUwksPvAaY-6WqvDg1-El1WpJkn6pC8TTY1jInOLuhWhCRTFH4kmZzFVSO2XhzGcGfnl3GQ5KHAZpm_a2znM";
@@ -63,7 +65,7 @@ const Inicio = () => {
     // A) Pedir permiso al usuario
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
-        alert('Debes permitir las notificaciones para recibir alertas.');
+        alertaAdvertencia('Debes permitir las notificaciones para recibir alertas.');
         return;
     }
 
@@ -98,11 +100,11 @@ const Inicio = () => {
         // Usamos api.post para que envíe el Token de Auth automáticamente
         await api.post('/notifications/subscribe', subscription);
 
-        alert('¡Notificaciones activadas! Ahora recibirás alertas incluso con la app cerrada.');
+        alertaExito('¡Notificaciones activadas! Ahora recibirás alertas incluso con la app cerrada.');
 
     } catch (error) {
         console.error('Error al activar notificaciones:', error);
-        alert('Error técnico al activar. Revisa la consola (F12).');
+        alertaError('Error técnico al activar. Revisa la consola (F12).');
     }
   };
 
@@ -193,7 +195,7 @@ const Inicio = () => {
           )
         );
       } else {
-        alert(data.error || 'Error al marcar la dosis');
+        alertaError(data.error || 'Error al marcar la dosis');
       }
     } catch (error) {
       console.error('Error' ,error);
@@ -251,15 +253,15 @@ const Inicio = () => {
 
   const guardarTratamiento = async () => {
     if (!tratamientoData.nombre_tratamiento || !tratamientoData.nombre_tratamiento.trim()) {
-      alert('Por favor ingresa un nombre para el tratamiento');
+      alertaAdvertencia('Por favor ingresa un nombre para el tratamiento');
       return;
     }
     if (!tratamientoData.fecha_inicio || !tratamientoData.fecha_fin) {
-      alert('Por favor ingresa fechas de inicio y fin válidas');
+      alertaAdvertencia('Por favor ingresa fechas de inicio y fin válidas');
       return;
     }
     if (!tratamientoData.medicamentos || tratamientoData.medicamentos.length === 0) {
-      alert('Por favor agrega al menos un medicamento');
+      alertaAdvertencia('Por favor agrega al menos un medicamento');
       return;
     }
 
@@ -280,7 +282,7 @@ const Inicio = () => {
       const data = response.data;
 
       if (data.success) {
-        alert('Tratamiento creado exitosamente!');
+        alertaExito('Tratamiento creado exitosamente!');
         cerrarModal();
 
         const inicioSemana = startOfWeek(semanaActual, { locale: es });
@@ -290,11 +292,11 @@ const Inicio = () => {
         setTratamientoActivo(data.data);
         setTratamientoData(estadoInicialFormulario);
       } else {
-        alert('Error al crear tratamiento: ' + (data.error || 'Error desconocido'));
+        alertaError('Error al crear tratamiento: ' + (data.error || 'Error desconocido'));
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión al guardar el tratamiento');
+      alertaError('Error de conexión al guardar el tratamiento');
     }
   };
 
@@ -304,7 +306,7 @@ const Inicio = () => {
       const data = response.data;
 
       if (data.success) {
-        alert('Tratamiento actualizado exitosamente!');
+        alertaExito('Tratamiento actualizado exitosamente!');
         cerrarModal();
 
         const inicioSemana = startOfWeek(semanaActual, { locale: es });
@@ -313,38 +315,41 @@ const Inicio = () => {
 
         setTratamientoActivo(data.data);
       } else {
-        alert('Error al actualizar tratamiento: ' + (data.error || 'Error desconocido'));
+        alertaError('Error al actualizar tratamiento: ' + (data.error || 'Error desconocido'));
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión al actualizar el tratamiento');
+      alertaError('Ha ocurrido un error al actualizar el tratamiento');
     }
   };
 
   const eliminarTratamiento = async () => {
     if (!tratamientoActivo) return;
 
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este tratamiento? Se eliminarán todas las dosis programadas.')) {
-      return;
-    }
+   const confirmado = await confirmarEliminar(
+    "Eliminar tratamiento",
+    "Se eliminarán todas las dosis programadas. Esta acción no se puede deshacer."
+  );
+
+  if (!confirmado) return;
 
     try {
       const response = await api.delete(`/tratamientos/${tratamientoActivo.id}`);
       const data = response.data;
 
       if (data.success) {
-        alert('Tratamiento eliminado correctamente');
+        alertaExito('Tratamiento eliminado correctamente');
         setTratamientoActivo(null);
 
         const inicioSemana = startOfWeek(semanaActual, { locale: es });
         const finSemana = endOfWeek(semanaActual, { locale: es });
         await obtenerDosisSemana(inicioSemana, finSemana);
       } else {
-        alert('Error al eliminar tratamiento: ' + (data.error || 'Error desconocido'));
+        alertaError('Error al eliminar tratamiento: ' + (data.error || 'Error desconocido'));
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error de conexión al eliminar el tratamiento');
+      alertaError('Error de conexión al eliminar el tratamiento');
     }
   };
 
