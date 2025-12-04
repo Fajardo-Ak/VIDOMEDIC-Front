@@ -27,10 +27,10 @@ const Contactos = () => {
       if (data.success) {
         setContactos(data.data);
       } else {
-        alertaerror('Error al obtener contactos:', data.error);
+        alertaError('Error al obtener contactos:', data.error);
       }
     } catch (error) {
-      alertaerror('Error:', error);
+      alertaError('Error:', error);
     } finally {
       setCargandoContactos(false);
     }
@@ -87,7 +87,6 @@ const Contactos = () => {
         alertaError(data.error || "Error al guardar el contacto");
       }
     } catch (error) {
-      console.error('Error:', error);
       alertaError("Error de conexión con el servidor");
     } finally {
       setGuardandoContacto(false);
