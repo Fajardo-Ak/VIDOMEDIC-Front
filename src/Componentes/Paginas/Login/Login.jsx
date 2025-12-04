@@ -9,7 +9,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
@@ -22,6 +22,20 @@ const handleSubmit = async (e) => {
       if (data.success) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+
+        // --- PUENTE HACIA ANDROID (NUEVO) ---
+        // Verificamos si la web está corriendo dentro de la App Android
+        if (window.Android && window.Android.guardarToken) {
+            try {
+                // Enviamos el token a Java para encender las notificaciones
+                window.Android.guardarToken(data.token);
+                console.log("Token enviado a la App Android correctamente");
+            } catch (e) {
+                console.error("Error al comunicarse con Android:", e);
+            }
+        }
+        // ------------------------------------
+
         navigate("/inicio");
       } else {
         setError("Datos incorrectos");
@@ -37,14 +51,13 @@ const handleSubmit = async (e) => {
     }
   };
 
-// Función para iniciar login con OAuth
-const loginWithProvider = (provider) => {
+  // Función para iniciar login con OAuth
+  const loginWithProvider = (provider) => {
     // Usamos la baseURL configurada en axios (la de la nube o local según corresponda)
     const baseURL = api.defaults.baseURL; 
     // Redirigir usando la base correcta
     window.location.href = `${baseURL.replace('/api', '')}/auth/${provider}/redirect`;
-};
-
+  };
 
   return (
     <div className="login-wrapper">
