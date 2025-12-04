@@ -88,7 +88,7 @@ const Planes = () => {
     };
 
     if (plan === "Básico") {
-      alert("Comenzando plan gratuito con anuncios");
+      alertaExito("Comenzando plan gratuito con anuncios");
       return;
     }
 
