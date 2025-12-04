@@ -9,7 +9,8 @@ const Cuenta = () => {
   const [usuario, setUsuario] = useState({
     nombre: "",
     correo: "",
-    foto_perfil: null
+    foto_perfil: null,
+    plan_actual: null,
   });
   const [cargando, setCargando] = useState(true);
 
@@ -40,8 +41,11 @@ const Cuenta = () => {
       const response = await api.get('/usuario/perfil');
       const data = response.data;
       
-      if (data.success) {
-        setUsuario(data.usuario);
+       if (data.success) {
+        setUsuario({
+          ...data.usuario,
+          plan_actual: data.usuario.plan_actual || "Básico" // <-- Añadir plan
+        });
       } else {
         console.error('Error al obtener perfil:', data.error);
       }
@@ -215,6 +219,29 @@ const Cuenta = () => {
     }
   };
 
+    const obtenerIconoPlan = () => {
+    switch(usuario.plan_actual?.toLowerCase()) {
+      case 'premium':
+        return <FiStar className="plan-icon" />;
+      case 'experto':
+        return <FiCrown className="plan-icon" />;
+      default:
+        return <FiZap className="plan-icon" />; // Básico
+    }
+  };
+
+  // Función para obtener clase CSS según el plan
+  const obtenerClasePlan = () => {
+    switch(usuario.plan_actual?.toLowerCase()) {
+      case 'premium':
+        return 'plan-badge premium';
+      case 'experto':
+        return 'plan-badge experto';
+      default:
+        return 'plan-badge basico';
+    }
+  };
+
   // Cargar datos al iniciar
   useEffect(() => {
     obtenerPerfilUsuario();
@@ -254,6 +281,16 @@ const Cuenta = () => {
             <button className="cambiar-foto">
               <FiImage/> Cambiar foto
             </button>
+
+             <div className={`${obtenerClasePlan()}`}>
+              <span className="plan-badge-content">
+                {obtenerIconoPlan()}
+                <span className="plan-text">
+                  Plan {usuario.plan_actual || "Básico"}
+                </span>
+              </span>
+            </div>
+
           </div>
 
           <div className="cuenta-datos">

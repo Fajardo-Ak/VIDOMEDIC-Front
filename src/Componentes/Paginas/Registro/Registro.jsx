@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import api from '../../../api/axiosConfig';
 import './Registro.css';
+import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
 
 const Registro = () => {
   const navigate = useNavigate();
@@ -25,14 +26,14 @@ const Registro = () => {
       
       // Axios lanza error si el status no es 200, así que si llegamos aquí, fue éxito
       console.log("Usuario registrado:", response.data);
-      alert("Registro exitoso");
+      alertaExito("Registro exitoso");
       navigate('/login');
 
     } catch (err) {
       console.error("Error:", err);
       // Capturamos el mensaje de error que viene del backend o ponemos uno genérico
       const mensaje = err.response?.data?.message || "Error de conexión o datos inválidos";
-      alert("Error en el registro: " + mensaje);
+      alertaError("Error en el registro: " + mensaje);
     }
   };
 
