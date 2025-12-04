@@ -91,15 +91,6 @@ const Planes = () => {
       return;
     }
 
-    // 1. PRIMERO: Actualizar plan en backend
-    await api.post("/usuario/actualizar-plan", {
-      plan: plan
-    });
-
-    // 2. SEGUNDO: Guardar en localStorage (como backup)
-    localStorage.setItem('plan_usuario', plan);
-    
-    // 3. TERCERO: Ir a Stripe a pagar
     const response = await api.post("/create-checkout-session", {
       price_id: priceIds[plan]
     });
@@ -108,7 +99,11 @@ const Planes = () => {
 
   } catch (error) {
     console.error("Error al crear sesión de pago:", error);
-    alert("Ocurrió un error. Intenta de nuevo.");
+    if (error.response && error.response.status === 401) {
+        alert("Debes iniciar sesión para suscribirte.");
+    } else {
+        alert("Ocurrió un error al intentar pagar. Intenta de nuevo.");
+    }
   }
 };
 

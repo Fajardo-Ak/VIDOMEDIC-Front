@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { FiUser, FiEdit2, FiImage, FiMail, FiLock, FiZap, FiStar, FiCrown } from "react-icons/fi";
-import api from "../../../api/axiosConfig";
+import { FiUser, FiEdit2, FiImage, FiMail, FiLock } from "react-icons/fi";
+import api from "../../../api/axiosConfig"; // <--- IMPORTAR API
 import { alertaExito, alertaError, alertaAdvertencia } from "../Configuraciones/alertas";
+
 
 const Cuenta = () => {
   // Estados para datos del usuario
   const [usuario, setUsuario] = useState({
     nombre: "",
     correo: "",
-    foto_perfil: null,
-    plan_actual: 'Básico', // <-- Lee de localStorage
+    foto_perfil: null
   });
   const [cargando, setCargando] = useState(true);
 
@@ -36,14 +36,12 @@ const Cuenta = () => {
   // Obtener perfil del usuario
   const obtenerPerfilUsuario = async () => {
     try {
+      // CAMBIO: api.get
       const response = await api.get('/usuario/perfil');
       const data = response.data;
       
       if (data.success) {
-        setUsuario({
-          ...data.usuario,
-          plan_actual: data.usuario.plan_actual || "Básico"
-        });
+        setUsuario(data.usuario);
       } else {
         console.error('Error al obtener perfil:', data.error);
       }
@@ -106,6 +104,7 @@ const Cuenta = () => {
     setGuardando(true);
 
     try {
+      // CAMBIO: api.put
       const response = await api.put('/usuario/perfil', datosEditados);
       const data = response.data;
 
@@ -142,6 +141,7 @@ const Cuenta = () => {
     setCambiandoPassword(true);
 
     try {
+      // CAMBIO: api.put
       const response = await api.put('/usuario/password', {
         password_actual: datosPassword.password_actual,
         nueva_password: datosPassword.nueva_password
@@ -163,17 +163,19 @@ const Cuenta = () => {
   };
 
   const subirFoto = async () => {
-    if (!archivoSeleccionado) {
-      alertaAdvertencia("Sin imagen", "Debes seleccionar una foto antes de subir");
-      return;
-    }
-    
+      if (!archivoSeleccionado) {
+    alertaAdvertencia("Sin imagen", "Debes seleccionar una foto antes de subir");
+    return;
+  }
     setSubiendoFoto(true);
 
     try {
       const formData = new FormData();
       formData.append('foto', archivoSeleccionado);
 
+      // Sobrescribimos el header 'Content-Type' a undefined.
+      // Esto obliga al navegador a detectar que es un archivo y 
+      // poner automáticamente el "boundary" correcto.
       const response = await api.post('/usuario/foto', formData, {
         headers: {
           'Content-Type': 'multipart/form-data' 
@@ -196,7 +198,7 @@ const Cuenta = () => {
       //console.error('Error:', error);
       // Mostramos el mensaje exacto que nos da el servidor si existe
       const mensaje = error.response?.data?.message || 'Error al subir la foto';
-      alertaError("Error", mensaje);
+      alertError("Error", mensaje);
     } finally {
       setSubiendoFoto(false);
     }
@@ -207,38 +209,10 @@ const Cuenta = () => {
     if (usuario.foto_perfil) {
       return usuario.foto_perfil;
     } else {
+      // Usamos la URL base de axios para la imagen default
       const baseUrl = api.defaults.baseURL.replace('/api', '');
       return `${baseUrl}/images/usuario-default.png`;
     }
-  };
-
-  // Función para obtener icono según el plan
-  const obtenerIconoPlan = () => {
-    switch(usuario.plan_actual?.toLowerCase()) {
-      case 'premium':
-        return <FiStar className="plan-icon" />;
-      case 'experto':
-        return <FiCrown className="plan-icon" />;
-      default:
-        return <FiZap className="plan-icon" />;
-    }
-  };
-
-  // Función para obtener clase CSS según el plan
-  const obtenerClasePlan = () => {
-    switch(usuario.plan_actual?.toLowerCase()) {
-      case 'premium':
-        return 'plan-badge premium';
-      case 'experto':
-        return 'plan-badge experto';
-      default:
-        return 'plan-badge basico';
-    }
-  };
-
-  // Función para redirigir a la página de planes
-  const irAPlanes = () => {
-    window.location.href = '/configuraciones/planes';
   };
 
   // Cargar datos al iniciar
@@ -254,6 +228,7 @@ const Cuenta = () => {
     );
   }
 
+  // (El return es exactamente el mismo, solo cambia la lógica de arriba)
   return (
     <div>
       {/* === SECCIÓN PRINCIPAL DE CUENTA === */}
@@ -279,24 +254,6 @@ const Cuenta = () => {
             <button className="cambiar-foto">
               <FiImage/> Cambiar foto
             </button>
-
-            {/* BADGE SIMPLE DEL PLAN */}
-            <div 
-              className={`${obtenerClasePlan()} clickable`}
-              onClick={(e) => {
-                e.stopPropagation(); // Evita que se active el click de la foto
-                irAPlanes();
-              }}
-              title="Ver planes disponibles"
-            >
-              <span className="plan-badge-content">
-                {obtenerIconoPlan()}
-                <span className="plan-text">
-                  {usuario.plan_actual || "Básico"}
-                </span>
-              </span>
-            </div>
-
           </div>
 
           <div className="cuenta-datos">
