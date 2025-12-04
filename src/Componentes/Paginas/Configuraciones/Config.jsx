@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import Cuenta from "./Cuenta";
-import Contactos from "./Contactos";
+//import Contactos from "./Contactos";
 import Actualizaciones from "./Actualizaciones";
 import "./Config.css";
+import Planes from "../Planes/Planes";
+import Swal from "sweetalert2";
+import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
+
 
 export default function Configuracion() {
   const [activeTab, setActiveTab] = useState('cuenta');
 
   const tabs = [
     { id: 'cuenta', label: 'Cuenta', component: <Cuenta /> },
-    { id: 'contactos', label: 'Contactos', component: <Contactos /> },
+  //  { id: 'contactos', label: 'Contactos', component: <Contactos /> },
+    { id: 'Planes', label: 'Planes', component: <Planes /> },
     { id: 'actualizaciones', label: 'Actualizaciones', component: <Actualizaciones /> },
   ];
 
