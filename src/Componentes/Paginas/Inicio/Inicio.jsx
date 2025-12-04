@@ -306,7 +306,7 @@ const Inicio = () => {
       const data = response.data;
 
       if (data.success) {
-        alertaAdvertencia('Tratamiento actualizado exitosamente!');
+        alertaExito('Tratamiento actualizado exitosamente!');
         cerrarModal();
 
         const inicioSemana = startOfWeek(semanaActual, { locale: es });
@@ -319,7 +319,7 @@ const Inicio = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      alertaError('Error de conexión al actualizar el tratamiento');
+      alertaError('Ha ocurrido un error al actualizar el tratamiento');
     }
   };
 
