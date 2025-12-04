@@ -4,7 +4,6 @@ import "./Planes.css";
 import api from "../../../api/axiosConfig";
 import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
 
-
 const Planes = () => {
   const [temaOscuro, setTemaOscuro] = useState(false);
 
@@ -89,7 +88,7 @@ const Planes = () => {
     };
 
     if (plan === "Básico") {
-      alertaExito("Comenzando plan gratuito con anuncios");
+      alert("Comenzando plan gratuito con anuncios");
       return;
     }
 
