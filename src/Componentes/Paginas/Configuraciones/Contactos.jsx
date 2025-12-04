@@ -82,18 +82,13 @@ const Contactos = () => {
       if (data.success) {
         await obtenerContactos();
         setModalContacto(false);
-        Swal.fire({
-          title:"Campos incompletos",
-          text: "Por favor, completa todos los campos requeridos",
-          icon:"warning",
-          confirmButtonColor: "#00a6a6",
-        })
+        alertExito(editandoContacto ? "Contacto actualizado correctamente" : "Contacto creado correctamente");
       } else {
-        alert(data.error || "Error al guardar el contacto");
+        alertError(data.error || "Error al guardar el contacto");
       }
     } catch (error) {
       console.error('Error:', error);
-      alert("Error de conexión con el servidor");
+      alertError("Error de conexión con el servidor");
     } finally {
       setGuardandoContacto(false);
     }
@@ -110,18 +105,13 @@ const Contactos = () => {
 
       if (data.success) {
         await obtenerContactos();
-        Swal.fire({
-          title:"Campos incompletos",
-          text: "Contacto eliminado correctamente",
-          icon:"warning",
-          confirmButtonColor: "#00a6a6",
-        })
+
       } else {
-        Swal(data.error || "Error al eliminar el contacto");
+        Swal.fire(data.error || "Error al eliminar el contacto");
       }
     } catch (error) {
       console.error('Error:', error);
-      alert("Error de conexión con el servidor");
+      Swal.fire("Error de conexión con el servidor");
     }
   };
 
