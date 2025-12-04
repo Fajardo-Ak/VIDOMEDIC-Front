@@ -19,6 +19,8 @@ import Planes from './Componentes/Paginas/Planes/Planes.jsx';
 import Contactos from './Componentes/Paginas/Configuraciones/Contactos.jsx';
 import Configuracion from './Componentes/Paginas/Configuraciones/Config.jsx';
 import SupersetDashboard from './Componentes/SupersetDashboard.jsx';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // 🧭 Scroll automático
 const ScrollToTop = () => {
