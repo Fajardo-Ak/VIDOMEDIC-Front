@@ -27,10 +27,10 @@ const Contactos = () => {
       if (data.success) {
         setContactos(data.data);
       } else {
-        console.error('Error al obtener contactos:', data.error);
+        alertaerror('Error al obtener contactos:', data.error);
       }
     } catch (error) {
-      console.error('Error:', error);
+      alertaerror('Error:', error);
     } finally {
       setCargandoContactos(false);
     }
