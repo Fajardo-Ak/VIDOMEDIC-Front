@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle, Crown, Star, Zap } from "lucide-react";
 import "./Planes.css";
 import api from "../../../api/axiosConfig";
-import { alertaAdvertencia, alertaExito, alertaAdvertencia } from "../Configuraciones/alertas";
+import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
+
 
 const Planes = () => {
   const [temaOscuro, setTemaOscuro] = useState(false);

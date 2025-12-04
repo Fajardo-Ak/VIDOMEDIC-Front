@@ -198,7 +198,7 @@ const Cuenta = () => {
       //console.error('Error:', error);
       // Mostramos el mensaje exacto que nos da el servidor si existe
       const mensaje = error.response?.data?.message || 'Error al subir la foto';
-      alertError("Error", mensaje);
+      alertaError("Error", mensaje);
     } finally {
       setSubiendoFoto(false);
     }
