@@ -96,7 +96,8 @@ const Contactos = () => {
 
   // Eliminar contacto
   const eliminarContacto = async (id) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar este contacto?")) return;
+    const confirmado = await confirmarEliminar("¿Estás seguro de que deseas eliminar este contacto?")
+    if (!confirmado) return;
 
     try {
       // CAMBIO: api.delete
@@ -107,11 +108,10 @@ const Contactos = () => {
         await obtenerContactos();
 
       } else {
-        Swal.fire(data.error || "Error al eliminar el contacto");
+        alertaExito(data.error || "Error al eliminar el contacto");
       }
     } catch (error) {
-      console.error('Error:', error);
-      Swal.fire("Error de conexión con el servidor");
+      alertaError("Error de conexión con el servidor");
     }
   };
 
