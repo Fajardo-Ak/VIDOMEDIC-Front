@@ -31,8 +31,8 @@ export const alertaAdvertencia = (mensaje) =>
     ...baseConfig
   });
 
-export const confirmarEliminar = () =>
-  Swal.fire({
+export const confirmarEliminar = async () => {
+  const result = await Swal.fire({
     title: "¿Eliminar contacto?",
     text: "Esta acción no se puede deshacer.",
     icon: "question",
@@ -43,3 +43,6 @@ export const confirmarEliminar = () =>
     cancelButtonColor: "#4f7d85",
     ...baseConfig
   });
+
+  return result.isConfirmed;
+};
