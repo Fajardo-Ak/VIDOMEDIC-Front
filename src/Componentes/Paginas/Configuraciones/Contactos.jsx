@@ -82,13 +82,13 @@ const Contactos = () => {
       if (data.success) {
         await obtenerContactos();
         setModalContacto(false);
-        alertExito(editandoContacto ? "Contacto actualizado correctamente" : "Contacto creado correctamente");
+        alertaExito(editandoContacto ? "Contacto actualizado correctamente" : "Contacto creado correctamente");
       } else {
-        alertError(data.error || "Error al guardar el contacto");
+        alertaError(data.error || "Error al guardar el contacto");
       }
     } catch (error) {
       console.error('Error:', error);
-      alertError("Error de conexión con el servidor");
+      alertaError("Error de conexión con el servidor");
     } finally {
       setGuardandoContacto(false);
     }
