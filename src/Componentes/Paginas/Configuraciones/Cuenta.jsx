@@ -115,7 +115,7 @@ const Cuenta = () => {
           correo: datosEditados.correo
         });
         setModalEditando(false);
-        alertaExitoso("Perfil actualizado correctamente");
+        alertaExito("Perfil actualizado correctamente");
       } else {
         alertaError(data.error || "Error al actualizar perfil");
       }
@@ -156,7 +156,7 @@ const Cuenta = () => {
         alertaError(data.message || "Error al cambiar contraseña");
       }
     } catch (error) {
-      alertError("Error de conexión");
+      alertaError("Error de conexión");
     } finally {
       setCambiandoPassword(false);
     }
@@ -190,7 +190,7 @@ const Cuenta = () => {
           foto_perfil: data.foto_perfil
         });
         setModalFoto(false);
-        alertaExitoso('Foto de perfil actualizada correctamente');
+        alertaExito('Foto de perfil actualizada correctamente');
       } else {
         alertaError(data.message || 'Error al subir la foto');
       }
@@ -198,7 +198,7 @@ const Cuenta = () => {
       //console.error('Error:', error);
       // Mostramos el mensaje exacto que nos da el servidor si existe
       const mensaje = error.response?.data?.message || 'Error al subir la foto';
-      alertError("Error", mensaje);
+      alertaError("Error", mensaje);
     } finally {
       setSubiendoFoto(false);
     }
