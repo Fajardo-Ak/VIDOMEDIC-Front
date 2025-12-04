@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle, Crown, Star, Zap } from "lucide-react";
 import "./Planes.css";
 import api from "../../../api/axiosConfig";
-import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
-
 
 const Planes = () => {
   const [temaOscuro, setTemaOscuro] = useState(false);
@@ -89,7 +87,7 @@ const Planes = () => {
     };
 
     if (plan === "Básico") {
-      alertaExito("Comenzando plan gratuito con anuncios");
+      alert("Comenzando plan gratuito con anuncios");
       return;
     }
 
@@ -102,9 +100,9 @@ const Planes = () => {
   } catch (error) {
     console.error("Error al crear sesión de pago:", error);
     if (error.response && error.response.status === 401) {
-        alertaAdvertencia("Debes iniciar sesión para suscribirte.");
+        alert("Debes iniciar sesión para suscribirte.");
     } else {
-        alertaError("Ocurrió un error al intentar pagar. Intenta de nuevo.");
+        alert("Ocurrió un error al intentar pagar. Intenta de nuevo.");
     }
   }
 };
