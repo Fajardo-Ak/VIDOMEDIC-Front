@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiTrash2, FiFileText, FiDownload, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import api from '../../../api/axiosConfig'; // <--- IMPORTANTE: Importar axios
 import './Historial.css';
-import { alertaExito, alertaError, alertaAdvertencia } from "../Configuraciones/alertas";
+import { alertaExito, alertaError, alertaAdvertencia, confirmarEliminar } from "../Configuraciones/alertas";
 
 
 const Historial = () => {
@@ -17,59 +17,59 @@ const Historial = () => {
   const cargarTratamientos = async () => {
     setCargando(true);
     try {
-      // CAMBIO: api.get
       const response = await api.get('/tratamientos');
       const data = response.data;
-      
+
       if (data.success) {
         setTratamientos(data.data);
-        
+      } else {
+        alertaAdvertencia("No se pudieron cargar los tratamientos.");
       }
+
     } catch (error) {
       console.error("Error cargando historial:", error);
-
+      alertaError("Error al cargar el historial.");
     } finally {
       setCargando(false);
     }
   };
 
   const eliminarTratamiento = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar este historial? Esta acción no se puede deshacer.")) return;
+    const confirmar = await confirmarEliminar(
+      "¿Eliminar historial?",
+      "Esta acción no se puede deshacer."
+    );
+
+    if (!confirmar) return;
 
     try {
-      // CAMBIO: api.delete
       const response = await api.delete(`/tratamientos/${id}`);
       const data = response.data;
 
       if (data.success) {
-        alert("Tratamiento eliminado correctamente");
+        alertaExito("Tratamiento eliminado correctamente");
         cargarTratamientos();
       } else {
-        alert("Error al eliminar");
+        alertaError("Error al eliminar el tratamiento.");
       }
+
     } catch (error) {
       console.error(error);
-
+      alertaError("Ocurrió un error al intentar eliminar el tratamiento.");
     }
   };
 
-  // --- LÓGICA DE DESCARGA PDF (ADAPTADA A AXIOS) ---
   const descargarPDF = async (tratamiento) => {
     setDescargandoId(tratamiento.id);
 
     try {
-      // CAMBIO: api.get con responseType 'blob'
       const response = await api.get(`/tratamientos/${tratamiento.id}/pdf`, {
-        responseType: 'blob', // Importante para que Axios sepa que es un archivo
+        responseType: 'blob',
       });
 
-      // Con Axios, response.data YA ES el contenido del archivo
-      // Creamos el Blob directamente desde response.data
       const blob = new Blob([response.data], { type: 'application/pdf' });
-      
-      // Crear una URL temporal para el navegador
-      const url = window.URL.createObjectURL(blob);
 
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `Historial_${tratamiento.nombre_tratamiento.replace(/\s+/g, '_')}.pdf`;
@@ -81,7 +81,7 @@ const Historial = () => {
 
     } catch (error) {
       console.error("Error descargando PDF:", error);
-      alert("No se pudo descargar el historial. Intente nuevamente.");
+      alertaError("No se pudo descargar el historial. Intente nuevamente.");
     } finally {
       setDescargandoId(null);
     }
